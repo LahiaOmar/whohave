@@ -4,16 +4,20 @@ import Menu from '../Menu'
 import Authentication from '../Authentication'
 import Logo from '../Logo'
 
-import {AppBar, Toolbar} from '@material-ui/core'
+import {AppBar, Grid} from '@material-ui/core'
 
 function NavBar(){
     return(
         <AppBar position="static">
-            <Toolbar>
+            <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center">
                 <Logo />
                 <Menu />
                 <Authentication />
-            </Toolbar>
+            </Grid>
         </AppBar>
     )
 }

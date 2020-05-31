@@ -1,12 +1,22 @@
 import React from 'react'
 import LogIn from '../LogIn'
-import SignIn from '../SignIn'
+import SignUp from '../SignUp'
+import MyModal from '../Mymodal'
 
 function Authentication() {
     return (
         <div>
-            <LogIn />
-            <SignIn />
+            {true
+            ?<React.Fragment>
+                <MyModal btnTitle="Sign UP">
+                    <SignUp />
+                </MyModal>
+                <MyModal btnTitle="Log IN">
+                    <LogIn />
+                </MyModal>
+            </ React.Fragment>
+            :<div>user information</div>
+        }
         </div>
     )
 }
