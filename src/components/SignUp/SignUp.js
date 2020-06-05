@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button, Grid, TextField, Typography} from '@material-ui/core'
 import {AccountCircle} from '@material-ui/icons'
-import {useFormik, yupToFormErrors} from 'formik'
+import {useFormik} from 'formik'
 import * as Yup from 'yup';
 
 function SignUp(props) {
