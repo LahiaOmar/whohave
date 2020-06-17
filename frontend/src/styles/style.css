@@ -1,0 +1,56 @@
+/* body */
+body{
+	margin:0px;
+	padding: 0px;
+	font-family: "Roboto";
+}
+/* SignUP */
+
+.tab-panel{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.multi-select-form{
+	width: 100%;
+}
+#signup-multi{
+	width: calc(40vw);
+	height: calc(80vh);
+	background-color: white;
+}
+.container-modal{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 4px;
+}
+
+.form-signup{
+	background-color: white;
+	border-radius: 4px;
+	padding: 16px;
+}
+
+/* HeadLine */
+
+#head-line{
+	height: 90vh;
+}
+
+#head-line-info{
+    
+}
+
+
+/* dashboard */
+
+#dashboard{
+	width: 100vw;
+	height: 100vh;
+}
+
+.container-map{
+	width: 100vw;
+	height: 100vh;
+}
