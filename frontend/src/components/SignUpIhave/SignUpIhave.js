@@ -26,7 +26,7 @@ function SignUpIhave(props){
 			lastName : '',
 			address : '',
 			email : '',
-			storeType : [],
+			storeTypes : [],
 			password : '',
 			confirmPassword : '',
 		},
@@ -42,7 +42,7 @@ function SignUpIhave(props){
 			email : Yup.string()
 				.email('format not allowed!')
 				.required('required !'),
-			storeType : Yup.array()
+			storeTypes : Yup.array()
 				.min(1, 'you must select the type(s) of service that your store provide!'),
 			password : Yup.string()
 				.min(6, 'must have at least 6 characters')
@@ -52,7 +52,20 @@ function SignUpIhave(props){
 				.oneOf([Yup.ref('password'), null], 'Passwords must match'),
 		}),
 		onSubmit : values =>{
-			props.submitSingUp(JSON.stringify(values))
+			// send data to api auth
+			fetch('http://localhost:4000/api/auth/storeSignup', {
+				method: 'POST',
+				headers : {
+					'Content-Type' : 'application/json'
+				},
+				body : JSON.stringify(values)
+			})
+			.then((response)=>{
+				console.log("response data : ", response)
+			})
+			.catch((error)=>{
+				console.log("errpr", error)
+			})
 		}
 })
 
@@ -130,12 +143,12 @@ return (
 								<FormControl className="multi-select-form">
 									<InputLabel id="store-types">Store Types</InputLabel>
 									<Select
-										{...formik.getFieldProps('storeType')}
+										{...formik.getFieldProps('storeTypes')}
 										error={
-											formik.touched.storeType && formik.errors.storeType 
+											formik.touched.storeTypes && formik.errors.storeTypes 
 											? true : false}
-										helperText={formik.touched.storeType && formik.errors.storeType 
-											?formik.errors.storeType : null}
+										helperText={formik.touched.storeTypes && formik.errors.storeTypes 
+											?formik.errors.storeTypes : null}
 										labelId="store-types"
 										id="demo-mutiple-checkbox"
 										multiple
@@ -144,7 +157,7 @@ return (
 									>
 										{names.map((name) => (
 											<MenuItem key={name} value={name}>
-												<Checkbox checked={formik.values.storeType.indexOf(name) > -1} />
+												<Checkbox checked={formik.values.storeTypes.indexOf(name) > -1} />
 												<ListItemText primary={name} />
 											</MenuItem>
 										))}

@@ -31,7 +31,19 @@ function SignUpWho(props){
 				.oneOf([Yup.ref('password'), null], 'Passwords must match'),
 		}),
 		onSubmit : values =>{
-			props.submitSingUp(JSON.stringify(values))
+			fetch('http://localhost:4000/api/auth/userSignup',{
+				headers : {
+					'Content-Type' : 'application/json'
+				},
+				method : 'POST',
+				body : JSON.stringify(values)
+			})
+				.then(response =>{
+					console.log("response data", response)
+				})
+				.catch(err=>{
+					console.log("error fetch ", err)
+				})
 		}
 })
 
