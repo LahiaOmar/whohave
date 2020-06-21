@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt')
 const userStore = require('../models/userStore')
 const UserWho = require("../models/user")
+const jwt = require("jsonwebtoken")
 
-exports.storeSignUp = (req, res, next)=>{
+exports.storeSignUp = (req, res)=>{
   const {password, ...restOfFiled} = req.body
   bcrypt.hash(password, 10)
     .then(hash=>{
@@ -17,7 +18,7 @@ exports.storeSignUp = (req, res, next)=>{
     .catch(error => res.status(500).json({error}))
 }
 
-exports.userSignUp = (req, res, next) =>{
+exports.userSignUp = (req, res) =>{
   const {password, ...restOfFiled} = req.body
   bcrypt.hash(password, 10)
     .then(hash=>{
@@ -31,3 +32,29 @@ exports.userSignUp = (req, res, next) =>{
     })
     .catch(err=>res.status(500).json({err}))
 }
+
+exports.userLogin = ((req, res)=>{
+  console.log("login routes", req.body)
+  const model = req.body.checkStore ? userStore : UserWho
+  const {password, email} = req.body
+  model.findOne({email : email})
+    .then(user=>{
+      if(!user)
+        return res.status(401).json({message : "user not found!"})
+      bcrypt.compare(password, user.password)
+        .then(valid=>{
+          if(!valid)
+            return res.status(401).json({message : "incorrect password!"})
+          res.status(200).json({
+            userId : user._id,
+            token : jwt.sign(
+              {userId : user._id},
+              'RANDOM_TOKEN_KEY',
+              {expiresIn : '24h'}
+            )
+          })
+        })
+        .catch(error=>res.status(500).json({error}))
+    })
+    .catch(error => res.status(500).json({error}))
+})
