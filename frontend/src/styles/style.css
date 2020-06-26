@@ -32,6 +32,39 @@ body{
 	padding: 16px;
 }
 
+/* navbar */
+
+.nav-bar{
+	height: 50px;
+	box-shadow: 0px -10px 20px 0px black;
+}
+.menu-link{
+	padding-left: 3%;
+}
+
+.nav-logo{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	align-content: space-between;
+}
+
+.auth-btn{
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	height: 100%;
+}
+.menu{
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	height: 100%;
+	padding: 0px 12% 0px 0%;
+}
+.nav-menu-link{
+	color: black;
+}
 /* HeadLine */
 
 #head-line{
