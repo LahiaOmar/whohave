@@ -15,7 +15,7 @@ function MyModal(props){
 	}
 
 	return (
-		<React.Fragment>
+		<div className="modal-btn">
 			<Button variant="outlined" onClick={handleOpen}>
 				{props.btnTitle}
 			</Button>
@@ -33,7 +33,7 @@ function MyModal(props){
 			>
 					{props.children}
 			</Modal>
-		</React.Fragment>
+		</div >
 	)
 }
 

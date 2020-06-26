@@ -3,6 +3,7 @@ import {Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel,
 import {AccountCircle} from '@material-ui/icons'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
+import axios from 'axios'
 
 function LogIn(props) {
 
@@ -20,22 +21,27 @@ const formik = useFormik({
 				checkUser : Yup.bool()
 		}),
 		onSubmit : values =>{
-			console.log("values ", values)
-			fetch('http://localhost:4000/api/auth/login',
-				{
-					method: 'POST',
-					body : JSON.stringify(values),
-					headers:{
-						'Content-Type' : 'application/json'
-					}
-				}
-			)
-			.then((response)=>{
-				console.log("body ", response)
-			})
-			.catch(error=>{
-
-			})
+			axios.post('http://localhost:4000/api/auth/login', values, {'Content-Type' : 'application/json'} )
+				.then(response =>{
+					console.log("res ", response)
+				})
+				.catch(err=>console.log("err ", err))
+			// console.log("values ", values)
+			// const data = JSON.stringify(values)
+			// fetch('http://localhost:4000/api/auth/login',
+			// 	{
+			// 		method: 'POST',
+			// 		body : data,
+			// 		headers:{
+			// 			'Content-Type' : 'application/json'
+			// 		}
+			// 	}
+			// )
+			// .then((response)=>response.json())
+			// .then((data)=>console.log("data ", data))
+			// .catch(error=>{
+			// 	console.log("errors fetch ", error)
+			// })
 		}
 
 })
@@ -106,13 +112,12 @@ return(
 				/>
 							</Grid>
 			<Button
-									type="submit"
-									fullWidth
-									variant="contained"
-									color="primary"
-							>
-									LogIn
-							</Button>
+					type="submit"
+					fullWidth
+					variant="contained"
+					color="primary">
+					LogIn
+			</Button>
 		</Grid>
 	</form>    
 )

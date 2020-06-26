@@ -4,21 +4,17 @@ import Menu from '../Menu'
 import Authentication from '../Authentication'
 import Logo from '../Logo'
 
-import {AppBar, Grid} from '@material-ui/core'
+import {AppBar, Grid, Container} from '@material-ui/core'
 
 function NavBar(){
 	return(
-		<AppBar position="static" className="nav-bar" color="transparent">
-			<Grid
-					container
-					direction="row"
-					justify="space-between"
-					alignItems="center">
+		<Grid container xs={12} className="nav-bar">
+				<Container maxWidth="lg" style={{display:'flex'}}>
 					<Logo />
 					<Menu />
 					<Authentication />
-			</Grid>
-		</AppBar>
+				</Container>
+		</Grid>
 	)
 }
 

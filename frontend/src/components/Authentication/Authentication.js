@@ -4,6 +4,7 @@ import SignUp from '../SignUp'
 import MyModal from '../Mymodal'
 import LoginContext from '../ContextAuth'
 import StoreUser from '../StoreUser'
+import {Grid} from '@material-ui/core'
 
 function Authentication() {
 	
@@ -18,25 +19,25 @@ function Authentication() {
 	}
 
 	return (
-		<div>
-				{isLoged
+		<Grid item xs={2} justify="flex-end">
+			{isLoged
 					?(
 						<React.Fragment>
 							<StoreUser />
 						</React.Fragment>
 					)
 					:(
-						<React.Fragment>
+						<div className="auth-btn">
 							<MyModal btnTitle="Sign Up">
 									<SignUp submitSingUp={submitSingUp} />
 							</MyModal>
 							<MyModal btnTitle="Log In">
 									<LogIn submitSingUp={submitLogIn}/>
 							</MyModal>
-						</React.Fragment>
+						</div >
 					)
 				}
-		</div>
+		</Grid>
 	)
 }
 
