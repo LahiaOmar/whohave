@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const userStore = require('../models/userStore')
-const UserWho = require("../models/user")
+const userWho = require("../models/user")
 const jwt = require("jsonwebtoken")
 
 exports.storeSignUp = (req, res)=>{
@@ -22,7 +22,7 @@ exports.userSignUp = (req, res) =>{
   const {password, ...restOfFiled} = req.body
   bcrypt.hash(password, 10)
     .then(hash=>{
-      const currentUser = new UserWho({
+      const currentUser = new userWho({
         ...restOfFiled,
         password : hash
       })
@@ -33,28 +33,30 @@ exports.userSignUp = (req, res) =>{
     .catch(err=>res.status(500).json({err}))
 }
 
-exports.userLogin = ((req, res)=>{
-  console.log("login routes", req.body)
-  const model = req.body.checkStore ? userStore : UserWho
-  const {password, email} = req.body
-  model.findOne({email : email})
-    .then(user=>{
-      if(!user)
-        return res.status(401).json({message : "user not found!"})
-      bcrypt.compare(password, user.password)
-        .then(valid=>{
-          if(!valid)
-            return res.status(401).json({message : "incorrect password!"})
-          res.status(200).json({
-            userId : user._id,
-            token : jwt.sign(
-              {userId : user._id},
-              'RANDOM_TOKEN_KEY',
-              {expiresIn : '24h'}
-            )
-          })
-        })
-        .catch(error=>res.status(500).json({error}))
+exports.userLogin = async function (req, res){
+  console.log("req ", req.body)
+  const model = (req.body.checkStore) ? userStore : userWho
+  try{
+    let curUser = await model.findOne({email : req.body.email})
+    if(!curUser){
+      const errObject = {status : 401, message : "userNotFound"} 
+      throw new Error(JSON.stringify(errObject))
+    }
+    let match = await bcrypt.compare(req.body.password, curUser.password)
+    if(!match){
+      const errObject = {status : 401, message : "userNotFound"}
+      throw new Error(JSON.stringify(errObject))
+    }
+    const token = jwt.sign({userId : curUser._id}, "RANDOM_SECRECT_KEY", {expiresIn : '24h'})
+    
+    res.status(201).json({
+      token : token,
     })
-    .catch(error => res.status(500).json({error}))
-})
+  }
+  catch(e){
+    const message = JSON.parse(e.message)
+    if(typeof message === "object")
+      res.status(message.status).json({message : message.message})
+    res.status(500).json({message : "server error"})
+  }
+}
