@@ -26,6 +26,10 @@ body{
 	border-radius: 4px;
 }
 
+.modal-btn{
+	margin-left : 10px;
+}
+
 .form-signup{
 	background-color: white;
 	border-radius: 4px;
@@ -41,6 +45,9 @@ body{
 .menu-link{
 	padding-left: 3%;
 }
+.menu-link a{
+	text-decoration: none;
+}
 
 .nav-logo{
 	display: flex;
@@ -51,7 +58,7 @@ body{
 
 .auth-btn{
 	display: flex;
-	justify-content: space-around;
+	justify-content: flex-end;
 	align-items: center;
 	height: 100%;
 }
@@ -60,7 +67,6 @@ body{
 	justify-content: flex-end;
 	align-items: center;
 	height: 100%;
-	padding: 0px 12% 0px 0%;
 }
 .nav-menu-link{
 	color: black;
@@ -86,4 +92,18 @@ body{
 .container-map{
 	width: 100vw;
 	height: 100vh;
+}
+
+/* users */
+#who-user{
+	align-items: center;
+	justify-content: flex-end;
+	display: flex;
+}
+
+/* send product */
+#msg-product{
+	background-color: white;
+	padding: 20px;
+	max-width: 1000px;
 }
