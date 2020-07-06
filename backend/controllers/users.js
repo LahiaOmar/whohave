@@ -49,8 +49,9 @@ exports.userLogin = async function (req, res){
     }
     const token = jwt.sign({userId : curUser._id}, "RANDOM_SECRECT_KEY", {expiresIn : '24h'})
     
-    res.status(201).json({
+    res.status(200).json({
       token : token,
+      coords : curUser.coordinates
     })
   }
   catch(e){
