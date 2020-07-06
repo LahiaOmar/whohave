@@ -7,7 +7,7 @@ const userStoreSchema = mongoose.Schema({
   email : {type : String, require : true},
   address : {type : String, require : true},
   storeTypes: [{type : String, require : true}],
-  storePosition : [String]
+  storePosition : [Number]
 })
 
 module.exports = mongoose.model('userStore', userStoreSchema)
