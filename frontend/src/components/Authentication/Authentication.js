@@ -4,35 +4,32 @@ import SignUp from '../SignUp'
 import MyModal from '../Mymodal'
 import LoginContext from '../ContextAuth'
 import StoreUser from '../StoreUser'
+import WhoUser from '../WhoUser'
 import {Grid} from '@material-ui/core'
 
 function Authentication() {
 	
-	const {isLoged, setIsLoged } = React.useContext(LoginContext)
-
-	const submitSingUp = (data)=>{
-		console.log("submit sign up data : ", data)
-	}
-
-	const submitLogIn = (data)=>{
-		console.log("submition data from login component, data : ", data)
-	}
-
+	const context = React.useContext(LoginContext)
+	const sm = context.user.isLoged ? 10 : 4
+	console.log("Aurh context ", context)	
 	return (
-		<Grid item xs={2} justify="flex-end">
-			{isLoged
+		<Grid item sm={sm} justify="flex-end" className="flex"> 
+			{context.user.isLoged
 					?(
-						<React.Fragment>
+						context.user.type
+						?(
 							<StoreUser />
-						</React.Fragment>
+						):(
+							<WhoUser />
+						)
 					)
 					:(
 						<div className="auth-btn">
 							<MyModal btnTitle="Sign Up">
-									<SignUp submitSingUp={submitSingUp} />
+									<SignUp />
 							</MyModal>
 							<MyModal btnTitle="Log In">
-									<LogIn submitSingUp={submitLogIn}/>
+									<LogIn />
 							</MyModal>
 						</div >
 					)
