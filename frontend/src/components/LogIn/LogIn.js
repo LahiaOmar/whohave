@@ -1,13 +1,19 @@
 import React from 'react'
+import LoginContext from '../ContextAuth'
+
 import {Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup} from '@material-ui/core'
 import {AccountCircle} from '@material-ui/icons'
+
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
+import {Redirect, useHistory} from 'react-router-dom'
 
 function LogIn(props) {
+	const context = React.useContext(LoginContext)
+	const history = useHistory()
 
-const formik = useFormik({
+	const formik = useFormik({
 		initialValues:{
 				email:'',
 				password:'',
@@ -21,31 +27,31 @@ const formik = useFormik({
 				checkUser : Yup.bool()
 		}),
 		onSubmit : values =>{
-			axios.post('http://localhost:4000/api/auth/login', values, {'Content-Type' : 'application/json'} )
-				.then(response =>{
-					console.log("res ", response)
+			console.log("values ", values)
+			axios.post('http://localhost:4000/api/auth/login',
+				values,
+				{'Content-Type' : 'application/json'	
 				})
-				.catch(err=>console.log("err ", err))
-			// console.log("values ", values)
-			// const data = JSON.stringify(values)
-			// fetch('http://localhost:4000/api/auth/login',
-			// 	{
-			// 		method: 'POST',
-			// 		body : data,
-			// 		headers:{
-			// 			'Content-Type' : 'application/json'
-			// 		}
-			// 	}
-			// )
-			// .then((response)=>response.json())
-			// .then((data)=>console.log("data ", data))
-			// .catch(error=>{
-			// 	console.log("errors fetch ", error)
-			// })
+				.then(response =>{
+					if(response.status === 200){
+						const type = values.checkStore
+						context.setUser({
+							isLoged : true,
+							type : type,
+							coords : response.data.coords,
+							redirect : {
+								ok : true,
+								to : "/dashboard"
+							}
+						})
+					}	
+				})
+				.catch(err=>{
+					
+				})
 		}
 
 })
-
 
 return(
 	<form className="form-signup" onSubmit={formik.handleSubmit} autoComplete="off">
