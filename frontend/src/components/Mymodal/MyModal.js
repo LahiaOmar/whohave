@@ -2,7 +2,7 @@ import React from 'react'
 
 import {Button, Modal, Backdrop} from '@material-ui/core'
 
-function MyModal(props){
+function MyModal({btnTitle, children, MyButton}){
 
 	const [open, setOpen] = React.useState(false)
 
@@ -16,9 +16,14 @@ function MyModal(props){
 
 	return (
 		<div className="modal-btn">
-			<Button variant="outlined" onClick={handleOpen}>
-				{props.btnTitle}
-			</Button>
+			{
+				MyButton
+				? <MyButton onClick={handleOpen}/>
+				:<Button variant="outlined" onClick={handleOpen}>
+					{btnTitle}
+				</Button>
+			}
+			
 			<Modal
 			className="container-modal"
 			aria-labelledby="transition-modal-title"
@@ -31,7 +36,7 @@ function MyModal(props){
 				timeout: 500,
 			}}
 			>
-					{props.children}
+					{children}
 			</Modal>
 		</div >
 	)
