@@ -8,4 +8,13 @@ const userSchema = mongoose.Schema({
   coordinates : [Number]
 })
 
+userSchema.methods.getFieldToSend = function(){
+  return {
+    _id : this._id,
+    firstName : this.firstName,
+    lastName : this.lastName,
+    coordinates : this.coordinates
+  }
+}
+
 module.exports = mongoose.model('user', userSchema)
