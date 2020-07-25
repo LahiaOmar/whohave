@@ -5,7 +5,7 @@ import {UserStore} from '../UsersMarkers'
 
 
 function StoreAction({dispatch, coords, isExist}){
-  
+  console.log("store actios isExist " , isExist)
   const getMarker = (longitude, latitude)=>{
     return <UserStore
         longitude={longitude}
@@ -41,7 +41,18 @@ function StoreAction({dispatch, coords, isExist}){
       })
     }
   }
-
+  React.useEffect(()=>{
+    if(isExist){
+      const markerToAdd = getMarker(coords.longitude, coords.latitude) 
+      const {longitude, latitude} = coords
+      dispatch({
+        type : 'add_marker&change_focus_map',
+        marker : markerToAdd,
+        longitude : longitude,
+        latitude : latitude
+      })
+    }
+  },[])
   return (
     <div className="actions">
       <PositionAction handler={handleShowPosition}/>

@@ -4,26 +4,41 @@ import Message from '../Message'
 import MyMarker from '../MyMarker'
 import {UserConsumer} from '../UsersMarkers'
 
-function ConsumerAction({dispatch}){
-  
+function ConsumerAction({dispatch, coords, isExist}){
+  console.log("consumerACtion ",coords)
   const handleChangePositon = ()=>{    
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition((position)=>{
-        const {longitude, latitude} = position.coords
+        const {lgt, lat} = position.coords
         const markerToAdd = <UserConsumer 
-          longitude={longitude}
-          latitude={latitude}
+          longitude={lgt}
+          latitude={lat}
           isDraggeble={true}
          />
         dispatch({
           type : 'add_marker&change_focus_map',
           marker : markerToAdd,
-          longitude : longitude,
-          latitude : latitude
+          longitude : lgt,
+          latitude : lat
         })
       })
     }		
   }
+  React.useEffect(()=>{
+    if(isExist){
+      const markerToAdd = <UserConsumer 
+        longitude={coords.longitude}
+        latitude={coords.latitude}
+        isDraggeble={true}
+        />
+      dispatch({
+        type : 'add_marker&change_focus_map',
+        marker : markerToAdd,
+        longitude : coords.longitude,
+        latitude : coords.latitude
+      })
+    }
+  },[])
   return (
     <div className="actions">
       <div className="position-action">
