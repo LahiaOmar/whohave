@@ -34,7 +34,6 @@ exports.userSignUp = (req, res) =>{
 }
 
 exports.userLogin = async function (req, res){
-  console.log("req ", req.body)
   const model = (req.body.checkStore) ? userStore : userWho
   try{
     let curUser = await model.findOne({email : req.body.email})
@@ -48,10 +47,10 @@ exports.userLogin = async function (req, res){
       throw new Error(JSON.stringify(errObject))
     }
     const token = jwt.sign({userId : curUser._id}, "RANDOM_SECRECT_KEY", {expiresIn : '24h'})
-    
+    const dataToSend = curUser.getFieldToSend()
     res.status(200).json({
       token : token,
-      coords : curUser.coordinates
+      information : dataToSend
     })
   }
   catch(e){
