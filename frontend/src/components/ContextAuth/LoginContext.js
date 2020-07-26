@@ -2,11 +2,11 @@ import React from 'react'
 
 
 const LoginContext = React.createContext({
-  user : {
-    isLoged : false,
-    isStore : false,
-  },
-  setUser : ()=>{}
+  isLoged : false,
+  type : undefined,
+  userData : {},
+  redirect : {},
+  setContext : ()=>{}
 })
 
 export default LoginContext
