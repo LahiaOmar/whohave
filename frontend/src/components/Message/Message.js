@@ -5,7 +5,7 @@ import { Grid, TextField, Button, Typography, Select, Input,
 import * as Yup from 'yup'
 import {useFormik} from 'formik'
 import axios from 'axios'
-
+import { SendMessage } from '../ButtonActions'
 function Message(props){
 
   const imagesInput = React.createRef()
@@ -58,7 +58,7 @@ function Message(props){
   }
   
   return (
-    <MyModal btnTitle="send product">
+    <MyModal btnTitle="send product" MyButton={SendMessage}>
       <form id="msg-product" onSubmit={formik.handleSubmit}>
         <Grid container  spacing={2} justify="center">
           <Grid item xs={12}>

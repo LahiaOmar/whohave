@@ -1,8 +1,11 @@
 import React from 'react'
 import { Button, Avatar, Menu, MenuItem, Typography } from '@material-ui/core'
+import {Link} from 'react-router-dom'
+import ContextAuth from '../ContextAuth'
 
 function UserMenu({lastName, firstName}){
   const [anchorEl, setAnhcorEl] = React.useState(null)
+  const context = React.useContext(ContextAuth)
 
   const handleClick = (e)=>{
     setAnhcorEl(e.currentTarget)
@@ -12,6 +15,10 @@ function UserMenu({lastName, firstName}){
     setAnhcorEl(null)
   }
 
+  const handleLogOut = ()=>{
+    context.setUser({isLoged : false, redirect : {ok  : true, to : "/"}})
+    setAnhcorEl(null)
+  }
   return (
     <div id="user-menu">
       <Button aria-controls="panel-menu" onClick={handleClick}>
@@ -31,8 +38,12 @@ function UserMenu({lastName, firstName}){
         open={Boolean(anchorEl)}
         onClose={()=> setAnhcorEl()}
       >
-        <MenuItem onClick={handleClose}>my information</MenuItem>
-        <MenuItem onClick={handleClose}>logout</MenuItem>
+        <MenuItem onClick={handleClose}>
+          <Link to="/dashboard/information"> My information </Link>
+        </MenuItem>
+        <MenuItem onClick={handleLogOut}>
+          LogOut
+        </MenuItem>
       </Menu>
     </div>
   )

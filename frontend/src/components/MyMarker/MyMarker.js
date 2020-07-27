@@ -2,23 +2,15 @@ import React from 'react'
 import {Marker} from 'react-map-gl'
 import { Icon } from '@material-ui/core'
 
-function MyMarker({isDraggeble, children, longitude, latitude}){
+function MyMarker({isDraggeble, children, longitude, latitude, handleChangeMarker}){
   console.log("latghfj : ", longitude, latitude)
-  const [position, setPosition] = React.useState({longitude, latitude})
-
-  const handleChange = ({lngLat})=>{
-    if(!isDraggeble) return
-    const lgt = lngLat[0]
-    const lat = lngLat[1]
-    setPosition({longitude : lgt, latitude : lat})
-  }
 
   return(
     <Marker
-      longitude={position.longitude}
-      latitude={position.latitude}
+      longitude={longitude}
+      latitude={latitude}
       draggable={isDraggeble}
-      onDragEnd={handleChange}
+      onDragEnd={handleChangeMarker}
     >
       {
         children
