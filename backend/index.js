@@ -21,6 +21,7 @@ const errorHandler = error => {
   }
   const address = server.address();
   const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+  console.log("errorHandler : ", error)
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges.');

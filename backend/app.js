@@ -1,6 +1,9 @@
 const express = require('express')
-const users = require('./routes/users')
 const mongoos = require("mongoose")
+
+const users = require('./routes/users')
+const products = require('./routes/products')
+const positions = require('./routes/positions')
 const app = express()
 
 mongoos.connect('mongodb://localhost:27017/whohave', { 
@@ -19,5 +22,7 @@ app.use((req, res, next) => {
 app.use(express.json())
 
 app.use('/api/auth', users)
+app.use('/api/products', products)
+app.use('/api/positions', positions)
 
 module.exports = app
