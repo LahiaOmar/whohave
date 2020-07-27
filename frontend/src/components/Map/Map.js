@@ -2,7 +2,6 @@ import React from 'react'
 import ReactMapGL from 'react-map-gl'
 
 function Map(props){
-	console.log("map ", props)
 	const [viewport, setViewport] = React.useState(props.state.viewPort)
 	const key = process.env.REACT_APP_MAP_KEY
 
