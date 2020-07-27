@@ -35,10 +35,11 @@ function LogIn(props) {
 				.then(response =>{
 					if(response.status === 200){
 						const type = values.checkStore
+						console.log("all data user ", response.data)
 						context.setUser({
 							isLoged : true,
 							type : type,
-							coords : response.data.coords,
+							userData : response.data.information,
 							redirect : {
 								ok : true,
 								to : "/dashboard"

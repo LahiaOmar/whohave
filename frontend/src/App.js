@@ -3,32 +3,44 @@ import NavBar from './components/NavBar'
 import HeadLine from './components/HeadLIne'
 import Dashboard from './components/Dashboard'
 import LoginContext from './components/ContextAuth'
+import ProtectedRoute from './components/ProtectedRoute'
 
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-
+import {BrowserRouter as Router, Route, Switch, Redirect, useHistory} from 'react-router-dom'
+import {Grid} from '@material-ui/core'
 import './styles/style.css'
 
 function App() {
-  const [isLoged, setIsLoged] = React.useState(true)
-  const [connectedUser, setConnectedUSer] = React.useState('who')
-
+  const [user, setUser] = React.useState({
+    isLoged : false,
+    type : undefined,
+    userData : {},
+    redirect : {},
+  })
   return (
-    <div className="App">
-      <LoginContext.Provider value={{isLoged, setIsLoged, connectedUser}}>
+    <Grid container className="App">
+      <LoginContext.Provider value={{user, setUser}}>
         <Router>
+          {
+            (user.redirect.ok) 
+            ? (<Redirect to={user.redirect.to}/>)
+            : null
+          }
           <NavBar />
           <Switch>
             <Route path="/" exact>
               <HeadLine />
             </Route>
             {/* dashborad path sould be protected. */}
-            <Route exact path="/dashboard">
+            <ProtectedRoute exact path="/dashboard">
               <Dashboard />
-            </Route>
+            </ProtectedRoute>
+            <ProtectedRoute exact path="/dashboard/information">
+              <div>user information</div>
+            </ProtectedRoute>
           </Switch>
         </Router>
       </LoginContext.Provider>
-    </div>
+    </Grid>
   );
 }
 
