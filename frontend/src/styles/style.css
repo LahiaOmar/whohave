@@ -38,6 +38,10 @@ body{
 
 /* navbar */
 
+.flex{
+	display: flex;
+}
+
 .nav-bar{
 	height: 50px;
 	box-shadow: 0px -10px 20px 0px black;
@@ -106,4 +110,34 @@ body{
 	background-color: white;
 	padding: 20px;
 	max-width: 1000px;
+}
+
+/* MAP */
+#map{
+	position: relative;
+}
+
+.btnPosition{
+	position: absolute;
+	right: 0%;
+	margin: 10px;
+	z-index: 100;
+}
+
+/* action */
+
+.actions{
+	display: flex;
+	flex-direction: column;
+}
+.position-action{
+	margin: 8px;
+}
+.send-product-action{
+
+}
+
+.open-time{
+	text-align: center;
+	margin: 0px;
 }
