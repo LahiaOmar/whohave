@@ -8,7 +8,7 @@ import {AppBar, Grid, Container} from '@material-ui/core'
 
 function NavBar(){
 	return(
-		<Grid container xs={12} className="nav-bar">
+		<Grid container sm={12} className="nav-bar">
 				<Container maxWidth="lg" style={{display:'flex'}}>
 					<Logo />
 					<Menu />

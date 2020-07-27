@@ -3,7 +3,7 @@ import {Grid, Typography} from '@material-ui/core'
 import NotListedLocationOutlinedIcon from '@material-ui/icons/NotListedLocationOutlined';
 function Logo() {
     return (
-        <Grid item xs={2} className="nav-logo">
+        <Grid item sm={2} className="nav-logo">
             <NotListedLocationOutlinedIcon fontSize="large"/>
             <Typography>
                 WhoHave?
