@@ -4,10 +4,10 @@ import MyModal from '../Mymodal'
 import StoresInfo from '../StoresInfo'
 import UserMenu from '../UserMenu'
 
-function StoreUser(props){
+function StoreUser(){
   return (
     <React.Fragment> 
-      <UserMenu firstName="omar" lastName="lahia" />
+      <UserMenu />
       {/* <isOpen /> 
         have switch button : to notify others user if he is open or not 
         display also the opening time of the sotre.

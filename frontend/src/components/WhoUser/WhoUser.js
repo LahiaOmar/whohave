@@ -7,7 +7,7 @@ function WhoUser(props){
   const {firstName, lastName} = context.user.userData
   return (
     <div id="who-user">
-      <UserMenu firstName={firstName} lastName={lastName} />
+      <UserMenu/>
     </div>
   )
 }

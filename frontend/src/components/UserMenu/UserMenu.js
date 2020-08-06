@@ -3,10 +3,10 @@ import { Button, Avatar, Menu, MenuItem, Typography } from '@material-ui/core'
 import {Link} from 'react-router-dom'
 import ContextAuth from '../ContextAuth'
 
-function UserMenu({lastName, firstName}){
+function UserMenu(){
   const [anchorEl, setAnhcorEl] = React.useState(null)
   const context = React.useContext(ContextAuth)
-
+  const {lastName, firstName} = context.user.userData
   const handleClick = (e)=>{
     setAnhcorEl(e.currentTarget)
   }
