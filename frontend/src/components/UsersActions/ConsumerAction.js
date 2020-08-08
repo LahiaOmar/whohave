@@ -5,40 +5,44 @@ import MyMarker from '../MyMarker'
 import {UserConsumer} from '../UsersMarkers'
 
 function ConsumerAction({dispatch, coords, isExist}){
-  console.log("consumerACtion ",coords)
   const handleChangePositon = ()=>{    
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition((position)=>{
-        const {lgt, lat} = position.coords
-        const markerToAdd = <UserConsumer 
-          longitude={lgt}
-          latitude={lat}
-          isDraggeble={true}
-         />
-        dispatch({
-          type : 'add_marker&change_focus_map',
-          marker : markerToAdd,
-          longitude : lgt,
-          latitude : lat
+    if(!isExist){
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition((position)=>{
+          const {longitude, latitude} = position.coords
+          const markerToAdd = <UserConsumer 
+            longitude={longitude}
+            latitude={latitude}
+            isDraggeble={true}
+           />
+          dispatch({
+            type : 'add_marker&change_focus_map',
+            marker : markerToAdd,
+            longitude : longitude,
+            latitude : latitude
+          })
         })
-      })
-    }		
+      }		
+    }
   }
+
   React.useEffect(()=>{
     if(isExist){
+      const {longitude, latitude} = coords
       const markerToAdd = <UserConsumer 
-        longitude={coords.longitude}
-        latitude={coords.latitude}
-        isDraggeble={true}
-        />
+      longitude={longitude}
+      latitude={latitude}
+      isDraggeble={true}
+      />
       dispatch({
         type : 'add_marker&change_focus_map',
         marker : markerToAdd,
-        longitude : coords.longitude,
-        latitude : coords.latitude
+        longitude : longitude,
+        latitude : latitude
       })
     }
   },[])
+
   return (
     <div className="actions">
       <div className="position-action">
