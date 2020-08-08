@@ -6,12 +6,26 @@ import {AccountCircle} from '@material-ui/icons'
 
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
-import axios from 'axios'
-import {Redirect, useHistory} from 'react-router-dom'
+import {useAxios} from '../useHooks'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 function LogIn(props) {
 	const context = React.useContext(LoginContext)
-	const history = useHistory()
+	const [data, error, loading, setConfig] = useAxios({})
+	React.useEffect(()=>{
+		if(data){
+			const type = formik.values.checkStore
+			context.setContext({
+				isLoged : true,
+				type : type,
+				userData : data.information,
+				redirect : {
+					ok : true,
+					to : "/dashboard"
+				}
+			})
+		}
+	}, [data])
 
 	const formik = useFormik({
 		initialValues:{
@@ -26,32 +40,14 @@ function LogIn(props) {
 				checkStore : Yup.bool(),
 				checkUser : Yup.bool()
 		}),
-		onSubmit : values =>{
-			console.log("values ", values)
-			axios.post('http://localhost:4000/api/auth/login',
-				values,
-				{'Content-Type' : 'application/json'	
-				})
-				.then(response =>{
-					if(response.status === 200){
-						const type = values.checkStore
-						console.log("all data user ", response.data)
-						context.setUser({
-							isLoged : true,
-							type : type,
-							userData : response.data.information,
-							redirect : {
-								ok : true,
-								to : "/dashboard"
-							}
-						})
-					}	
-				})
-				.catch(err=>{
-					
-				})
+		onSubmit :function(values){
+			const config = {
+				url : process.env.REACT_APP_PATH_LOGIN,
+				data : values,
+				method : 'POST' 
+			}
+			setConfig(config)
 		}
-
 })
 
 return(
@@ -118,13 +114,23 @@ return(
 						label="Password"
 				/>
 							</Grid>
-			<Button
-					type="submit"
-					fullWidth
-					variant="contained"
-					color="primary">
-					LogIn
-			</Button>
+			<Grid item xs={12}>
+				<Button
+						type="submit"
+						fullWidth
+						variant="contained"
+						color="primary">
+						LogIn
+				</Button>
+			</Grid>
+			<Grid item xs={12}>
+				{
+					loading && <CircularProgress />
+				}
+			</Grid>
+			<Grid item xs={12}>
+				<p>{error}</p>
+			</Grid>
 		</Grid>
 	</form>    
 )

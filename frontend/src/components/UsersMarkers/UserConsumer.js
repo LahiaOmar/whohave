@@ -5,11 +5,10 @@ import axios from 'axios'
 import LoginContext from '../ContextAuth'
 
 function UserConsumer({longitude, latitude, isDraggeble}){
-  console.log("USerConsumer ",longitude, latitude )
   const [coords, setCoords] = React.useState({longitude, latitude})
   const context = React.useContext(LoginContext)  
-  const _ID = context.user.userData._id
-  const TYPE = context.user.type
+  const _ID = context.userData._id
+  const TYPE = context.type
   const POST_URL = process.env.REACT_APP_PATH_SET_POSITIONS
 
   const handleChangeMarker = ({lngLat})=>{

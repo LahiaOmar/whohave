@@ -8,15 +8,14 @@ import WhoUser from '../WhoUser'
 import {Grid} from '@material-ui/core'
 
 function Authentication() {
-	
 	const context = React.useContext(LoginContext)
-	const sm = context.user.isLoged ? 10 : 4
-	console.log("Aurh context ", context)	
+	const sm = context.isLoged ? 10 : 4
+	
 	return (
 		<Grid item sm={sm} justify="flex-end" className="flex"> 
-			{context.user.isLoged
+			{context.isLoged
 					?(
-						context.user.type
+						context.type
 						?(
 							<StoreUser />
 						):(

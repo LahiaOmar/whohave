@@ -16,8 +16,8 @@ function UserStore({longitude, latitude, isDraggeble}){
     const lat = lngLat[1]
 
     axios.post(POST_URL, {
-      _id : context.user.userData._id,
-      type : context.user.type,
+      _id : context.userData._id,
+      type : context.type,
       longitude : lgt, 
       latitude : lat})
     setCoords({longitude : lgt, latitude : lat})

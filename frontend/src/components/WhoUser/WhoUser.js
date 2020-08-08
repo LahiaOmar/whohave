@@ -4,7 +4,7 @@ import LoginContext from '../ContextAuth'
 
 function WhoUser(props){
   const context = React.useContext(LoginContext)
-  const {firstName, lastName} = context.user.userData
+  const {firstName, lastName} = context.userData
   return (
     <div id="who-user">
       <UserMenu/>

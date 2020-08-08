@@ -4,12 +4,11 @@ import LoginContext from '../ContextAuth'
 
 function ProtectedRoute({children , ...rest}){
   const context = React.useContext(LoginContext)
-  console.log("children ", children, context)
   return (
     <Route 
       {...rest}
       render={({location})=>
-        context.user.isLoged ? (
+        context.isLoged ? (
           children
         ) : (
           <Redirect 

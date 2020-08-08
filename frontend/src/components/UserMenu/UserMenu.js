@@ -6,7 +6,7 @@ import ContextAuth from '../ContextAuth'
 function UserMenu(){
   const [anchorEl, setAnhcorEl] = React.useState(null)
   const context = React.useContext(ContextAuth)
-  const {lastName, firstName} = context.user.userData
+  const {lastName, firstName} = context.userData
   const handleClick = (e)=>{
     setAnhcorEl(e.currentTarget)
   }
@@ -16,7 +16,7 @@ function UserMenu(){
   }
 
   const handleLogOut = ()=>{
-    context.setUser({isLoged : false, redirect : {ok  : true, to : "/"}})
+    context.setContext({isLoged : false, redirect : {ok  : true, to : "/"}})
     setAnhcorEl(null)
   }
   return (

@@ -34,10 +34,9 @@ function reducer(state, action){
 function Dashboard(){
 	const context = React.useContext(LoginContext)
 	const start = {latitude : 31.669746 , longitude :-7.973328}
-	const isExistCoord = context.user.userData.coordinates.length !== 0
+	const isExistCoord = context.userData.coordinates.length !== 0
 	const startCoord =  isExistCoord ? 
-		{longitude : context.user.userData.coordinates[0] , latitude : context.user.userData.coordinates[1] }: start
-	console.log("start coods ", startCoord)
+		{longitude : context.userData.coordinates[0] , latitude : context.userData.coordinates[1] }: start
 		const [state, dispatch] = React.useReducer(reducer, {
 		viewPort : {
 			width : 'calc(100%)',
@@ -60,7 +59,7 @@ function Dashboard(){
 				<Grid item xs={10}> 
 					<div className="btnPosition">
 						{
-							context.user.type
+							context.type
 							?<StoreAction
 									dispatch={dispatch}
 									coords={state.userCoords}
