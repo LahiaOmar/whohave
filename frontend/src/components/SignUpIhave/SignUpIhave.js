@@ -4,16 +4,30 @@ InputLabel, Select, Input, Checkbox, ListItemText, FormControl} from '@material-
 import {AccountCircle} from '@material-ui/icons'
 import {useFormik} from 'formik'
 import * as Yup from 'yup';
+import {useAxios} from '../useHooks'
+import LoginContext from '../ContextAuth'
 
 function SignUpIhave(props){
-	
+	const context = React.useContext(LoginContext)
+	const [data, error, loading, setConfig] = useAxios({})
+
 	const names = [
-		'Clothing',
-		'Technology',
-		'store',
-		'Pharmacy',
-		'grocery',
+		"tech"
 	];
+
+	React.useEffect(()=>{
+		if(data){
+			context.setContext({
+				isLoged : true,
+				type : true,
+				userData : data.data,
+				redirect : {
+					ok : true,
+					to : "/dashboard"
+				}
+			})
+		}
+	}, [data])
 
 	const formik = useFormik({
 		initialValues : {
@@ -47,20 +61,12 @@ function SignUpIhave(props){
 				.oneOf([Yup.ref('password'), null], 'Passwords must match'),
 		}),
 		onSubmit : values =>{
-			// send data to api auth
-			fetch('http://localhost:4000/api/auth/storeSignup', {
-				method: 'POST',
-				headers : {
-					'Content-Type' : 'application/json'
-				},
-				body : JSON.stringify(values)
-			})
-			.then((response)=>{
-				console.log("response data : ", response)
-			})
-			.catch((error)=>{
-				console.log("errpr", error)
-			})
+			const config = {
+				url : process.env.REACT_APP_PATH_SIGNUP_STORE,
+				data : values,
+				method : 'POST' 
+			}
+			setConfig(config)
 		}
 })
 

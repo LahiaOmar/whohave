@@ -3,8 +3,27 @@ import {Button, Grid, TextField, Typography} from '@material-ui/core'
 import {AccountCircle} from '@material-ui/icons'
 import {useFormik} from 'formik'
 import * as Yup from 'yup';
+import {useAxios} from '../useHooks'
+import LoginContext from '../ContextAuth';
 
 function SignUpWho(props){
+	const [data, error, loading, setConfig] = useAxios({})
+	const context = React.useContext(LoginContext)
+
+	React.useEffect(()=>{
+		if(data){
+			context.setContext({
+				isLoged : true,
+				type : false,
+				userData : data.data,
+				redirect : {
+					ok : true,
+					to : "/dashboard"
+				}
+			})
+		}
+	}, [data])
+
 	const formik = useFormik({
 		initialValues : {
 			firstName : '',
@@ -31,19 +50,12 @@ function SignUpWho(props){
 				.oneOf([Yup.ref('password'), null], 'Passwords must match'),
 		}),
 		onSubmit : values =>{
-			fetch('http://localhost:4000/api/auth/userSignup',{
-				headers : {
-					'Content-Type' : 'application/json'
-				},
-				method : 'POST',
-				body : JSON.stringify(values)
-			})
-				.then(response =>{
-					console.log("response data", response)
-				})
-				.catch(err=>{
-					console.log("error fetch ", err)
-				})
+			const config = {
+				url : process.env.REACT_APP_PATH_SIGNUP_CONSUMER,
+				data : values,
+				method : 'POST' 
+			}
+			setConfig(config)
 		}
 })
 
