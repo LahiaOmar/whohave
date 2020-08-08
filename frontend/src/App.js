@@ -10,19 +10,20 @@ import {Grid} from '@material-ui/core'
 import './styles/style.css'
 
 function App() {
-  const [user, setUser] = React.useState({
+  const [context, setContext] = React.useState({
     isLoged : false,
     type : undefined,
     userData : {},
     redirect : {},
   })
+  console.log("new state APP user ", context)
   return (
     <Grid container className="App">
-      <LoginContext.Provider value={{user, setUser}}>
+      <LoginContext.Provider value={{...context, setContext}}>
         <Router>
           {
-            (user.redirect.ok) 
-            ? (<Redirect to={user.redirect.to}/>)
+            (context.redirect.ok) 
+            ? (<Redirect to={context.redirect.to}/>)
             : null
           }
           <NavBar />
