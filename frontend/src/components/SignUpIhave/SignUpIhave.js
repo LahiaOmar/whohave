@@ -6,14 +6,11 @@ import {useFormik} from 'formik'
 import * as Yup from 'yup';
 import {useAxios} from '../useHooks'
 import LoginContext from '../ContextAuth'
+import StoresType from '../StoresType'
 
 function SignUpIhave(props){
 	const context = React.useContext(LoginContext)
 	const [data, error, loading, setConfig] = useAxios({})
-
-	const names = [
-		"tech"
-	];
 
 	React.useEffect(()=>{
 		if(data){
@@ -141,29 +138,7 @@ return (
 								/>
 							</Grid>
 							<Grid item xs={12}>
-								<FormControl className="multi-select-form">
-									<InputLabel id="store-types">Store Types</InputLabel>
-									<Select
-										{...formik.getFieldProps('storeTypes')}
-										error={
-											formik.touched.storeTypes && formik.errors.storeTypes 
-											? true : false}
-										helperText={formik.touched.storeTypes && formik.errors.storeTypes 
-											?formik.errors.storeTypes : null}
-										labelId="store-types"
-										id="demo-mutiple-checkbox"
-										multiple
-										input={<Input />}
-										renderValue={(selected) => selected.join(', ')}
-									>
-										{names.map((name) => (
-											<MenuItem key={name} value={name}>
-												<Checkbox checked={formik.values.storeTypes.indexOf(name) > -1} />
-												<ListItemText primary={name} />
-											</MenuItem>
-										))}
-									</Select>	
-								</FormControl>		
+								<StoresType formik={formik}/>
 							</Grid>
 							<Grid item xs={12}  >
 								<TextField
