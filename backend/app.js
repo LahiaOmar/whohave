@@ -4,6 +4,8 @@ const mongoos = require("mongoose")
 const users = require('./routes/users')
 const products = require('./routes/products')
 const positions = require('./routes/positions')
+const storesType = require('./routes/storesType')
+
 const app = express()
 
 mongoos.connect('mongodb://localhost:27017/whohave', { 
@@ -24,5 +26,6 @@ app.use(express.json())
 app.use('/api/auth', users)
 app.use('/api/products', products)
 app.use('/api/positions', positions)
+app.use('/api/storesType', storesType)
 
 module.exports = app
