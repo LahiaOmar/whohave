@@ -6,7 +6,7 @@ import {useFormik} from 'formik'
 import * as Yup from 'yup';
 import {useAxios} from '../useHooks'
 import LoginContext from '../ContextAuth'
-import StoresType from '../StoresType'
+import {StoresType, NewStoreType} from '../StoresType'
 
 function SignUpIhave(props){
 	const context = React.useContext(LoginContext)
@@ -138,7 +138,7 @@ return (
 								/>
 							</Grid>
 							<Grid item xs={12}>
-								<StoresType formik={formik}/>
+								<StoresType formik={formik} showAddNewType={true}/>
 							</Grid>
 							<Grid item xs={12}  >
 								<TextField

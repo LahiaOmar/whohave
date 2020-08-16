@@ -1,9 +1,9 @@
 import React from 'react'
-import {MenuItem, InputLabel, Select, Input, Checkbox, ListItemText, FormControl, InputAdornment} from '@material-ui/core'
+import {MenuItem, InputLabel, Select, Input, Checkbox, ListItemText, FormControl, InputAdornment, FormHelperText} from '@material-ui/core'
 import {useAxios} from '../useHooks'
 import AddIcon from '@material-ui/icons/Add';
 
-function StoresType({formik}){
+function StoresType({formik, showAddNewType}){
   const [types, error, loading, setConfig ] = useAxios({})
 
   React.useEffect(()=>{
@@ -37,10 +37,9 @@ function StoresType({formik}){
         <Select
           {...formik.getFieldProps('storeTypes')}
           error={
-            formik.touched.storeTypes && formik.errors.storeTypes 
-            ? true : false}
-          helperText={formik.touched.storeTypes && formik.errors.storeTypes 
-            ?formik.errors.storeTypes : null}
+            formik.touched.storeTypes &&
+            formik.errors.storeTypes 
+            }
           labelId="store-types"
           id="demo-mutiple-checkbox"
           multiple
@@ -53,19 +52,26 @@ function StoresType({formik}){
             <ListItemText primary={specialty} />
           </MenuItem>
         ))}
-      </Select>	
+      </Select>
+      { formik.touched.storeTypes && 
+        formik.errors.storeTypes 
+      ?<FormHelperText style={{color : 'red'}}>{formik.errors.storeTypes}</FormHelperText>
+        : null}	
     </FormControl>
-    <InputLabel htmlFor="new-store-type">add new type</InputLabel>
-    <FormControl>
-      <Input 
-        id="new-store-type"
-        inputRef={newStoresType}
-        endAdornment={
-          <InputAdornment position="end">
-            <AddIcon onClick={addTypeStore} style={{cursor : 'pointer'}}/>
-          </InputAdornment>
-        }/>
-    </FormControl>
+    {
+      showAddNewType && 
+      <FormControl>
+        <InputLabel htmlFor="new-store-type">add new type</InputLabel>
+        <Input 
+          id="new-store-type"
+          inputRef={newStoresType}
+          endAdornment={
+            <InputAdornment position="end">
+              <AddIcon onClick={addTypeStore} style={{cursor : 'pointer'}}/>
+            </InputAdornment>
+          }/>
+      </FormControl>
+    }
   </>
   )
 }

@@ -1,3 +1,2 @@
 import StoresType from './StoresType'
-
-export default StoresType
+export {StoresType}
