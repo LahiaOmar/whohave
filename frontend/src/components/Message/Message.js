@@ -1,31 +1,20 @@
 import React from 'react'
 import MyModal from '../Mymodal'
-import { Grid, TextField, Button, Typography, Select, Input,
-   FormControl, InputLabel, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
+import { Grid, TextField, Button, Typography} from '@material-ui/core'
 import * as Yup from 'yup'
 import {useFormik} from 'formik'
-import axios from 'axios'
-import { SendMessage } from '../ButtonActions'
-function Message(props){
+import {SendMessage} from '../ButtonActions'
+import {StoresType} from '../StoresType'
+import {useAxios}  from '../useHooks'
 
+function Message(props){
+  const [data, errors, loading, setConfig] = useAxios({})
   const imagesInput = React.createRef()
-  const names = [
-		'Oliver Hansen',
-		'Van Henry',
-		'April Tucker',
-		'Ralph Hubbard',
-		'Omar Alexander',
-		'Carlos Abbott',
-		'Miriam Wagner',
-		'Bradley Wilkerson',
-		'Virginia Andrews',
-		'Kelly Snyder',
-  ]
   
   const formik = useFormik({
     initialValues : {
       productName : '',
-      categories : [],
+      storeTypes : [],
       description : '',
       images : []
     },
@@ -33,29 +22,23 @@ function Message(props){
       productName : Yup.string()
         .min(5, 'minimum is 5 character')
         .required('required !'),
-      productName : Yup.string(),
+      storeTypes : Yup.array()
+        .min(1, 'you must select the type(s) of service that your store provide!')
+        .required('required !'),
+      description : Yup.string(),
       images : Yup.array()
     }),
-    onSubmit :  async (values) =>{
-      console.log("values : ", values)
+    onSubmit : (values) =>{
       values.images = imagesInput.current.files
-
-      console.log(values)
-
-      // try{
-      //   let req = await axios.post('http://localhost400:api/product/broadcast')
-
-      // }
-      // catch(e){
-
-      // }
-
+      const config = {
+        url : process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
+        method : 'POST',
+        data : values
+      }
+      console.log("config obj", config)
+      setConfig(config)
     }
   })
-
-  const handleImages = (event)=>{
-    console.log(event.files)
-  }
   
   return (
     <MyModal btnTitle="send product" MyButton={SendMessage}>
@@ -72,33 +55,19 @@ function Message(props){
               variant="outlined"
               label="Product Name"
               fullWidth
+              error={
+                formik.touched.productName &&
+                formik.errors.productName
+              }
+              helperText={
+                formik.touched.productName &&
+                formik.errors.productName 
+              }
             />
           </Grid>
           <Grid item xs={12}>
-								<FormControl className="multi-select-form">
-									<InputLabel id="store-types">store types</InputLabel>
-									<Select
-										{...formik.getFieldProps('categories')}
-										error={
-											formik.touched.categories && formik.errors.categories 
-											? true : false}
-										helperText={formik.touched.categories && formik.errors.categories 
-											?formik.errors.categories : null}
-										labelId="store-types"
-										id="demo-mutiple-checkbox"
-										multiple
-										input={<Input />}
-										renderValue={(selected) => selected.join(', ')}
-									>
-										{names.map((name) => (
-											<MenuItem key={name} value={name}>
-												<Checkbox checked={formik.values.categories.indexOf(name) > -1} />
-												<ListItemText primary={name} />
-											</MenuItem>
-										))}
-									</Select>	
-								</FormControl>		
-							</Grid>
+								<StoresType formik={formik} showAddNewType={false}/>
+					</Grid>
           <Grid item xs={12}>
             <TextField
               {...formik.getFieldProps('description')}
@@ -133,7 +102,6 @@ function Message(props){
         </Grid>
       </form>
     </MyModal>
-
   )
 }
 
