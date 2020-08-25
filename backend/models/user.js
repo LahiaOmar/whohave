@@ -1,11 +1,12 @@
 const mongoose = require("mongoose")
+const location = require("../models/location.js")
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   firstName : {type : String, require : true},
   lastName : {type : String, require : true},
   password : {type : String, require : true},
   email : {type : String, require : true},
-  coordinates : [Number]
+  location : {type : location, default : {}}
 })
 
 userSchema.methods.getFieldToSend = function(){
@@ -13,7 +14,7 @@ userSchema.methods.getFieldToSend = function(){
     _id : this._id,
     firstName : this.firstName,
     lastName : this.lastName,
-    coordinates : this.coordinates
+    coordinates : this.location.coordinates
   }
 }
 

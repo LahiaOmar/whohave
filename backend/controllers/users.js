@@ -54,6 +54,7 @@ exports.userLogin = async function (req, res){
     })
   }
   catch(e){
+    console.log("err ", e)
     const message = JSON.parse(e.message)
     if(typeof message === "object")
       res.status(message.status).json({message : message.message})

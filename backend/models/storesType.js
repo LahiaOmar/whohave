@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const storesType = mongoose.Schema({
+const storesType = new mongoose.Schema({
   specialty : {
       type : String,
       require : true,
