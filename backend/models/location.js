@@ -3,11 +3,12 @@ const mongoos = require("mongoose")
 const locationSchema = new mongoos.Schema({
   type : {
     type : String,
-    default : 'Point'
+    default : "Point"
   },
   coordinates : {
     type : [Number],
-    default : []
+    default : [-1,-1],
+    index : '2dsphere'
   }
 })
 
