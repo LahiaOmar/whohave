@@ -33,10 +33,12 @@ function reducer(state, action){
 
 function Dashboard(){
 	const context = React.useContext(LoginContext)
+	const {userData} = context
 	const start = {latitude : 31.669746 , longitude :-7.973328}
-	const isExistCoord = context.userData.coordinates.length !== 0
+	const isExistCoord = userData.coordinates[0] !== -1 && userData.coordinates[1] !== -1
 	const startCoord =  isExistCoord ? 
-		{longitude : context.userData.coordinates[0] , latitude : context.userData.coordinates[1] }: start
+		{	longitude : userData.coordinates[0] ,
+			latitude : userData.coordinates[1] }: start
 		const [state, dispatch] = React.useReducer(reducer, {
 		viewPort : {
 			width : 'calc(100%)',
