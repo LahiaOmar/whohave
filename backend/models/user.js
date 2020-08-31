@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   lastName : {type : String, require : true},
   password : {type : String, require : true},
   email : {type : String, require : true},
+  first : {type : Boolean, default : false}, 
   location : {type : location, default : {}}
 })
 
@@ -14,6 +15,7 @@ userSchema.methods.getFieldToSend = function(){
     _id : this._id,
     firstName : this.firstName,
     lastName : this.lastName,
+    first : this.first,
     coordinates : this.location.coordinates
   }
 }
