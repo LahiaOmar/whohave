@@ -1,23 +1,19 @@
 const userStore = require('../models/userStore')
 const consumer = require('../models/user')
 
-exports.saveChangePosition = (req, res)=>{
+exports.saveChangePosition = async (req, res)=>{
   try{
-    const {type, _id, longitude, latitude } = req.body
+    const {type, _id, longitude, latitude, ...rest } = req.body
     const model = type ? userStore : consumer
-    model.findByIdAndUpdate({_id : _id }, {
+    let doc = await model.findByIdAndUpdate({_id : _id }, {
       location : {
         coordinates : [longitude, latitude]
-      }
-    }, (err, doc)=>{
-      if(err)
-        console.log("err ", err)
-      else
-        console.log("docs ", doc)
+      },
+      ...rest
     })
     res.status(201).json("save change positions")
   }
   catch(e){
-
+    res.status(400).json({err : e})
   }
 }
