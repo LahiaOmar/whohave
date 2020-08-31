@@ -9,14 +9,17 @@ const userStoreSchema = new mongoose.Schema({
   email : {type : String, require : true},
   address : {type : String, require : true},
   storeTypes: [{type : String, require : true}],
-  location : {type : location, default : {}}
+  first : {type : Boolean, default : false},
+  location : {type : location, default : {}, index : "2dsphere"}
 })
+
 
 userStoreSchema.methods.getFieldToSend = function(){  
   return {
     _id : this._id,
     firstName : this.firstName,
     lastName : this.lastName,
+    first : this.first,
     coordinates : this.location.coordinates
   }
 }
