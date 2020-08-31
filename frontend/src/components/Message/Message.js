@@ -6,11 +6,13 @@ import {useFormik} from 'formik'
 import {SendMessage} from '../ButtonActions'
 import {StoresType} from '../StoresType'
 import {useAxios}  from '../useHooks'
+import LoginContext from '../ContextAuth'
 
 function Message(props){
   const [data, errors, loading, setConfig] = useAxios({})
   const imagesInput = React.createRef()
-  
+  const context = React.useContext(LoginContext)
+
   const formik = useFormik({
     initialValues : {
       productName : '',
@@ -30,6 +32,7 @@ function Message(props){
     }),
     onSubmit : (values) =>{
       values.images = imagesInput.current.files
+      Object.assign(values,{ corrdinates : context.userData.coordinates}) 
       const config = {
         url : process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
         method : 'POST',
