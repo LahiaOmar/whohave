@@ -35,7 +35,7 @@ function Dashboard(){
 	const context = React.useContext(LoginContext)
 	const {userData} = context
 	const start = {latitude : 31.669746 , longitude :-7.973328}
-	const isExistCoord = userData.coordinates[0] !== -1 && userData.coordinates[1] !== -1
+	const isExistCoord = userData.first
 	const startCoord =  isExistCoord ? 
 		{	longitude : userData.coordinates[0] ,
 			latitude : userData.coordinates[1] }: start
