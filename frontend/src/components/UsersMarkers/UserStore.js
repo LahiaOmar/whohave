@@ -23,6 +23,15 @@ function UserStore({longitude, latitude, isDraggeble}){
     setCoords({longitude : lgt, latitude : lat})
   }
 
+  React.useEffect(()=>{
+    axios.post(POST_URL,{
+      _id : context.userData._id,
+      type : context.type,
+      first : true,
+      longitude : longitude, 
+      latitude : latitude})
+  }, [])
+
   return (
     <MyMarker
     longitude={coords.longitude}

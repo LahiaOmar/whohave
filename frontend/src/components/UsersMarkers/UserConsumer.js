@@ -18,6 +18,16 @@ function UserConsumer({longitude, latitude, isDraggeble}){
     axios.post(POST_URL, { _id : _ID, type : TYPE, longitude : lgt, latitude : lat })
     setCoords({longitude : lgt, latitude : lat})
   }
+
+  React.useEffect(()=>{
+    axios.post(POST_URL, { 
+      _id : _ID,
+      type : TYPE,
+      first : true,
+      longitude : longitude,
+      latitude : latitude })
+  }, [])
+
   return(
     <MyMarker
       isDraggeble={isDraggeble}
