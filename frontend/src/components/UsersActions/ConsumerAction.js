@@ -9,6 +9,7 @@ function ConsumerAction({dispatch, coords, isExist}){
     if(!isExist){
       if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition((position)=>{
+          console.log("position ", position)
           const {longitude, latitude} = position.coords
           const markerToAdd = <UserConsumer 
             longitude={longitude}
