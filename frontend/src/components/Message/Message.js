@@ -1,6 +1,6 @@
 import React from 'react'
 import MyModal from '../Mymodal'
-import { Grid, TextField, Button, Typography} from '@material-ui/core'
+import { Grid, TextField, Button, Slider, Typography} from '@material-ui/core'
 import * as Yup from 'yup'
 import {useFormik} from 'formik'
 import {SendMessage} from '../ButtonActions'
@@ -10,9 +10,20 @@ import LoginContext from '../ContextAuth'
 
 function Message(props){
   const [data, errors, loading, setConfig] = useAxios({})
+  const [open, setOpen] = React.useState(false)
   const imagesInput = React.createRef()
   const context = React.useContext(LoginContext)
 
+	const handleOpen = ()=>{
+		setOpen(true)
+	}	
+
+	const handleClose = ()=>{
+		setOpen(false)
+  }
+  
+  let distance = 5
+  
   const formik = useFormik({
     initialValues : {
       productName : '',
@@ -30,21 +41,33 @@ function Message(props){
       description : Yup.string(),
       images : Yup.array()
     }),
-    onSubmit : (values) =>{
+    onSubmit : (values, {resetForm}) =>{
       values.images = imagesInput.current.files
       Object.assign(values,{ corrdinates : context.userData.coordinates}) 
+      Object.assign(values, {distance})
       const config = {
         url : process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
         method : 'POST',
         data : values
       }
-      console.log("config obj", config)
+      resetForm()
+      handleClose()
       setConfig(config)
     }
   })
   
+  const KmToMetre = km => km * 1000 
+
+  const getDistanceValue = value => distance = KmToMetre(value)
+
   return (
-    <MyModal btnTitle="send product" MyButton={SendMessage}>
+    <MyModal 
+      btnTitle="send product"
+      MyButton={SendMessage}
+      open={open}
+      handleClose={handleClose}
+      handleOpen={handleOpen}
+      >
       <form id="msg-product" onSubmit={formik.handleSubmit}>
         <Grid container  spacing={2} justify="center">
           <Grid item xs={12}>
@@ -95,6 +118,21 @@ function Message(props){
                 Upload image
               </Button>
             </label>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography id="distance-slider">
+              Distance
+            </Typography>
+            <Slider 
+              className="distance-slider"
+              defaultValue="5"
+              getAriaValueText={getDistanceValue}
+              valueLabelDisplay="auto"
+              step={5}
+              marks
+              min={distance}
+              max={50}
+            />
           </Grid>
           <Button 
             variant="contained"
