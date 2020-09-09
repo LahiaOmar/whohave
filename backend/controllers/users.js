@@ -12,7 +12,7 @@ exports.storeSignUp = (req, res)=>{
         password : hash
       })
       currentUserStore.save()
-        .then(()=> res.status(201).json({message : "object Created", data : currentUserStore.getFieldToSend()}))
+        .then(()=> res.status(201).json({message : "object Created",type : true, information : currentUserStore.getFieldToSend()}))
         .catch((err)=> res.status(400).json({err}))
     })
     .catch(error => res.status(500).json({error}))
@@ -27,7 +27,7 @@ exports.userSignUp = (req, res) =>{
         password : hash
       })
       currentUser.save()
-        .then(()=>res.status(201).json({message : "user created !", data : currentUser.getFieldToSend()}))
+        .then(()=>res.status(201).json({message : "user created !",type : false, information : currentUser.getFieldToSend()}))
         .catch(err=> res.status(400).json({err}))
     })
     .catch(err=>res.status(500).json({err}))
@@ -50,6 +50,7 @@ exports.userLogin = async function (req, res){
     const dataToSend = curUser.getFieldToSend()
     res.status(200).json({
       token : token,
+      type : req.body.checkStore ? true : false,
       information : dataToSend
     })
   }
