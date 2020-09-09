@@ -8,24 +8,8 @@ import {useAxios} from '../useHooks'
 import LoginContext from '../ContextAuth'
 import {StoresType, NewStoreType} from '../StoresType'
 
-function SignUpIhave(props){
-	const context = React.useContext(LoginContext)
-	const [data, error, loading, setConfig] = useAxios({})
-
-	React.useEffect(()=>{
-		if(data){
-			context.setContext({
-				isLoged : true,
-				type : true,
-				userData : data.data,
-				redirect : {
-					ok : true,
-					to : "/dashboard"
-				}
-			})
-		}
-	}, [data])
-
+function SignUpIhave({clSubmit, error, loading, label}){
+	
 	const formik = useFormik({
 		initialValues : {
 			firstName : '',
@@ -63,7 +47,7 @@ function SignUpIhave(props){
 				data : values,
 				method : 'POST' 
 			}
-			setConfig(config)
+			clSubmit(config)
 		}
 })
 
@@ -72,7 +56,7 @@ return (
 					<Grid container justify="center" alignItems="center">
 						<AccountCircle style={{fontSize:100, color:'blue'}}/>
 						<Typography component="h1" variant="h5">
-								{props.label}
+								{label}
 						</Typography>
 					</Grid>
 

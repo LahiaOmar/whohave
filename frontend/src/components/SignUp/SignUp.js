@@ -20,7 +20,7 @@ function TabPanel(props) {
   );
 }
 
-function SignUp(props) {
+function SignUp({clSubmit, error, loading}) {
 	const [value, setValue] = React.useState(0)
 	const signUpCompoNames = ["Store Owner", "User"]
 	return (
@@ -30,10 +30,10 @@ function SignUp(props) {
 				<Tab label={signUpCompoNames[1]} id="simple-tab-1" aria-controls="simple-tabpanel-1"/>
 			</Tabs>
 			<TabPanel value={value} index={0}>
-				<SignUpIhave label={signUpCompoNames[0]}/>
+				<SignUpIhave label={signUpCompoNames[0]} error={error} loading={loading} clSubmit={clSubmit}/>
 			</TabPanel>
 			<TabPanel value={value} index={1} >
-				<SignUpWho label={signUpCompoNames[1]}/>
+				<SignUpWho label={signUpCompoNames[1]} error={error} loading={loading} clSubmit={clSubmit}/>
 			</TabPanel>
 		</div>							
 	)

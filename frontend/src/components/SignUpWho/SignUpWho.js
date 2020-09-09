@@ -6,23 +6,7 @@ import * as Yup from 'yup';
 import {useAxios} from '../useHooks'
 import LoginContext from '../ContextAuth';
 
-function SignUpWho(props){
-	const [data, error, loading, setConfig] = useAxios({})
-	const context = React.useContext(LoginContext)
-
-	React.useEffect(()=>{
-		if(data){
-			context.setContext({
-				isLoged : true,
-				type : false,
-				userData : data.data,
-				redirect : {
-					ok : true,
-					to : "/dashboard"
-				}
-			})
-		}
-	}, [data])
+function SignUpWho({clSubmit, error, loading, label}){
 
 	const formik = useFormik({
 		initialValues : {
@@ -55,7 +39,7 @@ function SignUpWho(props){
 				data : values,
 				method : 'POST' 
 			}
-			setConfig(config)
+			clSubmit(config)
 		}
 })
 
@@ -64,7 +48,7 @@ return (
 					<Grid container justify="center" alignItems="center">
 						<AccountCircle style={{fontSize:100, color:'blue'}}/>
 						<Typography component="h1" variant="h5">
-								{props.label}
+								{label}
 						</Typography>
 					</Grid>
 

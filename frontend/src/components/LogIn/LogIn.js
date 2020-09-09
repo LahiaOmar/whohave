@@ -6,26 +6,9 @@ import {AccountCircle} from '@material-ui/icons'
 
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
-import {useAxios} from '../useHooks'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-function LogIn(props) {
-	const context = React.useContext(LoginContext)
-	const [data, error, loading, setConfig] = useAxios({})
-	React.useEffect(()=>{
-		if(data){
-			const type = formik.values.checkStore
-			context.setContext({
-				isLoged : true,
-				type : type,
-				userData : data.information,
-				redirect : {
-					ok : true,
-					to : "/dashboard"
-				}
-			})
-		}
-	}, [data])
+function LogIn({clSubmit, error, loading}) {
 
 	const formik = useFormik({
 		initialValues:{
@@ -46,7 +29,7 @@ function LogIn(props) {
 				data : values,
 				method : 'POST' 
 			}
-			setConfig(config)
+			clSubmit(config)
 		}
 })
 
