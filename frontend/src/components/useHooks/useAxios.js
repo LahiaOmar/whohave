@@ -5,7 +5,7 @@ import { object } from 'yup'
 
 function useAxios(conf){ 
   const [data, setData] = React.useState(null)
-  const [error, setError] = React.useState(null)
+  const [error, setError] = React.useState(false)
   const [config, setConfig] = React.useState(conf)
   const [loading, setLoading] = React.useState(false)
   
@@ -15,11 +15,11 @@ function useAxios(conf){
       try{
         const response = await axios(config)  
         setData(response.data)
-        setError(null)
+        setError(false)
         setLoading(false)
       }
       catch(err){
-        setError("wrong credentials")
+        setError(true)
         setLoading(false)
       }
     }
