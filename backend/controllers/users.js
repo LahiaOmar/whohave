@@ -63,3 +63,20 @@ exports.userLogin = async function (req, res){
       res.status(500).json({message : "server error"})
   }
 }
+
+exports.userSetInformation = async function (req, res){
+  console.log("update user req.body ", req.body)
+  const {forUpdate, userId , type} = req.body
+  
+  const model = type ? userStore : userWho
+  console.log("model ", model)
+  try{
+    const update = await model.findByIdAndUpdate({_id : userId}, {
+      ...forUpdate
+    })
+    res.status(200).json({msg : "updated !"})
+  }
+  catch(e){
+    res.status(500).json({msg : e})
+  }
+}

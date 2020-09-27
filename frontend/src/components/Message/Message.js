@@ -43,7 +43,8 @@ function Message(props){
     }),
     onSubmit : (values, {resetForm}) =>{
       values.images = imagesInput.current.files
-      Object.assign(values,{ corrdinates : context.userData.coordinates}) 
+      Object.assign(values,{ corrdinates : context.userData.coordinates})
+      Object.assign(values, {userId : context.userData._id}) 
       Object.assign(values, {distance})
       const config = {
         url : process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
