@@ -2,10 +2,8 @@ import React from 'react'
 import {Grid} from '@material-ui/core'
 import Map from '../Map'
 import LoginContext from '../ContextAuth'
-import {UserStore, UserConsumer} from '../UsersMarkers'
-import MyMarker from '../MyMarker'
-import {StoreOpen} from '../ButtonActions'
-import Message from '../Message'
+import NotificationPanel from '../NotificationPanel'
+
 import { StoreAction, ConsumerAction } from '../UsersActions'
 
 function reducer(state, action){
@@ -56,7 +54,7 @@ function Dashboard(){
 		<div id="dashboard">
 			<Grid container spacing={0}>
 				<Grid item xs={2} >
-					<div>Store notificaions </div>
+					<NotificationPanel />
 				</Grid>
 				<Grid item xs={10}> 
 					<div className="btnPosition">

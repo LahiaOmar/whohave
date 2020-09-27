@@ -5,8 +5,9 @@ import Dashboard from './components/Dashboard'
 import LoginContext from './components/ContextAuth'
 import ProtectedRoute from './components/ProtectedRoute'
 
-import {BrowserRouter as Router, Route, Switch, Redirect, useHistory} from 'react-router-dom'
 import {Grid} from '@material-ui/core'
+import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
+
 import './styles/style.css'
 
 function App() {

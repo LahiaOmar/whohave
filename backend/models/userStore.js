@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const location = require("../models/location.js")
-const { get } = require("../models/location.js")
+const notification = require('../models/notification')
 
 const userStoreSchema = new mongoose.Schema({
   firstName : {type : String, require : true},
@@ -10,6 +10,8 @@ const userStoreSchema = new mongoose.Schema({
   address : {type : String, require : true},
   storeTypes: [{type : String, require : true}],
   first : {type : Boolean, default : false},
+  socketId : {type : String, default : ""},
+  notifications : [notification],
   location : {type : location, default : {}, index : "2dsphere"}
 })
 
@@ -20,7 +22,8 @@ userStoreSchema.methods.getFieldToSend = function(){
     firstName : this.firstName,
     lastName : this.lastName,
     first : this.first,
-    coordinates : this.location.coordinates
+    coordinates : this.location.coordinates,
+    notifications : this.notifications
   }
 }
 
