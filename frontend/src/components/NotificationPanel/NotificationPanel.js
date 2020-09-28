@@ -1,6 +1,6 @@
 import React from 'react'
+import axios from 'axios'
 import io from 'socket.io-client'
-import {useAxios} from '../useHooks'
 import LoginContext from '../ContextAuth'
 import NotificationImages from '../NotificationImages'
 import NotificationStoreBtn from '../NotificationStoreBtn'
@@ -9,7 +9,6 @@ import NotificationInformations from '../NotificationInformations'
 
 const NotificationPanel = ()=>{  
   const context = React.useContext(LoginContext)
-  const [data, loading, error, setConfig] = useAxios({})
   const [notifications, setNotifications] = React.useState(context.userData.notifications)
   
   React.useEffect(()=>{
@@ -30,13 +29,33 @@ const NotificationPanel = ()=>{
     }
   },[])
 
-  const removeNotification = (index)=>{
+  const removeNotification = async (index)=>{
     let step = 1
     if(index === 0){ 
       step = 0
     }
-    
-    setNotifications(notifications.splice(index, step))
+    const config = {
+      method : 'POST',
+      url : process.env.REACT_APP_UPDATE_USER,
+      data : {
+        type : context.type,
+        userId : context.userData._id,
+        forUpdate : {
+          $pull : {
+            notifications : {
+              _id : notifications[index]._id 
+            }
+          }
+        }
+      }
+    }
+    try{
+      const response = await axios(config)
+      setNotifications(notifications.splice(index, step))
+
+    }catch(err){
+      console.log("error", err)
+    }
   }
 
   return(
