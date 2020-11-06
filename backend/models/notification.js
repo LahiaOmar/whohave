@@ -1,16 +1,16 @@
 const mongoose = require('mongoose')
 
 const notification = new mongoose.Schema({
-  from : {
-    type : String
+  from: {
+    type: String
   },
-  informations : {
+  informations: {
     type: Object,
-    required : true
+    required: true
   },
-  images : {
-    type : []
+  images: {
+    type: []
   }
 })
 
-module.exports =  notification
+module.exports = notification

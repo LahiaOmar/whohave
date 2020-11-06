@@ -1,5 +1,5 @@
 const http = require('http')
-const app = require('./app')
+const app = require('./app');
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
@@ -12,7 +12,7 @@ const normalizePort = val => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || '4000');
+const port = normalizePort(process.env.PORT || '4000');
 app.set('port', port);
 
 const errorHandler = error => {
@@ -37,6 +37,13 @@ const errorHandler = error => {
 };
 
 const server = http.createServer(app);
+
+const socketHandler = (socket) => {
+  console.log("user is connected ", socket.id)
+  socket.on('test', (msg) => console.log("msg from client ", msg))
+}
+
+io.on('connection', socketHandler)
 
 server.on('error', errorHandler);
 server.on('listening', () => {
