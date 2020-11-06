@@ -1,85 +1,123 @@
 import React from 'react'
-import {Grid} from '@material-ui/core'
-import Map from '../Map'
+import io from 'socket.io-client'
+import { Grid } from '@material-ui/core'
 import LoginContext from '../ContextAuth'
-import NotificationPanel from '../NotificationPanel'
+import ListOfProduct from '../ListOfProduct'
+import ListOfResponse from '../ListOfResponse'
+import UserInformationPanel from '../UserInformationPanel'
+import { useAxios } from '../useHooks'
+import Axios from 'axios'
+import constants from '../../constants'
 
-import { StoreAction, ConsumerAction } from '../UsersActions'
-
-function reducer(state, action){
-	console.log("actual state : ", state)
-	const actionsTypes = action.type.split("&")
-	let newState = {...state}
-	for(let act of actionsTypes){	
-		switch(act){
-			case 'add_marker' : 
-				newState = { ...newState, markers: state.markers.concat(action.marker)}
-				break
-			case 'change_focus_map' :
-				newState = { ...newState,viewPort : {
-					...newState.viewPort,
-					longitude : action.longitude,
-					latitude : action.latitude
-				}}
-				break
+function useGetNotifications() {
+	const { userData, type } = React.useContext(LoginContext)
+	const [loading, setLoading] = React.useState(true)
+	const [state, dispatch] = React.useReducer((state, action) => {
+		let newState = [...state]
+		switch (action.type) {
+			case 'CHECK_BYID':
+				newState = newState.map(element => {
+					if (element._id === action.id) {
+						element.isSelected = !element.isSelected
+					}
+					return element
+				})
+				break;
+			case 'CHECK_ALL':
+				newState = newState.map(element => {
+					element.isSelected = action.isSelected
+					return element
+				})
+				break;
+			case 'DELETE':
+				newState = newState.filter((element => !action.idsArr.includes(element._id)))
+				break;
+			case 'ADD':
+				newState.push(action.newNotification)
+				break;
+			case 'UPDATE':
+				newState = action.newNotifications
+				break;
+			default:
+				console.log("error action type")
 		}
+		return newState
+	}, [])
+
+
+	const isConnectedHandler = async () => {
+		const config = {
+			method: 'POST',
+			url: 'http://localhost:4000/api/notifications/get',
+			data: {
+				type: type,
+				userId: userData._id
+			}
+		}
+		const { data } = await Axios(config)
+		setLoading(false);
+		const newNotifications = data.notifications.map(e => {
+			e.isSelected = false
+			return e
+		})
+		dispatch({ type: 'UPDATE', newNotifications })
 	}
-	console.log("new State", newState)
-	if(Object.keys(newState).length === 0) throw new Error("dashboard reducer error")
-	return newState
+
+	const addNotification = (data) => {
+		console.log("new notification ", data)
+		const newNotification = JSON.parse(data)
+		newNotification.isSelected = false
+		dispatch({ type: 'ADD', newNotification })
+	}
+
+	React.useEffect(() => {
+		const options = {
+			query: {
+				userId: userData._id,
+				type: type
+			}
+		}
+		const pathSocket = process.env.REACT_APP_PATH_SOCKET
+		const socket = io(pathSocket, options)
+		socket.on('connect', () => isConnectedHandler())
+		socket.on('newNotification', addNotification)
+
+		return () => {
+			socket.close()
+		}
+	}, [])
+
+	return [state, dispatch, loading]
 }
 
-function Dashboard(){
+const Dashboard = () => {
+	const LIST_NOTIFICATIONS = "notifications"
+	const MY_INFORMATION = "personelInformation"
+
 	const context = React.useContext(LoginContext)
-	const {userData} = context
-	const start = {latitude : 31.669746 , longitude :-7.973328}
-	const isExistCoord = userData.first
-	const startCoord =  isExistCoord ? 
-		{	longitude : userData.coordinates[0] ,
-			latitude : userData.coordinates[1] }: start
-		const [state, dispatch] = React.useReducer(reducer, {
-		viewPort : {
-			width : 'calc(100%)',
-			height : 'calc(100vh - 50px)',
-			...startCoord,
-			zoom: 8
-		},
-		markers : [],
-		userCoords : {
-			...startCoord
-		},
-	})
-	
-	return (	
-		<div id="dashboard">
-			<Grid container spacing={0}>
-				<Grid item xs={2} >
-					<NotificationPanel />
-				</Grid>
-				<Grid item xs={10}> 
-					<div className="btnPosition">
-						{
-							context.type
-							?<StoreAction
-									dispatch={dispatch}
-									coords={state.userCoords}
-									isExist={isExistCoord}
-								/>
-							:<ConsumerAction
-									coords={state.userCoords} 
-									dispatch={dispatch}
-									isExist={isExistCoord}/>
-						}
-					</div>
-					<Map
-						state={state}>
-							{
-								state.markers.map((marker)=>(marker))
-							}
-					</Map>
-				</Grid>
-			</Grid>            
-		</div>
+	const [component, setComponent] = React.useState(LIST_NOTIFICATIONS)
+	const [notifications, dispatch, loading] = useGetNotifications();
+
+	if (loading)
+		return <div>Loading ...</div>
+	return (
+		<Grid item xs={12} >
+			<div className="notification_list">
+				<div className="dashboard_menu">
+					<a href="#" onClick={() => setComponent(LIST_NOTIFICATIONS)}> Notifications </a>
+					<a href="#" onClick={() => setComponent(MY_INFORMATION)}>My Informations </a>
+				</div>
+				<div>
+					{
+						component === LIST_NOTIFICATIONS
+							? context.type
+								? <ListOfProduct notifications={notifications} dispatch={dispatch} />
+								: <ListOfResponse notifications={notifications} dispatch={dispatch} />
+							: <UserInformationPanel />
+					}
+				</div>
+			</div>
+		</Grid>
 	)
 }
 

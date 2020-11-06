@@ -5,27 +5,27 @@ import Dashboard from './components/Dashboard'
 import LoginContext from './components/ContextAuth'
 import ProtectedRoute from './components/ProtectedRoute'
 
-import {Grid} from '@material-ui/core'
-import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
+import { Grid } from '@material-ui/core'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 
 import './styles/style.css'
 
 function App() {
   const [context, setContext] = React.useState({
-    isLoged : false,
-    type : undefined,
-    userData : {},
-    redirect : {},
+    isLoged: false,
+    type: undefined,
+    userData: {},
+    redirect: {},
   })
   console.log("new state APP user ", context)
   return (
     <Grid container className="App">
-      <LoginContext.Provider value={{...context, setContext}}>
+      <LoginContext.Provider value={{ ...context, setContext }}>
         <Router>
           {
-            (context.redirect.ok) 
-            ? (<Redirect to={context.redirect.to}/>)
-            : null
+            (context.redirect.ok)
+              ? (<Redirect to={context.redirect.to} />)
+              : null
           }
           <NavBar />
           <Switch>
@@ -35,9 +35,6 @@ function App() {
             {/* dashborad path sould be protected. */}
             <ProtectedRoute exact path="/dashboard">
               <Dashboard />
-            </ProtectedRoute>
-            <ProtectedRoute exact path="/dashboard/information">
-              <div>user information</div>
             </ProtectedRoute>
           </Switch>
         </Router>

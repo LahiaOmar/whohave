@@ -112,6 +112,10 @@ body{
 	max-width: 1000px;
 }
 
+.distance-slider{
+	width: 70%;
+}
+
 /* MAP */
 #map{
 	position: relative;

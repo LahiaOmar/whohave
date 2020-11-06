@@ -1,76 +1,77 @@
 import React from 'react'
 import MyModal from '../Mymodal'
-import { Grid, TextField, Button, Slider, Typography} from '@material-ui/core'
+import { Grid, TextField, Button, Slider, Typography } from '@material-ui/core'
 import * as Yup from 'yup'
-import {useFormik} from 'formik'
-import {SendMessage} from '../ButtonActions'
-import {StoresType} from '../StoresType'
-import {useAxios}  from '../useHooks'
+import { useFormik } from 'formik'
+import { SendMessage } from '../ButtonActions'
+import { StoresType } from '../StoresType'
+import { useAxios } from '../useHooks'
 import LoginContext from '../ContextAuth'
 
-function Message(props){
+function Message(props) {
   const [data, errors, loading, setConfig] = useAxios({})
   const [open, setOpen] = React.useState(false)
   const imagesInput = React.createRef()
   const context = React.useContext(LoginContext)
 
-	const handleOpen = ()=>{
-		setOpen(true)
-	}	
-
-	const handleClose = ()=>{
-		setOpen(false)
+  const handleOpen = () => {
+    setOpen(true)
   }
-  
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   let distance = 5
-  
+
   const formik = useFormik({
-    initialValues : {
-      productName : '',
-      storeTypes : [],
-      description : '',
-      images : []
+    initialValues: {
+      productName: '',
+      storeTypes: [],
+      description: '',
+      images: []
     },
-    validationSchema : Yup.object({
-      productName : Yup.string()
+    validationSchema: Yup.object({
+      productName: Yup.string()
         .min(5, 'minimum is 5 character')
         .required('required !'),
-      storeTypes : Yup.array()
+      storeTypes: Yup.array()
         .min(1, 'you must select the type(s) of service that your store provide!')
         .required('required !'),
-      description : Yup.string(),
-      images : Yup.array()
+      description: Yup.string(),
+      images: Yup.array()
     }),
-    onSubmit : (values, {resetForm}) =>{
+    onSubmit: (values, { resetForm }) => {
       values.images = imagesInput.current.files
-      Object.assign(values,{ corrdinates : context.userData.coordinates})
-      Object.assign(values, {userId : context.userData._id}) 
-      Object.assign(values, {distance})
+      Object.assign(values, { corrdinates: context.userData.coordinates })
+      Object.assign(values, { type: context.type })
+      Object.assign(values, { userId: context.userData._id })
+      Object.assign(values, { distance })
       const config = {
-        url : process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
-        method : 'POST',
-        data : values
+        url: process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
+        method: 'POST',
+        data: values
       }
       resetForm()
       handleClose()
       setConfig(config)
     }
   })
-  
-  const KmToMetre = km => km * 1000 
+
+  const KmToMetre = km => km * 1000
 
   const getDistanceValue = value => distance = KmToMetre(value)
 
   return (
-    <MyModal 
+    <MyModal
       btnTitle="send product"
       MyButton={SendMessage}
       open={open}
       handleClose={handleClose}
       handleOpen={handleOpen}
-      >
+    >
       <form id="msg-product" onSubmit={formik.handleSubmit}>
-        <Grid container  spacing={2} justify="center">
+        <Grid container spacing={2} justify="center">
           <Grid item xs={12}>
             <Typography variant="h5" align="center">
               Describe the product that you looking for
@@ -78,7 +79,7 @@ function Message(props){
           </Grid>
           <Grid item xs={12}>
             <TextField
-              {...formik.getFieldProps('productName')} 
+              {...formik.getFieldProps('productName')}
               variant="outlined"
               label="Product Name"
               fullWidth
@@ -88,13 +89,13 @@ function Message(props){
               }
               helperText={
                 formik.touched.productName &&
-                formik.errors.productName 
+                formik.errors.productName
               }
             />
           </Grid>
           <Grid item xs={12}>
-								<StoresType formik={formik} showAddNewType={false}/>
-					</Grid>
+            <StoresType formik={formik} showAddNewType={false} />
+          </Grid>
           <Grid item xs={12}>
             <TextField
               {...formik.getFieldProps('description')}
@@ -109,7 +110,7 @@ function Message(props){
             <input
               ref={imagesInput}
               accept="image/*"
-              style={{display:"none"}}              
+              style={{ display: "none" }}
               multiple
               id="contained-button-file"
               type="file"
@@ -124,7 +125,7 @@ function Message(props){
             <Typography id="distance-slider">
               Distance
             </Typography>
-            <Slider 
+            <Slider
               className="distance-slider"
               defaultValue="5"
               getAriaValueText={getDistanceValue}
@@ -135,7 +136,7 @@ function Message(props){
               max={50}
             />
           </Grid>
-          <Button 
+          <Button
             variant="contained"
             color="secondary"
             type="submit">

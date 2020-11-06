@@ -1,22 +1,22 @@
 import React from 'react'
 import { Button, Avatar, Menu, MenuItem, Typography } from '@material-ui/core'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ContextAuth from '../ContextAuth'
 
-function UserMenu(){
+function UserMenu() {
   const [anchorEl, setAnhcorEl] = React.useState(null)
   const context = React.useContext(ContextAuth)
-  const {lastName, firstName} = context.userData
-  const handleClick = (e)=>{
+  const { lastName, firstName } = context.userData
+  const handleClick = (e) => {
     setAnhcorEl(e.currentTarget)
   }
 
-  const handleClose = ()=>{
+  const handleClose = () => {
     setAnhcorEl(null)
   }
 
-  const handleLogOut = ()=>{
-    context.setContext({isLoged : false, redirect : {ok  : true, to : "/"}})
+  const handleLogOut = () => {
+    context.setContext({ isLoged: false, redirect: { ok: true, to: "/" } })
     setAnhcorEl(null)
   }
   return (
@@ -36,7 +36,7 @@ function UserMenu(){
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
-        onClose={()=> setAnhcorEl()}
+        onClose={() => setAnhcorEl()}
       >
         <MenuItem onClick={handleClose}>
           <Link to="/dashboard/information"> My information </Link>

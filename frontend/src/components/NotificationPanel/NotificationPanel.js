@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import io from 'socket.io-client'
+import { v4 as uuidv4 } from 'uuid';
 import LoginContext from '../ContextAuth'
 import NotificationImages from '../NotificationImages'
 import NotificationStoreBtn from '../NotificationStoreBtn'
@@ -10,7 +11,7 @@ import NotificationInformations from '../NotificationInformations'
 const NotificationPanel = ()=>{  
   const context = React.useContext(LoginContext)
   const [notifications, setNotifications] = React.useState(context.userData.notifications)
-  
+
   React.useEffect(()=>{
     const options = {
       query : {
@@ -21,7 +22,7 @@ const NotificationPanel = ()=>{
     const socket = io('http://localhost:4000', options)
     socket.on("newNotification", (data)=>{
       const newProduct = JSON.parse(data)
-      setNotifications(notifications.concat(newProduct))
+      setNotifications([...notifications].concat(newProduct))
     })
 
     return ()=>{
@@ -29,11 +30,18 @@ const NotificationPanel = ()=>{
     }
   },[])
 
-  const removeNotification = async (index)=>{
+  const removeNotification = async (notificationId)=>{
+    let index = -1
     let step = 1
-    if(index === 0){ 
-      step = 0
+    notifications.forEach((nt, ind)=>{
+      if(nt._id === notificationId){
+        index = ind
+      }
+    })
+    if(index === 0){
+      step = 0;
     }
+    console.log("index of notif ", index)
     const config = {
       method : 'POST',
       url : process.env.REACT_APP_UPDATE_USER,
@@ -51,8 +59,9 @@ const NotificationPanel = ()=>{
     }
     try{
       const response = await axios(config)
-      setNotifications(notifications.splice(index, step))
-
+      const newNotif = [...notifications]
+      delete newNotif[index]
+      setNotifications(newNotif)
     }catch(err){
       console.log("error", err)
     }
@@ -61,16 +70,17 @@ const NotificationPanel = ()=>{
   return(
     <div id="notifications">
       {
-        notifications.map( (notification, i) =>{ 
-          const {informations, images } = notification
+        notifications && notifications.map( (notification, i) =>{ 
+          const {informations, images ,_id:notificationId} = notification
+          const uid = uuidv4()
           return(
-            <div className="single-notification" key={i}> 
+            <div className="single-notification" key={uid}>
               <NotificationInformations informations={informations} />
               <NotificationImages images={images} />
               {
                 context.type 
-                ? <NotificationStoreBtn index={i} removeNotification={removeNotification} />
-                : <NotificationConsumerBtn index={i} removeNotification={removeNotification} />
+                ? <NotificationStoreBtn index={notificationId} removeNotification={removeNotification} />
+                : <NotificationConsumerBtn index={notificationId} removeNotification={removeNotification} />
               }
             </div>
           ) 

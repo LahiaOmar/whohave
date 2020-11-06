@@ -1,11 +1,30 @@
+import { Switch } from '@material-ui/core'
 import React from 'react'
-import {Marker} from 'react-map-gl'
-import { Icon } from '@material-ui/core'
+import { Marker } from 'react-map-gl'
+import constants from '../../constants'
+import RoomIcon from '@material-ui/icons/Room';
+import StoreIcon from '@material-ui/icons/Store';
 
-function MyMarker({isDraggeble, children, longitude, latitude, handleChangeMarker}){
-  console.log("latghfj : ", longitude, latitude)
+function MyMarker({ isDraggeble, lngLat, handleChangeMarker, iconType }) {
+  console.log("lngLat mymarker ", lngLat)
+  const { longitude, latitude } = lngLat
+  const getIcone = () => {
+    switch (iconType) {
+      case constants.MARKER_TYPE.CONSUMER:
+        return <RoomIcon fontSize="large" />
+        break;
+      case constants.MARKER_TYPE.STOREOWNER:
+        return <StoreIcon fontSize="large" />
+        break;
+      case constants.MARKER_TYPE.STORE_POSITON:
+        return <StoreIcon fontSize="large" />
+        break;
+      default:
+        throw Error("error type Marker")
+    }
+  }
 
-  return(
+  return (
     <Marker
       longitude={longitude}
       latitude={latitude}
@@ -13,7 +32,7 @@ function MyMarker({isDraggeble, children, longitude, latitude, handleChangeMarke
       onDragEnd={handleChangeMarker}
     >
       {
-        children
+        getIcone()
       }
     </Marker>
   )
