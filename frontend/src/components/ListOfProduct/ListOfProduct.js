@@ -57,8 +57,8 @@ const ListOfProduct = ({ notifications, dispatch }) => {
   }
 
   return (
-    <div>
-      <TableContainer component={Paper}>
+    <div className="list-products">
+      <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>

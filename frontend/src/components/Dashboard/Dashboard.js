@@ -5,11 +5,11 @@ import LoginContext from '../ContextAuth'
 import ListOfProduct from '../ListOfProduct'
 import ListOfResponse from '../ListOfResponse'
 import UserInformationPanel from '../UserInformationPanel'
-import { useAxios } from '../useHooks'
 import Axios from 'axios'
 import constants from '../../constants'
+import { Route, Link } from 'react-router-dom'
 
-function useGetNotifications() {
+function useNotifications() {
 	const { userData, type } = React.useContext(LoginContext)
 	const [loading, setLoading] = React.useState(true)
 	const [state, dispatch] = React.useReducer((state, action) => {
@@ -96,27 +96,27 @@ const Dashboard = () => {
 
 	const context = React.useContext(LoginContext)
 	const [component, setComponent] = React.useState(LIST_NOTIFICATIONS)
-	const [notifications, dispatch, loading] = useGetNotifications();
+	const [notifications, dispatch, loading] = useNotifications();
 
 	if (loading)
 		return <div>Loading ...</div>
 	return (
-		<Grid item xs={12} >
-			<div className="notification_list">
-				<div className="dashboard_menu">
-					<a href="#" onClick={() => setComponent(LIST_NOTIFICATIONS)}> Notifications </a>
-					<a href="#" onClick={() => setComponent(MY_INFORMATION)}>My Informations </a>
-				</div>
-				<div>
-					{
-						component === LIST_NOTIFICATIONS
-							? context.type
-								? <ListOfProduct notifications={notifications} dispatch={dispatch} />
-								: <ListOfResponse notifications={notifications} dispatch={dispatch} />
-							: <UserInformationPanel />
+		<Grid container className="dashboard-container" xs={12} >
+			<Grid item className="dashboard_menu" xs={2}>
+				<Link to="/dashboard/profile">Profile</Link>
+				<Link to="/dashboard/notifications">Notifications</Link>
+			</Grid>
+			<Grid item xs={10} className="dashboard-notifications">
+				<Route path="/dashboard/notifications">
+					{context.type
+						? <ListOfProduct notifications={notifications} dispatch={dispatch} />
+						: <ListOfResponse notifications={notifications} dispatch={dispatch} />
 					}
-				</div>
-			</div>
+				</Route>
+				<Route path="/dashboard/profile">
+					<UserInformationPanel />
+				</Route>
+			</Grid>
 		</Grid>
 	)
 }
