@@ -28,7 +28,7 @@ function Authentication() {
 				userData: data.information,
 				redirect: {
 					ok: true,
-					to: "/dashboard"
+					to: "/dashboard/notifications"
 				}
 			})
 		}

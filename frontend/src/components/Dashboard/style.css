@@ -1,0 +1,29 @@
+.dashboard-container{
+  height: 100vh;
+}
+
+.dashboard-topbar{
+  height: 60px;
+  display: flex;
+}
+
+.dashboard-menu{
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.menu-btn{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+}
+
+.menu-btn:hover{
+  background-color: rgb(182, 194, 219);
+}
+.dashboard-notifications{
+  height: inherit;
+}

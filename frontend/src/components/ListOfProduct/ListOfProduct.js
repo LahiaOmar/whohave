@@ -8,7 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import TableFooter from '@material-ui/core/TableFooter'
-import { Button } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
 import { v4 as uuidv4 } from 'uuid';
 import { useAxios } from '../useHooks';
 import LoginContext from '../ContextAuth';
@@ -31,7 +31,6 @@ const ListOfProduct = ({ notifications, dispatch }) => {
         productName
       }
     }
-    console.log("loading ", loading)
     setConfig(config)
   }
 
@@ -58,6 +57,9 @@ const ListOfProduct = ({ notifications, dispatch }) => {
 
   return (
     <div className="list-products">
+      <Typography>
+        <h1>List of product</h1>
+      </Typography>
       <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
         <Table aria-label="simple table">
           <TableHead>
