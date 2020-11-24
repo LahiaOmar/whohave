@@ -38,9 +38,6 @@ function UserMenu() {
         open={Boolean(anchorEl)}
         onClose={() => setAnhcorEl()}
       >
-        <MenuItem onClick={handleClose}>
-          <Link to="/dashboard/information"> My information </Link>
-        </MenuItem>
         <MenuItem onClick={handleLogOut}>
           LogOut
         </MenuItem>

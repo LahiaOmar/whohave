@@ -19,7 +19,11 @@ function App() {
   })
   console.log("new state APP user ", context)
   return (
-    <Grid container className="App">
+    <Grid
+      container
+      className="app-container"
+      xs={12}
+    >
       <LoginContext.Provider value={{ ...context, setContext }}>
         <Router>
           {
@@ -27,13 +31,13 @@ function App() {
               ? (<Redirect to={context.redirect.to} />)
               : null
           }
-          <NavBar />
           <Switch>
             <Route path="/" exact>
+              <NavBar />
               <HeadLine />
             </Route>
             {/* dashborad path sould be protected. */}
-            <ProtectedRoute exact path="/dashboard">
+            <ProtectedRoute path="/dashboard/*">
               <Dashboard />
             </ProtectedRoute>
           </Switch>

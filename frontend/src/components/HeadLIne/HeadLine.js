@@ -1,9 +1,9 @@
 import React from 'react'
-import {Grid} from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 
-function HeadLine(){
-	return(
-		<Grid container xs={12}>
+function HeadLine() {
+	return (
+		<Grid container className="headline" xs={12}>
 			<Grid item xs={6}>
 				<p>whohave</p>
 				<p>Store Owner : </p>
