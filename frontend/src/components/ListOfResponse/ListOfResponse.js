@@ -85,7 +85,9 @@ function ListOfResponse({ notifications, dispatch }) {
 
   return (
     <div>
-      <Message />
+      <Typography>
+        <h1>List of Response</h1>
+      </Typography>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>

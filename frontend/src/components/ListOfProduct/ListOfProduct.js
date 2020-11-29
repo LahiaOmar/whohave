@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAxios } from '../useHooks';
 import LoginContext from '../ContextAuth';
 import constants from '../../constants'
+import './style.css'
 
 const ListOfProduct = ({ notifications, dispatch }) => {
   const [response, loading, error, setConfig] = useAxios({})
