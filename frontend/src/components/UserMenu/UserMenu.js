@@ -4,44 +4,18 @@ import { Link } from 'react-router-dom'
 import ContextAuth from '../ContextAuth'
 
 function UserMenu() {
-  const [anchorEl, setAnhcorEl] = React.useState(null)
   const context = React.useContext(ContextAuth)
   const { lastName, firstName } = context.userData
-  const handleClick = (e) => {
-    setAnhcorEl(e.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnhcorEl(null)
-  }
-
-  const handleLogOut = () => {
-    context.setContext({ isLoged: false, redirect: { ok: true, to: "/" } })
-    setAnhcorEl(null)
-  }
   return (
     <div id="user-menu">
-      <Button aria-controls="panel-menu" onClick={handleClick}>
-        <Avatar>
-          {
-            `${lastName[0]}.${firstName[0]}`
-          }
-        </Avatar>
-        <Typography>
-          {`${lastName} ${firstName}`}
-        </Typography>
-      </Button>
-      <Menu
-        id="panel-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={() => setAnhcorEl()}
-      >
-        <MenuItem onClick={handleLogOut}>
-          LogOut
-        </MenuItem>
-      </Menu>
+      <Avatar style={{ width: "60px", height: "60px" }}>
+        {
+          `${lastName[0]}.${firstName[0]}`
+        }
+      </Avatar>
+      <Typography>
+        <h2>{`${lastName} ${firstName}`}</h2>
+      </Typography>
     </div>
   )
 }
