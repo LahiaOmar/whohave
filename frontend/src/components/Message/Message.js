@@ -63,88 +63,82 @@ function Message(props) {
   const getDistanceValue = value => distance = KmToMetre(value)
 
   return (
-    <MyModal
-      btnTitle="send product"
-      MyButton={SendMessage}
-      open={open}
-      handleClose={handleClose}
-      handleOpen={handleOpen}
-    >
-      <form id="msg-product" onSubmit={formik.handleSubmit}>
-        <Grid container spacing={2} justify="center">
-          <Grid item xs={12}>
-            <Typography variant="h5" align="center">
-              Describe the product that you looking for
+
+    <form id="msg-product" onSubmit={formik.handleSubmit}>
+      <Grid container spacing={2} justify="center">
+        <Grid item xs={12}>
+          <Typography variant="h5" align="center">
+            Describe the product that you looking for
             </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              {...formik.getFieldProps('productName')}
-              variant="outlined"
-              label="Product Name"
-              fullWidth
-              error={
-                formik.touched.productName &&
-                formik.errors.productName
-              }
-              helperText={
-                formik.touched.productName &&
-                formik.errors.productName
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <StoresType formik={formik} showAddNewType={false} />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              {...formik.getFieldProps('description')}
-              variant="outlined"
-              label="Description"
-              fullWidth
-              multiline
-              rows={4}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <input
-              ref={imagesInput}
-              accept="image/*"
-              style={{ display: "none" }}
-              multiple
-              id="contained-button-file"
-              type="file"
-            />
-            <label htmlFor="contained-button-file">
-              <Button variant="contained" color="primary" component="span">
-                Upload image
-              </Button>
-            </label>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography id="distance-slider">
-              Distance
-            </Typography>
-            <Slider
-              className="distance-slider"
-              defaultValue="5"
-              getAriaValueText={getDistanceValue}
-              valueLabelDisplay="auto"
-              step={5}
-              marks
-              min={distance}
-              max={50}
-            />
-          </Grid>
-          <Button
-            variant="contained"
-            color="secondary"
-            type="submit">
-            BROADCAST
-          </Button>
         </Grid>
-      </form>
-    </MyModal>
+        <Grid item xs={12}>
+          <TextField
+            {...formik.getFieldProps('productName')}
+            variant="outlined"
+            label="Product Name"
+            fullWidth
+            error={
+              formik.touched.productName &&
+              formik.errors.productName
+            }
+            helperText={
+              formik.touched.productName &&
+              formik.errors.productName
+            }
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <StoresType formik={formik} showAddNewType={false} />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            {...formik.getFieldProps('description')}
+            variant="outlined"
+            label="Description"
+            fullWidth
+            multiline
+            rows={4}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <input
+            ref={imagesInput}
+            accept="image/*"
+            style={{ display: "none" }}
+            multiple
+            id="contained-button-file"
+            type="file"
+          />
+          <label htmlFor="contained-button-file">
+            <Button variant="contained" color="primary" component="span">
+              Upload image
+              </Button>
+          </label>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography id="distance-slider">
+            Distance
+            </Typography>
+          <Slider
+            className="distance-slider"
+            defaultValue="5"
+            getAriaValueText={getDistanceValue}
+            valueLabelDisplay="auto"
+            step={5}
+            marks
+            min={distance}
+            max={50}
+          />
+        </Grid>
+        <Button
+          variant="contained"
+          color="secondary"
+          type="submit">
+          BROADCAST
+          </Button>
+      </Grid>
+    </form>
+
   )
 }
 

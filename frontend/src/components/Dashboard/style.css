@@ -5,8 +5,11 @@
 .dashboard-topbar{
   height: 60px;
   display: flex;
+  justify-content: flex-end;
 }
-
+.dashboard-mid{
+  height: calc(100vh - 55px);
+}
 .dashboard-menu{
   height: inherit;
   display: flex;
@@ -18,7 +21,8 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
+  font-size: 14px;
 }
 
 .menu-btn:hover{
@@ -26,4 +30,6 @@
 }
 .dashboard-notifications{
   height: inherit;
+  background : #F4F6F8;
+  padding: 20px;
 }

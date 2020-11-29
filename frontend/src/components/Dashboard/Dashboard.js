@@ -1,6 +1,13 @@
 import React from 'react'
 import io from 'socket.io-client'
-import { AppBar, Button, Grid, Toolbar } from '@material-ui/core'
+import {
+	AppBar,
+	Button,
+	Divider,
+	Grid,
+	Toolbar,
+	Link as LinkUi,
+} from '@material-ui/core'
 import LoginContext from '../ContextAuth'
 import ListOfProduct from '../ListOfProduct'
 import ListOfResponse from '../ListOfResponse'
@@ -12,8 +19,11 @@ import './style.css'
 import DehazeIcon from '@material-ui/icons/Dehaze';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
+
+import WhoUser from '../WhoUser'
+import UserMenuList from '../UserMenuList'
+import StoreMenuList from '../StoreMenuList'
+import Message from '../Message'
 
 function useNotifications() {
 	const { userData, type } = React.useContext(LoginContext)
@@ -100,50 +110,55 @@ const Dashboard = () => {
 	const context = React.useContext(LoginContext)
 	const [notifications, dispatch, loading] = useNotifications();
 
+	React.useEffect(() => {
+		document.title = "Dashboard"
+	}, [])
+
 	if (loading)
 		return <div>Loading ...</div>
 	return (
 		<Grid className="dashboard-container" item xs={12} spacing={4}>
-			<Grid className="dashboard-topbar" xs={12} item>
+			<Grid xs={12} item>
 				<AppBar position="relative">
-					<Toolbar disableGutters>
+					<Toolbar className="dashboard-topbar" disableGutters>
 						<Button>
 							<DehazeIcon />
 						</Button>
 						<Button>
-							<ExitToAppIcon />
+							<NotificationsIcon />
 						</Button>
 						<Button>
-							<NotificationsIcon />
+							<ExitToAppIcon />
 						</Button>
 					</Toolbar>
 				</AppBar>
 			</Grid>
-			<Grid xs={12} container item>
+			<Grid className="dashboard-mid" xs={12} container item>
 				<Grid item className="dashboard-menu" xs={2}>
-					<Link className="menu-btn" to="/dashboard/notifications">
-						<ListAltIcon />
-						Notifications
-					</Link>
-					<Link className="menu-btn" to="/dashboard/profile">
-						<AccountBoxIcon />
-							Profile
-					</Link>
+					<WhoUser />
+					<Divider />
+					{
+						context.type
+							? <StoreMenuList />
+							: <UserMenuList />
+					}
 				</Grid>
 				<Grid item xs={10} className="dashboard-notifications">
-
-					<Route path="/dashboard/notifications">
+					<Route exact path="/dashboard/notifications">
 						{context.type
 							? <ListOfProduct notifications={notifications} dispatch={dispatch} />
 							: <ListOfResponse notifications={notifications} dispatch={dispatch} />
 						}
 					</Route>
-					<Route path="/dashboard/profile">
+					<Route exact path="/dashboard/profile">
 						<UserInformationPanel />
+					</Route>
+					<Route exact path="/dashboard/product">
+						<Message />
 					</Route>
 				</Grid>
 			</Grid>
-		</Grid>
+		</Grid >
 	)
 }
 
