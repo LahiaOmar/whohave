@@ -1,0 +1,17 @@
+.table-actions{
+  height: 80px;
+  display: flex;
+  align-items: center;
+  /* justify-content: flex-end; */
+  /* background: white; */
+  padding : 0px 0px 0px 20px;
+}
+
+@keyframes bg-animation {
+  0%{
+    background-color: white;
+  }
+  100%{
+    background-color: #f443367d;
+  }
+}
