@@ -121,14 +121,16 @@ const Dashboard = () => {
 			<Grid xs={12} item>
 				<AppBar position="relative">
 					<Toolbar className="dashboard-topbar" disableGutters>
-						<Button>
+						<Button color="inherit">
 							<DehazeIcon />
 						</Button>
-						<Button>
+						<Button color="inherit">
 							<NotificationsIcon />
+
 						</Button>
-						<Button>
+						<Button color="inherit">
 							<ExitToAppIcon />
+
 						</Button>
 					</Toolbar>
 				</AppBar>
