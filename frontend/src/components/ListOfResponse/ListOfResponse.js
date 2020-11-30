@@ -18,11 +18,14 @@ import constants from '../../constants'
 import Axios from 'axios';
 import MyModal from '../Mymodal';
 import Map from '../Map'
-import { Button, Collapse, Typography } from '@material-ui/core';
+import { Button, Collapse, Typography, Tooltip, Divider } from '@material-ui/core';
+import RoomIcon from '@material-ui/icons/Room';
+import DeleteIcon from '@material-ui/icons/Delete';
+import './style.css'
 
 function ListOfResponse({ notifications, dispatch }) {
   const [modalOpen, setModalOpen] = React.useState(false)
-  const [collapsOpen, setCpllapsOpen] = React.useState(false)
+  const [selected, setSelected] = React.useState(false)
   const [mapPositions, mapDispatch] = React.useReducer(
     (state, action) => {
       switch (action.type) {
@@ -41,6 +44,11 @@ function ListOfResponse({ notifications, dispatch }) {
       }
     }, [])
   const context = React.useContext(LoginContext)
+
+  React.useEffect(() => {
+    const findSelected = notifications.find(notification => notification.isSelected === true)
+    setSelected(findSelected ? true : false)
+  }, [notifications])
 
   const removeProduct = async (itemIds) => {
     let config = {
@@ -69,7 +77,6 @@ function ListOfResponse({ notifications, dispatch }) {
   }
 
   const deleteItems = async () => {
-    // find checkbox active
     const notifCheckedIds = notifications.reduce((prev, curr) => {
       if (curr.isSelected) {
         prev.push(curr._id)
@@ -89,6 +96,29 @@ function ListOfResponse({ notifications, dispatch }) {
         <h1>List of Response</h1>
       </Typography>
       <TableContainer component={Paper}>
+        <div className="table-actions" style={
+          selected ? {
+            animation: 'bg-animation 0.3s ease-in-out forwards'
+          } : {}
+        }>
+          {
+            selected ?
+              <>
+                <Tooltip title="Delete">
+                  <IconButton aria-label="delete" onClick={() => deleteItems()}>
+                    <DeleteIcon size="large" color="action" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Map">
+                  <IconButton >
+                    <RoomIcon size="large" />
+                  </IconButton>
+                </Tooltip>
+              </>
+              : null
+          }
+        </div>
+        <Divider />
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -100,6 +130,7 @@ function ListOfResponse({ notifications, dispatch }) {
                     isSelected: e.target.checked
                   })}
                 />
+                SELECT ALL
               </TableCell>
               <TableCell align="left">ProductName</TableCell>
               <TableCell align="left">Store Name</TableCell>
@@ -139,7 +170,7 @@ function ListOfResponse({ notifications, dispatch }) {
           </TableBody>
         </Table>
       </TableContainer>
-      <div id="table-footer-action">
+      {/* <div id="table-footer-action">
         <Button variant="contained" color="secondary" onClick={() => deleteItems()}>Delete</Button>
         <MyModal
           btnTitle="show on the map"
@@ -158,7 +189,7 @@ function ListOfResponse({ notifications, dispatch }) {
           />
 
         </MyModal>
-      </div>
+      </div> */}
     </div>
   )
 }

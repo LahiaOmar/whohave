@@ -8,16 +8,24 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import TableFooter from '@material-ui/core/TableFooter'
-import { Button, Typography } from '@material-ui/core'
+import { Button, Divider, IconButton, Tooltip, Typography } from '@material-ui/core'
 import { v4 as uuidv4 } from 'uuid';
 import { useAxios } from '../useHooks';
 import LoginContext from '../ContextAuth';
 import constants from '../../constants'
 import './style.css'
+import { Grid } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const ListOfProduct = ({ notifications, dispatch }) => {
   const [response, loading, error, setConfig] = useAxios({})
   const context = React.useContext(LoginContext)
+  const [selected, setSelected] = React.useState(false)
+
+  React.useEffect(() => {
+    const findSelected = notifications.find(notification => notification.isSelected === true)
+    setSelected(findSelected ? true : false)
+  }, [notifications])
 
   const sendResponse = (consumerId, productId, productName) => {
     const from = context.userData._id
@@ -58,10 +66,30 @@ const ListOfProduct = ({ notifications, dispatch }) => {
 
   return (
     <div className="list-products">
-      <Typography>
-        <h1>List of product</h1>
-      </Typography>
+      <Grid className="list-header" container>
+        <Typography>
+          <h1>List of product</h1>
+        </Typography>
+      </Grid>
       <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
+        <div className="table-actions" style={
+          selected ? {
+            animation: 'bg-animation 0.3s ease-in-out forwards'
+          } : {}
+        }>
+          {
+            selected ?
+              <>
+                <Tooltip title="delete">
+                  <IconButton aria-label="delete" onClick={() => deleteSelectedProduct()}>
+                    <DeleteIcon size="large" color="action" />
+                  </IconButton>
+                </Tooltip>
+              </>
+              : null
+          }
+        </div>
+        <Divider />
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -107,9 +135,6 @@ const ListOfProduct = ({ notifications, dispatch }) => {
               )
             })}
           </TableBody>
-          <TableFooter>
-            <button onClick={() => deleteSelectedProduct()}> delete </button>
-          </TableFooter>
         </Table>
       </TableContainer>
     </div>

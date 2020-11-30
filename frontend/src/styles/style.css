@@ -99,10 +99,17 @@ body{
 }
 
 /* users */
-#who-user{
-	align-items: center;
-	justify-content: flex-end;
+#user-menu{
 	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	padding: 15px;
+}
+#who-user{
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 /* send product */
