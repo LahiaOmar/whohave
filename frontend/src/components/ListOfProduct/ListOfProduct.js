@@ -66,11 +66,7 @@ const ListOfProduct = ({ notifications, dispatch }) => {
 
   return (
     <div className="list-products">
-      <Grid className="list-header" container>
-        <Typography>
-          <h1>List of product</h1>
-        </Typography>
-      </Grid>
+
       <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
         <div className="table-actions" style={
           selected ? {
@@ -86,7 +82,9 @@ const ListOfProduct = ({ notifications, dispatch }) => {
                   </IconButton>
                 </Tooltip>
               </>
-              : null
+              : <Typography>
+                <h3>List of product</h3>
+              </Typography>
           }
         </div>
         <Divider />

@@ -92,9 +92,6 @@ function ListOfResponse({ notifications, dispatch }) {
 
   return (
     <div>
-      <Typography>
-        <h1>List of Response</h1>
-      </Typography>
       <TableContainer component={Paper}>
         <div className="table-actions" style={
           selected ? {
@@ -115,7 +112,9 @@ function ListOfResponse({ notifications, dispatch }) {
                   </IconButton>
                 </Tooltip>
               </>
-              : null
+              : <Typography>
+                <h3>List of Response</h3>
+              </Typography>
           }
         </div>
         <Divider />
