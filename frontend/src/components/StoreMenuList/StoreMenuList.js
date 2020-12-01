@@ -2,19 +2,27 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
 
 const UserMenuList = () => {
   return (
     <div className="menu-list">
-      <Link className="menu-btn" to="/dashboard/notifications">
-        <ListAltIcon />
-        Notifications
-      </Link>
-      <Link className="menu-btn" to="/dashboard/profile">
-        <AccountBoxIcon />
-        Profile
-      </Link>
+      <List component="nav">
+        <ListItem button component={Link} to="/dashboard/notifications">
+          <ListItemIcon>
+            <ListAltIcon />
+          </ListItemIcon>
+          <ListItemText primary="Notifications" />
+        </ListItem>
+
+        <ListItem button component={Link} to="/dashboard/profile">
+          <ListItemIcon>
+            <AccountBoxIcon />
+          </ListItemIcon>
+          <ListItemText primary="Profile" />
+        </ListItem>
+      </List>
     </div>
   )
 }
