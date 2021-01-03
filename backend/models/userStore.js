@@ -23,8 +23,11 @@ userStoreSchema.methods.getFieldToSend = function () {
     firstName: this.firstName,
     lastName: this.lastName,
     first: this.first,
+    email: this.email,
+    address: this.address,
+    storeTypes: this.storeTypes,
+    storeName: this.storeName,
     coordinates: this.location.coordinates,
-    notifications: this.notifications
   }
 }
 

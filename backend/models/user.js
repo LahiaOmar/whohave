@@ -18,9 +18,9 @@ userSchema.methods.getFieldToSend = function () {
     _id: this._id,
     firstName: this.firstName,
     lastName: this.lastName,
+    email: this.email,
     first: this.first,
     coordinates: this.location.coordinates,
-    notifications: this.notifications
   }
 }
 
