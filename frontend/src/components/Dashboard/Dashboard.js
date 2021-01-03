@@ -12,7 +12,8 @@ import {
 import LoginContext from '../ContextAuth'
 import ListOfProduct from '../ListOfProduct'
 import ListOfResponse from '../ListOfResponse'
-import UserInformationPanel from '../UserInformationPanel'
+import UserInformations from '../UserInformations'
+import StoreInformations from '../StoreInformations'
 import Axios from 'axios'
 import constants from '../../constants'
 import { Route, Link } from 'react-router-dom'
@@ -32,6 +33,8 @@ const Dashboard = () => {
 	const context = React.useContext(LoginContext)
 	const [notifications, dispatch, loading] = useNotifications();
 
+
+	console.log("context dash ", context)
 	React.useEffect(() => {
 		document.title = "Dashboard"
 	}, [])
@@ -73,7 +76,11 @@ const Dashboard = () => {
 						}
 					</Route>
 					<Route exact path="/dashboard/profile">
-						<UserInformationPanel />
+						{
+							context.type
+								? <StoreInformations />
+								: <UserInformations />
+						}
 					</Route>
 					<Route exact path="/dashboard/product">
 						<Message />
