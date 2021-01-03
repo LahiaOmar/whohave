@@ -39,15 +39,18 @@ exports.userLogin = async function (req, res) {
   try {
     let curUser = await model.findOne({ email: req.body.email })
     if (!curUser) {
+      console.log("no user found")
       const errObject = { status: 401, message: "userNotFound" }
       throw new Error(JSON.stringify(errObject))
     }
     let match = await bcrypt.compare(req.body.password, curUser.password)
     if (!match) {
+      console.log("match")
       const errObject = { status: 401, message: "userNotFound" }
       throw new Error(JSON.stringify(errObject))
     }
     const token = jwt.sign({ userId: curUser._id }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
+    res.cookie('token', token, { httpOnly: true })
     const dataToSend = curUser.getFieldToSend()
     res.status(200).json({
       token: token,
@@ -65,6 +68,35 @@ exports.userLogin = async function (req, res) {
   }
 }
 
+exports.setPassword = async (req, res) => {
+  const { oldPassword, newPassword, userType } = req.body
+  const { token } = req.cookies
+  console.log("token ", token, oldPassword, newPassword, userType)
+  try {
+    const decodedToken = jwt.verify(token, "RANDOM_SECRECT_KEY")
+    console.log("decodedToken", decodedToken)
+    const model = userType ? userStore : userWho
+    const user = await model.findById({ _id: decodedToken.userId })
+    if (user) {
+      const match = await bcrypt.compare(oldPassword, user.password)
+      if (!match) {
+        res.status(401).json("wrong password")
+      }
+      else {
+        const hashPassword = await bcrypt.hash(newPassword, 10)
+        await model.findByIdAndUpdate({ _id: decodedToken.userId }, { password: hashPassword })
+        res.status(201).json("password updated")
+      }
+    }
+    else {
+      res.status(401).json("wrong credentials / user not found")
+    }
+  }
+  catch (e) {
+    res.status(401).json("wrong credentials")
+  }
+}
+
 exports.userSetInformation = async function (req, res) {
   console.log("update user req.body ", req.body)
   const { forUpdate, userId, type } = req.body
@@ -79,5 +111,22 @@ exports.userSetInformation = async function (req, res) {
   }
   catch (e) {
     res.status(500).json({ msg: e })
+  }
+}
+
+exports.verify = async (req, res) => {
+  const { userType, userId } = res.locals
+  try {
+    const model = userType ? userStore : userWho
+    const user = await model.findById({ _id: userId })
+    if (user) {
+      res.status(201).json({ userData: user.getFieldToSend(), valideToken: true })
+    }
+    else {
+      res.status(401).json({ valideToken: false })
+    }
+  }
+  catch (e) {
+    res.status(401).json({ userData: null, valideToken: false })
   }
 }
