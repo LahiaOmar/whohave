@@ -35,7 +35,7 @@ function reducer(state, action) {
 	return newState
 }
 
-function Map({ listOfPosition, selfPositionOnChange }) {
+function Map({ listOfPosition, selfPositionOnChange, userCoordinates }) {
 	const { type } = React.useContext(LoginContext)
 	const key = process.env.REACT_APP_MAP_KEY
 	const [state, dispatch] = React.useReducer(reducer, {
@@ -44,6 +44,12 @@ function Map({ listOfPosition, selfPositionOnChange }) {
 		userMarker: null,
 		userLngLat: null
 	})
+
+	React.useEffect(() => {
+		if (userCoordinates) {
+			setUserLngLat(userCoordinates)
+		}
+	}, [])
 
 	React.useEffect(() => {
 		console.log("update list of positions.")
@@ -83,7 +89,10 @@ function Map({ listOfPosition, selfPositionOnChange }) {
 				typeUser = constants.MARKER_TYPE.STOREOWNER
 			}
 			const userMarker = <MyMarker
-				handleChangeMarker={({ lngLat }) => setUserLngLat(lngLat)}
+				handleChangeMarker={({ lngLat }) => {
+					setUserLngLat(lngLat)
+					selfPositionOnChange(lngLat)
+				}}
 				lngLat={{ longitude, latitude }}
 				isDraggeble={true}
 				iconType={typeUser} />
