@@ -7,6 +7,7 @@ import StoreUser from '../StoreUser'
 import WhoUser from '../WhoUser'
 import { Grid } from '@material-ui/core'
 import { useAxios } from '../useHooks'
+import { useHistory } from 'react-router-dom'
 
 function Authentication() {
 	const context = React.useContext(LoginContext)
@@ -18,22 +19,24 @@ function Authentication() {
 
 	const clModelsEvent = (target) => setModalState({ ...modalState, [target.who]: target.bool })
 	const closeModal = () => setModalState({ signUpOpen: false, loginOpen: false })
-
+	const history = useHistory()
 	React.useEffect(() => {
 		if (data && !error) {
 			closeModal()
+			localStorage.userType = data.type
 			context.setContext({
 				isLoged: true,
 				type: data.type,
 				userData: data.information,
-				redirect: {
-					ok: true,
-					to: "/dashboard/notifications"
-				}
+				redirect: 'dashboard/notifications'
 			})
 		}
 	}, [data])
-
+	React.useEffect(() => {
+		if (context.isLoged) {
+			history.push(context.redirect)
+		}
+	}, [context.isLoged])
 	const clSubmit = (config) => {
 		setConfig(config)
 	}
