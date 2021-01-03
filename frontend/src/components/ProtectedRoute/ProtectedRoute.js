@@ -1,22 +1,23 @@
 import React from 'react'
-import {Route, Redirect} from 'react-router-dom'
+import { Route, Redirect, useHistory } from 'react-router-dom'
 import LoginContext from '../ContextAuth'
 
-function ProtectedRoute({children , ...rest}){
+function ProtectedRoute({ children, to, ...rest }) {
   const context = React.useContext(LoginContext)
+
   return (
-    <Route 
+    <Route
       {...rest}
-      render={({location})=>
+      render={({ location }) =>
         context.isLoged ? (
           children
         ) : (
-          <Redirect 
-            to={{
-              pathname: '/'
-            }}
-          />
-        )    
+            <Redirect
+              to={{
+                pathname: '/'
+              }}
+            />
+          )
       }
     />
   )
