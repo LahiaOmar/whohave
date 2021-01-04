@@ -3,16 +3,19 @@ import React from 'react'
 import { Button, Modal, Backdrop, Grid } from '@material-ui/core'
 import CloseSharpIcon from '@material-ui/icons/CloseSharp';
 
-function MyModal({ btnTitle, children, MyButton, open, handleClose, handleOpen }) {
+function MyModal({ btnTitle, children, MyButton, open, handleClose, handleOpen, useBtn }) {
 
 	return (
 		<div className="modal-btn">
 			{
-				MyButton
-					? <MyButton onClick={handleOpen} />
-					: <Button variant="outlined" onClick={handleOpen}>
-						{btnTitle}
-					</Button>
+
+				useBtn ?
+					MyButton
+						? <MyButton onClick={handleOpen} />
+						: <Button variant="outlined" onClick={handleOpen}>
+							{btnTitle}
+						</Button>
+					: null
 			}
 
 			<Modal
