@@ -57,6 +57,7 @@ function Authentication() {
 				: (
 					<div className="auth-btn">
 						<MyModal
+							useBtn
 							btnTitle="Sign Up"
 							open={modalState.signUpOpen}
 							handleClose={() => clModelsEvent({ bool: false, who: 'signUpOpen' })}
@@ -65,6 +66,7 @@ function Authentication() {
 							<SignUp error={error} loading={loading} clSubmit={clSubmit} />
 						</MyModal>
 						<MyModal
+							useBtn
 							btnTitle="Log In"
 							open={modalState.loginOpen}
 							handleClose={() => clModelsEvent({ bool: false, who: 'loginOpen' })}
