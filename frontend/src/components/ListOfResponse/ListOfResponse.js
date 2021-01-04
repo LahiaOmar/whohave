@@ -46,6 +46,7 @@ function ListOfResponse({ notifications, dispatch }) {
   const context = React.useContext(LoginContext)
 
   React.useEffect(() => {
+    console.log("useEffect ")
     const findSelected = notifications.find(notification => notification.isSelected === true)
     setSelected(findSelected ? true : false)
   }, [notifications])
@@ -107,7 +108,10 @@ function ListOfResponse({ notifications, dispatch }) {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Map">
-                  <IconButton >
+                  <IconButton aria-label="map" onClick={() => {
+                    setModalOpen(true)
+                    mapDispatch({ type: 'ALL_SELECTED' })
+                  }}>
                     <RoomIcon size="large" />
                   </IconButton>
                 </Tooltip>
@@ -169,10 +173,9 @@ function ListOfResponse({ notifications, dispatch }) {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <div id="table-footer-action">
-        <Button variant="contained" color="secondary" onClick={() => deleteItems()}>Delete</Button>
+      <div id="table-footer-action">
         <MyModal
-          btnTitle="show on the map"
+          useBtn={false}
           open={modalOpen}
           handleClose={() => {
             setModalOpen(false)
@@ -186,9 +189,8 @@ function ListOfResponse({ notifications, dispatch }) {
             listOfPosition={mapPositions}
             selfPositionOnChange={(lngLat) => console.log("lngLat", lngLat)}
           />
-
         </MyModal>
-      </div> */}
+      </div>
     </div>
   )
 }
