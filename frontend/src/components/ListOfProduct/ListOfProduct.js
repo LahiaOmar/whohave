@@ -16,6 +16,8 @@ import constants from '../../constants'
 import './style.css'
 import { Grid } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 
 const ListOfProduct = ({ notifications, dispatch }) => {
   const [response, loading, error, setConfig] = useAxios({})
@@ -26,6 +28,12 @@ const ListOfProduct = ({ notifications, dispatch }) => {
     const findSelected = notifications.find(notification => notification.isSelected === true)
     setSelected(findSelected ? true : false)
   }, [notifications])
+
+  React.useEffect(() => {
+    if (error) {
+      console.log("there is a error")
+    }
+  }, [])
 
   const sendResponse = (consumerId, productId, productName) => {
     const from = context.userData._id
@@ -38,6 +46,26 @@ const ListOfProduct = ({ notifications, dispatch }) => {
         to: consumerId,
         productId,
         productName
+      }
+    }
+    setConfig(config)
+  }
+  const removeProduct = async (itemIds) => {
+    let config = {
+      method: 'POST',
+      url: process.env.REACT_APP_UPDATE_USER,
+      data: {
+        type: context.type,
+        userId: context.userData._id,
+        forUpdate: {
+          $pull: {
+            notifications: {
+              _id: {
+                $in: itemIds
+              }
+            }
+          }
+        }
       }
     }
     setConfig(config)
@@ -56,12 +84,21 @@ const ListOfProduct = ({ notifications, dispatch }) => {
     })
   }
 
-  const responseUserHandler = (consumerId, productId, productName) => {
+  const positiveResponse = (consumerId, productId, productName) => {
     sendResponse(consumerId, productId, productName)
     dispatch({
       type: constants.NOTIFICATIONS_REDUCER.DELETE,
       idsArr: [productId]
     })
+    removeProduct([productId])
+  }
+
+  const negativeRespone = (productId) => {
+    dispatch({
+      type: constants.NOTIFICATIONS_REDUCER.DELETE,
+      idsArr: [productId]
+    })
+    removeProduct([productId])
   }
 
   return (
@@ -125,9 +162,16 @@ const ListOfProduct = ({ notifications, dispatch }) => {
                   <TableCell align="left">{description}</TableCell>
                   <TableCell align="left">Images ... </TableCell>
                   <TableCell align="left">
-                    <Button variant="contained" color="primary" onClick={() => responseUserHandler(from, _id, productName)}>
-                      send response
-                  </Button>
+                    <ThumbUpIcon
+                      fontSize="medium"
+                      style={{ padding: '5px', cursor: 'pointer' }}
+                      color="primary"
+                      onClick={() => positiveResponse(from, _id, productName)} />
+                    <ThumbDownIcon
+                      fontSize="medium"
+                      style={{ padding: '5px', cursor: 'pointer' }}
+                      color="action"
+                      onClick={() => negativeRespone(_id)} />
                   </TableCell>
                 </TableRow>
               )
