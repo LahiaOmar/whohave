@@ -98,13 +98,38 @@ const StoreInformations = () => {
     }
   })
 
+  React.useEffect(() => {
+    if (error) {
+      console.log("error", error)
+    }
+  }, [error])
+
   const addNewType = () => {
     const newType = refNewType.current.value
     formik.setFieldValue('storeTypes', formik.values.storeTypes.concat(newType))
   }
-  const deleteType = (type) => {
-    formik.setFieldValue('storeTypes', formik.values.storeTypes.filter(cur => cur !== type))
+
+  const deleteType = (typeName) => {
+    console.log("typeName", typeName)
+    const config = {
+      url: process.env.REACT_APP_UPDATE_USER,
+      data: {
+        type: type,
+        userId: userData._id,
+        forUpdate: {
+          $pull: {
+            storeTypes: {
+              $in: [typeName]
+            }
+          }
+        }
+      },
+      method: 'POST'
+    }
+    setConfig(config)
+    formik.setFieldValue('storeTypes', formik.values.storeTypes.filter(cur => cur !== typeName))
   }
+
   const selfPositionOnChange = (lngLat) => {
     formik.setFieldValue('location', lngLat)
   }
