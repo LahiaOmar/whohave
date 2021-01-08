@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const userStore = require('../models/userStore')
 const userWho = require("../models/user")
 const jwt = require("jsonwebtoken")
+const httpStatus = require("http-status")
 
 exports.storeSignUp = (req, res) => {
   const { password, ...restOfFiled } = req.body
@@ -13,7 +14,7 @@ exports.storeSignUp = (req, res) => {
         password: hash
       })
       currentUserStore.save()
-        .then(() => res.status(201).json({ message: "object Created", type: true, information: currentUserStore.getFieldToSend() }))
+        .then(() => res.status(httpStatus.CREATED).json({ message: "object Created", type: true, information: currentUserStore.getFieldToSend() }))
         .catch((err) => res.status(400).json({ err }))
     })
     .catch(error => res.status(500).json({ error }))
@@ -68,10 +69,14 @@ exports.userLogin = async function (req, res) {
   }
 }
 
+exports.userLogout = (req, res) => {
+  res.cookie('token', null)
+  res.status(httpStatus.OK).json("token removed")
+}
+
 exports.setPassword = async (req, res) => {
   const { oldPassword, newPassword, userType } = req.body
   const { token } = req.cookies
-  console.log("token ", token, oldPassword, newPassword, userType)
   try {
     const decodedToken = jwt.verify(token, "RANDOM_SECRECT_KEY")
     console.log("decodedToken", decodedToken)
