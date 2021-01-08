@@ -1,5 +1,5 @@
 .dashboard-container{
-  height: 100vh;
+  height: calc(100vh);
 }
 
 .dashboard-topbar{
@@ -9,7 +9,8 @@
 }
 
 .dashboard-mid{
-  height: calc(100vh - 55px);
+  height: calc(100vh - 64px);
+  overflow: hidden;
 }
 .dashboard-menu{
   height: inherit;
@@ -33,4 +34,5 @@
   height: inherit;
   background : #F4F6F8;
   padding: 20px;
-}
+  overflow: auto;
+} 

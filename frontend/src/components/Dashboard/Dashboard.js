@@ -1,5 +1,4 @@
 import React from 'react'
-import io from 'socket.io-client'
 import {
 	AppBar,
 	Button,
@@ -14,8 +13,6 @@ import ListOfProduct from '../ListOfProduct'
 import ListOfResponse from '../ListOfResponse'
 import UserInformations from '../UserInformations'
 import StoreInformations from '../StoreInformations'
-import Axios from 'axios'
-import constants from '../../constants'
 import { Route, Link } from 'react-router-dom'
 import './style.css'
 import DehazeIcon from '@material-ui/icons/Dehaze';
@@ -28,13 +25,11 @@ import StoreMenuList from '../StoreMenuList'
 import Message from '../Message'
 
 import useNotifications from '../useHooks/UseNotifications'
+import Axios from 'axios'
 
 const Dashboard = () => {
 	const context = React.useContext(LoginContext)
 	const [notifications, dispatch, loading] = useNotifications();
-
-
-	console.log("context dash ", context)
 	React.useEffect(() => {
 		document.title = "Dashboard"
 	}, [])
@@ -46,14 +41,21 @@ const Dashboard = () => {
 			<Grid xs={12} item>
 				<AppBar position="relative">
 					<Toolbar className="dashboard-topbar" disableGutters>
-						<Button color="inherit">
+						{/* <Button color="inherit">
 							<DehazeIcon />
 						</Button>
 						<Badge badgeContent={10} color="secondary">
 							<NotificationsIcon />
-						</Badge>
+						</Badge> */}
 						<Button color="inherit">
-							<ExitToAppIcon />
+							<ExitToAppIcon onClick={async () => {
+								const config = {
+									url: '/api/user/auth/logout',
+									method: 'POST'
+								}
+								const response = await Axios(config)
+								context.setContext({})
+							}} />
 						</Button>
 					</Toolbar>
 				</AppBar>
