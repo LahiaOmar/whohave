@@ -7,6 +7,7 @@ import {
 	Toolbar,
 	Link as LinkUi,
 	Badge,
+	Tooltip,
 } from '@material-ui/core'
 import LoginContext from '../ContextAuth'
 import ListOfProduct from '../ListOfProduct'
@@ -47,16 +48,18 @@ const Dashboard = () => {
 						<Badge badgeContent={10} color="secondary">
 							<NotificationsIcon />
 						</Badge> */}
-						<Button color="inherit">
-							<ExitToAppIcon onClick={async () => {
-								const config = {
-									url: '/api/user/auth/logout',
-									method: 'POST'
-								}
-								const response = await Axios(config)
-								context.setContext({})
-							}} />
-						</Button>
+						<Tooltip title="LogOut">
+							<Button color="inherit">
+								<ExitToAppIcon onClick={async () => {
+									const config = {
+										url: '/api/user/auth/logout',
+										method: 'POST'
+									}
+									const response = await Axios(config)
+									context.setContext({})
+								}} />
+							</Button>
+						</Tooltip>
 					</Toolbar>
 				</AppBar>
 			</Grid>
