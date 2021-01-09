@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { Button, Modal, Backdrop, Grid } from '@material-ui/core'
+import { Button, Modal, Backdrop, Grid, IconButton, Tooltip } from '@material-ui/core'
 import CloseSharpIcon from '@material-ui/icons/CloseSharp';
+import './style.css'
 
 function MyModal({ btnTitle, children, MyButton, open, handleClose, handleOpen, useBtn }) {
 
@@ -30,9 +31,11 @@ function MyModal({ btnTitle, children, MyButton, open, handleClose, handleOpen, 
 					timeout: 500,
 				}}
 			>
-				<div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'white' }}>
-					<div>
-						<CloseSharpIcon style={{ float: 'right', cursor: 'pointer' }} onClick={handleClose} />
+				<div className="modal-content-container">
+					<div className="modal-close-btn">
+						<Tooltip title="Close" arrow>
+							<CloseSharpIcon onClick={handleClose} />
+						</Tooltip>
 					</div>
 					<div id="mappp">
 						{children}

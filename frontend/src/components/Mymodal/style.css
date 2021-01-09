@@ -1,0 +1,23 @@
+.modal-close-btn{
+  position: absolute;
+  z-index : 1000;
+  border: 3px solid black;
+  border-radius: 50%;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.modal-content-container{
+  position : relative;
+  display: flex;
+  flex-direction: column;
+  background-color : white;
+}
+
+.modal-btn{
+	margin-left : 10px;
+}
