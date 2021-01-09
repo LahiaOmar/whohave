@@ -9,8 +9,8 @@ export const MAP_REDUCER_CONST = {
 
 export const MAP_INIT_CONST = {
   VIEWPROT: {
-    width: '1000px',
-    height: '500px',
+    width: '80vw',
+    height: '80vh',
     latitude: 31.669746,
     longitude: -7.973328,
     zoom: 8
