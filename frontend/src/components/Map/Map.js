@@ -6,6 +6,7 @@ import MyModal from '../Mymodal'
 import constants from '../../constants'
 import LoginContext from '../ContextAuth'
 import { Tooltip } from '@material-ui/core'
+import { WebMercatorViewport } from 'react-map-gl'
 
 function reducer(state, action) {
 	let newState = { ...state }
@@ -45,6 +46,33 @@ function Map({ listOfPosition, selfPositionOnChange, userCoordinates }) {
 		userMarker: null,
 		userLngLat: null
 	})
+
+	React.useEffect(() => {
+		let newViewPort = {}
+		const positions = listOfPosition.map(position => [position.longitude, position.latitude])
+		if (positions.length === 1) {
+			// the centre of the map is the singel positions we have in the array.
+			newViewPort = {
+				...constants.MAP_INIT_CONST.VIEWPROT,
+				longitude: positions[0][0],
+				latitude: positions[0][1]
+			}
+			dispatch({
+				type: constants.MAP_REDUCER_CONST.SET_VIWEPORT,
+				data: newViewPort
+			})
+		}
+		else {
+			newViewPort = new WebMercatorViewport({ width: 500, height: 500 })
+				.fitBounds(positions, {
+					padding: 20, offset: [0, 100]
+				})
+			dispatch({
+				type: constants.MAP_REDUCER_CONST.SET_VIWEPORT,
+				data: { ...newViewPort, width: state.viewport.width, height: state.viewport.height }
+			})
+		}
+	}, [])
 
 	React.useEffect(() => {
 		if (userCoordinates) {
