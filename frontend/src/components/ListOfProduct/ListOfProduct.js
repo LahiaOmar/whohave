@@ -8,7 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import TableFooter from '@material-ui/core/TableFooter'
-import { Button, Divider, IconButton, Tooltip, Typography } from '@material-ui/core'
+import { Button, Divider, IconButton, Tooltip, Typography, TablePagination } from '@material-ui/core'
 import { v4 as uuidv4 } from 'uuid';
 import { useAxios } from '../useHooks';
 import LoginContext from '../ContextAuth';
@@ -23,6 +23,10 @@ const ListOfProduct = ({ notifications, dispatch }) => {
   const [response, loading, error, setConfig] = useAxios({})
   const context = React.useContext(LoginContext)
   const [selected, setSelected] = React.useState(false)
+
+  const [tableData, setTableData] = React.useState([])
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(2)
 
   React.useEffect(() => {
     const findSelected = notifications.find(notification => notification.isSelected === true)
@@ -102,84 +106,106 @@ const ListOfProduct = ({ notifications, dispatch }) => {
   }
 
   return (
-    <div className="list-products">
+    <Paper>
 
-      <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
-        <div className="table-actions" style={
-          selected ? {
-            animation: 'bg-animation 0.3s ease-in-out forwards'
-          } : {}
-        }>
-          {
-            selected ?
-              <>
-                <Tooltip title="delete">
-                  <IconButton aria-label="delete" onClick={() => deleteSelectedProduct()}>
-                    <DeleteIcon size="large" color="action" />
-                  </IconButton>
-                </Tooltip>
-              </>
-              : <Typography>
-                <h3>List of product</h3>
-              </Typography>
-          }
-        </div>
-        <Divider />
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">
-                <Checkbox
-                  inputProps={{ 'aria-label': 'uncontrolled-checkbox' }}
-                  onChange={(e) => dispatch({
-                    type: constants.NOTIFICATIONS_REDUCER.CHECK_ALL,
-                    isSelected: e.target.checked
-                  })}
-                />
+
+      <div className="list-products">
+
+        <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
+          <div className="table-actions" style={
+            selected ? {
+              animation: 'bg-animation 0.3s ease-in-out forwards'
+            } : {}
+          }>
+            {
+              selected ?
+                <>
+                  <Tooltip title="delete">
+                    <IconButton aria-label="delete" onClick={() => deleteSelectedProduct()}>
+                      <DeleteIcon size="large" color="action" />
+                    </IconButton>
+                  </Tooltip>
+                </>
+                : <Typography>
+                  <h3>List of product</h3>
+                </Typography>
+            }
+          </div>
+          <Divider />
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">
+                  <Checkbox
+                    inputProps={{ 'aria-label': 'uncontrolled-checkbox' }}
+                    onChange={(e) => dispatch({
+                      type: constants.NOTIFICATIONS_REDUCER.CHECK_ALL,
+                      isSelected: e.target.checked
+                    })}
+                  />
                 select all
               </TableCell>
-              <TableCell align="left">Product Name</TableCell>
-              <TableCell align="left">Description</TableCell>
-              <TableCell align="left">Images</TableCell>
-              <TableCell align="left">Response</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {notifications.map((product, i) => {
-              const { informations, _id, isSelected, from } = product
-              const { productName, description } = informations
-              return (
-                <TableRow key={_id}>
-                  <TableCell align="left">
-                    <Checkbox
-                      onChange={() => dispatch({
-                        type: constants.NOTIFICATIONS_REDUCER.CHECK_BYID, id: _id
-                      })}
-                      checked={isSelected}
-                    />
-                  </TableCell>
-                  <TableCell align="left">{productName}</TableCell>
-                  <TableCell align="left">{description}</TableCell>
-                  <TableCell align="left">Images ... </TableCell>
-                  <TableCell align="left">
-                    <ThumbUpIcon
-                      fontSize="medium"
-                      style={{ padding: '5px', cursor: 'pointer' }}
-                      color="primary"
-                      onClick={() => positiveResponse(from, _id, productName)} />
-                    <ThumbDownIcon
-                      fontSize="medium"
-                      style={{ padding: '5px', cursor: 'pointer' }}
-                      color="action"
-                      onClick={() => negativeRespone(_id)} />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+                <TableCell align="left">Product Name</TableCell>
+                <TableCell align="left">Description</TableCell>
+                <TableCell align="left">Images</TableCell>
+                <TableCell align="left">Response</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {notifications.map((product, i) => {
+                const { informations, _id, isSelected, from } = product
+                const { productName, description } = informations
+                return (
+                  <TableRow key={_id}>
+                    <TableCell align="left">
+                      <Checkbox
+                        onChange={() => dispatch({
+                          type: constants.NOTIFICATIONS_REDUCER.CHECK_BYID, id: _id
+                        })}
+                        checked={isSelected}
+                      />
+                    </TableCell>
+                    <TableCell align="left">{productName}</TableCell>
+                    <TableCell align="left">{description}</TableCell>
+                    <TableCell align="left">Images ... </TableCell>
+                    <TableCell align="left">
+                      <ThumbUpIcon
+                        fontSize="medium"
+                        style={{ padding: '5px', cursor: 'pointer' }}
+                        color="primary"
+                        onClick={() => positiveResponse(from, _id, productName)} />
+                      <ThumbDownIcon
+                        fontSize="medium"
+                        style={{ padding: '5px', cursor: 'pointer' }}
+                        color="action"
+                        onClick={() => negativeRespone(_id)} />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[2, 4, 6]}
+          component="div"
+          count={notifications.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={(e, newPage) => {
+            console.log("on Change Page", newPage * 2)
+            if (newPage * 2 <= notifications.length
+              && newPage * 2 + 2 <= notifications.length) {
+              setTableData(notifications.slice(newPage * 2, newPage * 2 + 2))
+              setPage(newPage)
+            }
+          }}
+          onChangeRowsPerPage={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10))
+          }}
+        />
+      </div>
+    </Paper>
   )
 }
 

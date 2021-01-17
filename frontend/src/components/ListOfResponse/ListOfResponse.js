@@ -18,12 +18,14 @@ import constants from '../../constants'
 import Axios from 'axios';
 import MyModal from '../Mymodal';
 import Map from '../Map'
-import { Button, Collapse, Typography, Tooltip, Divider } from '@material-ui/core';
+import { Button, Collapse, Typography, Tooltip, Divider, TablePagination } from '@material-ui/core';
 import RoomIcon from '@material-ui/icons/Room';
 import DeleteIcon from '@material-ui/icons/Delete';
 import './style.css'
 
 function ListOfResponse({ notifications, dispatch }) {
+  console.log("list of response component")
+  const [data, loading, error, setConfig] = useAxios({})
   const [modalOpen, setModalOpen] = React.useState(false)
   const [selected, setSelected] = React.useState(false)
   const [mapPositions, mapDispatch] = React.useReducer(
@@ -45,11 +47,24 @@ function ListOfResponse({ notifications, dispatch }) {
     }, [])
   const context = React.useContext(LoginContext)
 
+  const [tableData, setTableData] = React.useState([])
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(2)
+
   React.useEffect(() => {
-    console.log("useEffect ")
+    if (error) {
+      console.log("error", error)
+    }
+  }, [error])
+
+  React.useEffect(() => {
     const findSelected = notifications.find(notification => notification.isSelected === true)
     setSelected(findSelected ? true : false)
   }, [notifications])
+
+  React.useEffect(() => {
+    setTableData(notifications.slice(0, rowsPerPage))
+  }, [rowsPerPage])
 
   const removeProduct = async (itemIds) => {
     let config = {
@@ -69,12 +84,7 @@ function ListOfResponse({ notifications, dispatch }) {
         }
       }
     }
-    try {
-      await Axios(config)
-    }
-    catch (e) {
-
-    }
+    setConfig(config)
   }
 
   const deleteItems = async () => {
@@ -91,8 +101,11 @@ function ListOfResponse({ notifications, dispatch }) {
     })
   }
 
+  if (tableData.length === 0)
+    return <div>loading table data </div>
+
   return (
-    <div>
+    <Paper>
       <TableContainer component={Paper}>
         <div className="table-actions" style={
           selected ? {
@@ -142,7 +155,7 @@ function ListOfResponse({ notifications, dispatch }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {notifications.map((product, i) => {
+            {tableData.map((product, i) => {
               const { informations, _id, isSelected } = product
               return (
                 <TableRow key={_id}>
@@ -173,6 +186,23 @@ function ListOfResponse({ notifications, dispatch }) {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[2, 4, 6]}
+        component="div"
+        count={notifications.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={(e, newPage) => {
+          if (newPage * 2 <= notifications.length
+            && newPage * 2 + 2 <= notifications.length) {
+            setTableData(notifications.slice(newPage * 2, newPage * 2 + 2))
+            setPage(newPage)
+          }
+        }}
+        onChangeRowsPerPage={(e) => {
+          setRowsPerPage(parseInt(e.target.value, 10))
+        }}
+      />
       <div id="table-footer-action">
         <MyModal
           useBtn={false}
@@ -191,7 +221,7 @@ function ListOfResponse({ notifications, dispatch }) {
           />
         </MyModal>
       </div>
-    </div>
+    </Paper>
   )
 }
 
