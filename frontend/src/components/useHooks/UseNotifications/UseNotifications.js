@@ -49,13 +49,18 @@ function useNotifications() {
       }
     }
     const { data } = await Axios(config)
-    setLoading(false);
     const newNotifications = data.notifications.map(e => {
       e.isSelected = false
       return e
     })
     dispatch({ type: 'UPDATE', newNotifications })
   }
+
+  React.useEffect(() => {
+    if (state.length > 0) {
+      setLoading(false)
+    }
+  }, [state])
 
   const addNotification = (data) => {
     console.log("new notification ", data)
