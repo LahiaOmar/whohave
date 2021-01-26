@@ -1,5 +1,6 @@
 const express = require('express')
 const users = require('../controllers/users')
+const auth = require('../middleware/auth')
 const router = express.Router()
 const authentications = require("../middleware/auth")
 
@@ -8,6 +9,7 @@ router.post('/auth/userSignup', users.userSignUp)
 router.post('/auth/login', users.userLogin)
 router.post('/auth/logout', users.userLogout)
 router.post('/auth/setPassword', users.setPassword)
-router.post('/updateUser', users.userSetInformation)
+router.post('/updateUser', authentications, users.userSetInformation)
+router.post('/getInformation', authentications, users.getInformation)
 router.post('/verify', authentications, users.verify)
 module.exports = router
