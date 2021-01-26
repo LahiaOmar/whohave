@@ -14,6 +14,7 @@ import ListOfProduct from '../ListOfProduct'
 import ListOfResponse from '../ListOfResponse'
 import UserInformations from '../UserInformations'
 import StoreInformations from '../StoreInformations'
+import UserCard from '../UserCard'
 import { Route, Link } from 'react-router-dom'
 import './style.css'
 import DehazeIcon from '@material-ui/icons/Dehaze';
@@ -30,13 +31,15 @@ import Axios from 'axios'
 
 const Dashboard = () => {
 	const context = React.useContext(LoginContext)
+	console.log("dash context ", context)
 	const [notifications, dispatch, loading] = useNotifications();
+
 	React.useEffect(() => {
 		document.title = "Dashboard"
 	}, [])
 
 	if (loading)
-		return <div>Loading ...</div>
+		return <div>Loading Dashboard...</div>
 	return (
 		<Grid className="dashboard-container" item xs={12} spacing={4}>
 			<Grid xs={12} item>
@@ -56,7 +59,7 @@ const Dashboard = () => {
 										method: 'POST'
 									}
 									const response = await Axios(config)
-									context.setContext({})
+									context.setContext({ isLoged: false })
 								}} />
 							</Button>
 						</Tooltip>
@@ -65,7 +68,7 @@ const Dashboard = () => {
 			</Grid>
 			<Grid className="dashboard-mid" xs={12} container item>
 				<Grid item className="dashboard-menu" xs={2}>
-					<WhoUser />
+					<UserCard />
 					<Divider />
 					{
 						context.type
