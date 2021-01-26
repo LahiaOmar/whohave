@@ -6,19 +6,15 @@ const userConsumer = require("../models/user")
 
 module.exports = async (req, res, next) => {
   const { cookies } = req
-  const { userType } = req.body
+  console.log("coookie", cookies.token)
   try {
     const decodeToken = await jwt.verify(cookies.token, "RANDOM_SECRECT_KEY")
-    const model = userType ? userStore : userConsumer
-    const user = await model.findById({ _id: decodeToken.userId })
-    if (user) {
-      res.locals.userId = decodeToken.userId
-      res.locals.userType = userType
-      next()
-    }
-    else {
-      res.status(401).json({ valideToken: false })
-    }
+    const { userId, userType } = decodeToken
+    console.log("not ", !userId, !userType, !userId && !userType)
+    res.locals.userId = userId
+    res.locals.userType = userType
+    console.log("next call")
+    next()
   }
   catch (e) {
     console.log("e : ", e)
