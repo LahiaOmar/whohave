@@ -3,9 +3,9 @@ const storeOwner = require('../models/userStore')
 
 exports.getNotifications = async (req, res) => {
   // return all notifications for a specific user. base on userId.
-  const { type, userId } = req.body
-  console.log("type user ", type, userId)
-  const model = type ? storeOwner : consumer
+  const { userType, userId } = res.locals
+  console.log("userType user ", userType, userId)
+  const model = userType ? storeOwner : consumer
   try {
     const user = await model.findById({ _id: userId })
     console.log("user ", user)
