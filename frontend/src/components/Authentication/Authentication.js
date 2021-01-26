@@ -8,6 +8,7 @@ import WhoUser from '../WhoUser'
 import { Grid } from '@material-ui/core'
 import { useAxios } from '../useHooks'
 import { useHistory } from 'react-router-dom'
+import UserCard from '../UserCard'
 
 function Authentication() {
 	const context = React.useContext(LoginContext)
@@ -32,11 +33,13 @@ function Authentication() {
 			})
 		}
 	}, [data])
+
 	React.useEffect(() => {
 		if (context.isLoged) {
 			history.push(context.redirect)
 		}
 	}, [context.isLoged])
+
 	const clSubmit = (config) => {
 		setConfig(config)
 	}
@@ -47,12 +50,7 @@ function Authentication() {
 		<Grid item sm={sm} justify="flex-end" className="flex">
 			{context.isLoged
 				? (
-					context.type
-						? (
-							<StoreUser />
-						) : (
-							<WhoUser />
-						)
+					<UserCard />
 				)
 				: (
 					<div className="auth-btn">
