@@ -50,7 +50,7 @@ exports.userLogin = async function (req, res) {
       const errObject = { status: 401, message: "userNotFound" }
       throw new Error(JSON.stringify(errObject))
     }
-    const token = jwt.sign({ userId: curUser._id }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
+    const token = jwt.sign({ userId: curUser._id, userType: req.body.checkStore }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
     res.cookie('token', token, { httpOnly: true })
     const dataToSend = curUser.getFieldToSend()
     res.status(200).json({
@@ -70,7 +70,7 @@ exports.userLogin = async function (req, res) {
 }
 
 exports.userLogout = (req, res) => {
-  res.cookie('token', null)
+  res.clearCookie('token')
   res.status(httpStatus.OK).json("token removed")
 }
 
@@ -104,9 +104,10 @@ exports.setPassword = async (req, res) => {
 
 exports.userSetInformation = async function (req, res) {
   console.log("update user req.body ", req.body)
-  const { forUpdate, userId, type } = req.body
-
-  const model = type ? userStore : userWho
+  const { forUpdate } = req.body
+  const { userId, userType } = res.locals
+  console.log("userid , userType", userId, userType)
+  const model = userType ? userStore : userWho
   console.log("model ", model)
   try {
     const update = await model.findByIdAndUpdate({ _id: userId }, {
@@ -133,5 +134,23 @@ exports.verify = async (req, res) => {
   }
   catch (e) {
     res.status(401).json({ userData: null, valideToken: false })
+  }
+}
+
+exports.getInformation = async (req, res) => {
+  console.log("get informatios ", res.locals)
+  const { userType, userId } = res.locals
+  try {
+    const model = userType ? userStore : userWho
+    const user = await model.findById({ _id: userId })
+    if (user) {
+      res.status(201).json({ userData: user.getFieldToSend() })
+    }
+    else {
+      res.status(401).json({ e: "error" })
+    }
+  }
+  catch (e) {
+    res.status(401).json({ e: "error" })
   }
 }
