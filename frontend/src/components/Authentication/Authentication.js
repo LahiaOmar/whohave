@@ -28,7 +28,7 @@ function Authentication() {
 			})
 			context.redirectTo('/dashboard/notifications')
 		}
-	}, [data])
+	}, [loading])
 
 	const clSubmit = (config) => {
 		setConfig(config)
