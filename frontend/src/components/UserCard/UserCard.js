@@ -1,20 +1,34 @@
 import React from 'react'
 import LoginContext from '../ContextAuth'
 import Axios from 'axios'
+import { Avatar } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
+import './style.css'
 
 const UserCard = () => {
   const context = React.useContext(LoginContext)
   const [loading, setLoading] = React.useState(true)
 
+  const getFirstName = () => {
+    return context.userData.firstName
+  }
+  const getLastName = () => {
+    return context.userData.lastName
+  }
+
   React.useEffect(() => {
     async function fetchUserData() {
-      if (Object.keys(context.userData).length === 0) {
-        const { data } = await Axios.post('/api/user/getInformation')
-        console.log("data ", data)
-        context.setContext({ ...context, userData: data.userData })
-        setLoading(false)
+      try {
+        if (Object.keys(context.userData).length === 0) {
+          const { data } = await Axios.post('/api/user/getInformation')
+          context.setContext({ ...context, userData: data.userData })
+          setLoading(false)
+        }
+        else {
+          setLoading(false)
+        }
       }
-      else {
+      catch (e) {
         setLoading(false)
       }
     }
@@ -24,11 +38,16 @@ const UserCard = () => {
   if (loading)
     return <div>Loading user card...</div>
   return (
-    <div>
-      user card
-      {
-        context.userData.firstName
-      }
+    <div id="user-menu">
+      <Avatar id="avatar">
+        {
+          `${getFirstName()[0]}.
+          ${getLastName()[0]}`
+        }
+      </Avatar>
+      <Typography align="center">
+        <h2> {`${getFirstName()}`} {`${getLastName()}`} </h2>
+      </Typography>
     </div>
   )
 
