@@ -11,7 +11,7 @@ function VerificationToken({ children }) {
       try {
         const { data } = await axios.post('/api/user/verify')
         if (data.valideToken) {
-          context.setContext({ ...context, isLoged: true })
+          context.setContext({ ...context, isLoged: true, userData: data.userData })
           setloading(false)
         }
         else {
