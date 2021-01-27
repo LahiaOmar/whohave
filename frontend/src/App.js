@@ -6,17 +6,47 @@ import LoginContext from './components/ContextAuth'
 import ProtectedRoute from './components/ProtectedRoute'
 import VerificationToken from './components/VerificationToken'
 import { Grid } from '@material-ui/core'
+import Axios from 'axios'
 import { BrowserRouter as Router, Route, Switch, Redirect, useHistory } from 'react-router-dom'
 
 import './styles/style.css'
 
 function App() {
+  const history = useHistory()
+  const redirectTo = (path) => {
+    history.push(path)
+  }
+  const logout = async () => {
+    try {
+      const config = {
+        url: '/api/user/auth/logout',
+        method: 'POST'
+      }
+      const response = await Axios(config)
+      setContext({
+        isLoged: false,
+        type: undefined,
+        userData: {},
+        redirect: [],
+        logout: logout,
+        redirectTo: redirectTo
+      })
+    }
+    catch (e) {
+      // display error. 
+    }
+  }
+
+
   const [context, setContext] = React.useState({
     isLoged: false,
     type: undefined,
     userData: {},
     redirect: [],
+    logout: logout,
+    redirectTo: redirectTo
   })
+
 
   return (
     <Grid
