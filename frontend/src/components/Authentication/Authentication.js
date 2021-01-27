@@ -3,12 +3,8 @@ import LogIn from '../LogIn'
 import SignUp from '../SignUp'
 import MyModal from '../Mymodal'
 import LoginContext from '../ContextAuth'
-import StoreUser from '../StoreUser'
-import WhoUser from '../WhoUser'
-import { Grid } from '@material-ui/core'
+import { Button, Grid, Menu, MenuItem, Avatar } from '@material-ui/core'
 import { useAxios } from '../useHooks'
-import { useHistory } from 'react-router-dom'
-import UserCard from '../UserCard'
 
 function Authentication() {
 	const context = React.useContext(LoginContext)
@@ -17,41 +13,64 @@ function Authentication() {
 		signUpOpen: false,
 		loginOpen: false
 	})
-
 	const clModelsEvent = (target) => setModalState({ ...modalState, [target.who]: target.bool })
 	const closeModal = () => setModalState({ signUpOpen: false, loginOpen: false })
-	const history = useHistory()
 	React.useEffect(() => {
 		if (data && !error) {
 			closeModal()
 			localStorage.userType = data.type
 			context.setContext({
+				...context,
 				isLoged: true,
 				type: data.type,
 				userData: data.information,
 				redirect: 'dashboard/notifications'
 			})
+			context.redirectTo('/dashboard/notifications')
 		}
 	}, [data])
-
-	React.useEffect(() => {
-		if (context.isLoged) {
-			history.push(context.redirect)
-		}
-	}, [context.isLoged])
 
 	const clSubmit = (config) => {
 		setConfig(config)
 	}
 
 	const sm = context.isLoged ? 10 : 4
+	const [openMenu, setOpenMenu] = React.useState(null)
 
+	const buttonOnClick = (event) => {
+		setOpenMenu(event.currentTarget)
+	}
+
+	const handleCloseMenu = () => {
+		setOpenMenu(null)
+	}
 	return (
 		<Grid item sm={sm} justify="flex-end" className="flex">
 			{context.isLoged
-				? (
-					<UserCard />
-				)
+				?
+				<div>
+					<Button
+						aria-controls="simple-menu"
+						aria-haspopup="true"
+						endIcon={<Avatar> {`${context.userData.firstName[0]}.${context.userData.lastName[0]}`} </Avatar>}
+						onClick={buttonOnClick}>
+						{`${context.userData.firstName} ${context.userData.lastName}`}
+					</Button>
+					<Menu
+						id="simple-menu"
+						anchorEl={openMenu}
+						open={Boolean(openMenu)}
+						keepMounted
+						onClose={handleCloseMenu}
+					>
+						<MenuItem onClick={() => context.redirectTo('/dashboard/notifications')}>
+							dashboard
+						</MenuItem>
+						<MenuItem onClick={() => context.logout()}>
+							logout
+						</MenuItem>
+					</Menu>
+				</div>
 				: (
 					<div className="auth-btn">
 						<MyModal
