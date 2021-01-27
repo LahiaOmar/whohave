@@ -31,7 +31,6 @@ import Axios from 'axios'
 
 const Dashboard = () => {
 	const context = React.useContext(LoginContext)
-	console.log("dash context ", context)
 	const [notifications, dispatch, loading] = useNotifications();
 
 	React.useEffect(() => {
@@ -53,13 +52,8 @@ const Dashboard = () => {
 						</Badge> */}
 						<Tooltip title="LogOut">
 							<Button color="inherit">
-								<ExitToAppIcon onClick={async () => {
-									const config = {
-										url: '/api/user/auth/logout',
-										method: 'POST'
-									}
-									const response = await Axios(config)
-									context.setContext({ isLoged: false })
+								<ExitToAppIcon onClick={() => {
+									context.logout()
 								}} />
 							</Button>
 						</Tooltip>
