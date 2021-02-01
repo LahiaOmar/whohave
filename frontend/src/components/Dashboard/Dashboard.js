@@ -32,7 +32,9 @@ import Axios from 'axios'
 const Dashboard = () => {
 	const context = React.useContext(LoginContext)
 	const [notifications, dispatch, loading] = useNotifications();
-
+	const [actionErrors, setActionErrors] = React.useState({
+		msg: ''
+	})
 	React.useEffect(() => {
 		document.title = "Dashboard"
 	}, [])
@@ -50,11 +52,9 @@ const Dashboard = () => {
 						<Badge badgeContent={10} color="secondary">
 							<NotificationsIcon />
 						</Badge> */}
-						<Tooltip title="LogOut">
+						<Tooltip title="LogOut" onClick={() => context.logout()}>
 							<Button color="inherit">
-								<ExitToAppIcon onClick={() => {
-									context.logout()
-								}} />
+								<ExitToAppIcon />
 							</Button>
 						</Tooltip>
 					</Toolbar>
@@ -65,21 +65,27 @@ const Dashboard = () => {
 					<UserCard />
 					<Divider />
 					{
-						context.type
+						context.userType
 							? <StoreMenuList />
 							: <UserMenuList />
 					}
 				</Grid>
 				<Grid item xs={10} className="dashboard-notifications">
+					<div>
+						erros div :
+						{
+							actionErrors.msg
+						}
+					</div>
 					<Route exact path="/dashboard/notifications">
-						{context.type
-							? <ListOfProduct notifications={notifications} dispatch={dispatch} />
-							: <ListOfResponse notifications={notifications} dispatch={dispatch} />
+						{context.userType
+							? <ListOfProduct notifications={notifications} dispatch={dispatch} setActionErrors={setActionErrors} />
+							: <ListOfResponse notifications={notifications} dispatch={dispatch} setActionErrors={setActionErrors} />
 						}
 					</Route>
 					<Route exact path="/dashboard/profile">
 						{
-							context.type
+							context.userType
 								? <StoreInformations />
 								: <UserInformations />
 						}

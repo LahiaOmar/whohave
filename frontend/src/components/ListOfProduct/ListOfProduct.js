@@ -7,8 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import TableFooter from '@material-ui/core/TableFooter'
-import { Button, Divider, IconButton, Tooltip, Typography, TablePagination } from '@material-ui/core'
+import { Divider, IconButton, Tooltip, Typography, TablePagination } from '@material-ui/core'
 import { v4 as uuidv4 } from 'uuid';
 import { useAxios } from '../useHooks';
 import LoginContext from '../ContextAuth';
@@ -18,13 +17,12 @@ import { Grid } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
+import Axios from 'axios';
 
 const ListOfProduct = ({ notifications, dispatch }) => {
-  const [response, loading, error, setConfig] = useAxios({})
   const context = React.useContext(LoginContext)
   const [selected, setSelected] = React.useState(false)
 
-  const [tableData, setTableData] = React.useState([])
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(2)
 
@@ -33,46 +31,57 @@ const ListOfProduct = ({ notifications, dispatch }) => {
     setSelected(findSelected ? true : false)
   }, [notifications])
 
-  React.useEffect(() => {
-    if (error) {
-      console.log("there is a error")
-    }
-  }, [])
-
   const sendResponse = (consumerId, productId, productName) => {
-    const from = context.userData._id
-    let config = {
-      method: 'POST',
-      url: process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
-      data: {
-        type: context.type,
-        from: from,
-        to: consumerId,
-        productId,
-        productName
+    return new Promise(async (resolve, reject) => {
+      const from = context.userData._id
+      let config = {
+        method: 'POST',
+        url: process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
+        data: {
+          userType: context.userType,
+          from: from,
+          to: consumerId,
+          productId,
+          productName
+        }
       }
-    }
-    setConfig(config)
+      try {
+        const res = await Axios(config)
+        resolve(res)
+      }
+      catch (e) {
+        reject(e)
+      }
+    })
   }
-  const removeProduct = async (itemIds) => {
-    let config = {
-      method: 'POST',
-      url: process.env.REACT_APP_UPDATE_USER,
-      data: {
-        type: context.type,
-        userId: context.userData._id,
-        forUpdate: {
-          $pull: {
-            notifications: {
-              _id: {
-                $in: itemIds
+  const removeProduct = (itemIds) => {
+    return new Promise(async (resolve, reject) => {
+      let config = {
+        method: 'POST',
+        url: process.env.REACT_APP_UPDATE_USER,
+        data: {
+          type: context.type,
+          userId: context.userData._id,
+          forUpdate: {
+            $pull: {
+              notifications: {
+                _id: {
+                  $in: itemIds
+                }
               }
             }
           }
         }
       }
-    }
-    setConfig(config)
+      try {
+        const res = await Axios(config)
+        resolve(res)
+      }
+      catch (e) {
+        reject(e)
+      }
+    })
+
   }
 
   const deleteSelectedProduct = () => {
@@ -88,29 +97,38 @@ const ListOfProduct = ({ notifications, dispatch }) => {
     })
   }
 
-  const positiveResponse = (consumerId, productId, productName) => {
-    sendResponse(consumerId, productId, productName)
-    dispatch({
-      type: constants.NOTIFICATIONS_REDUCER.DELETE,
-      idsArr: [productId]
-    })
-    removeProduct([productId])
+  const positiveFeedBack = async (consumerId, productId, productName) => {
+    try {
+      await sendResponse(consumerId, productId, productName)
+      await removeProduct([productId])
+      dispatch({
+        type: constants.NOTIFICATIONS_REDUCER.DELETE,
+        idsArr: [productId]
+      })
+    }
+    catch (e) {
+      // shoow some error to the user.
+      console.log("positive err", e)
+    }
   }
 
-  const negativeRespone = (productId) => {
-    dispatch({
-      type: constants.NOTIFICATIONS_REDUCER.DELETE,
-      idsArr: [productId]
-    })
-    removeProduct([productId])
+  const negativeFeedBack = async (productId) => {
+    try {
+      await removeProduct([productId])
+      dispatch({
+        type: constants.NOTIFICATIONS_REDUCER.DELETE,
+        idsArr: [productId]
+      })
+    }
+    catch (e) {
+      // show error to the user,
+      console.log("nagative err", e)
+    }
   }
 
   return (
     <Paper>
-
-
       <div className="list-products">
-
         <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
           <div className="table-actions" style={
             selected ? {
@@ -152,37 +170,38 @@ const ListOfProduct = ({ notifications, dispatch }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {notifications.map((product, i) => {
-                const { informations, _id, isSelected, from } = product
-                const { productName, description } = informations
-                return (
-                  <TableRow key={_id}>
-                    <TableCell align="left">
-                      <Checkbox
-                        onChange={() => dispatch({
-                          type: constants.NOTIFICATIONS_REDUCER.CHECK_BYID, id: _id
-                        })}
-                        checked={isSelected}
-                      />
-                    </TableCell>
-                    <TableCell align="left">{productName}</TableCell>
-                    <TableCell align="left">{description}</TableCell>
-                    <TableCell align="left">Images ... </TableCell>
-                    <TableCell align="left">
-                      <ThumbUpIcon
-                        fontSize="medium"
-                        style={{ padding: '5px', cursor: 'pointer' }}
-                        color="primary"
-                        onClick={() => positiveResponse(from, _id, productName)} />
-                      <ThumbDownIcon
-                        fontSize="medium"
-                        style={{ padding: '5px', cursor: 'pointer' }}
-                        color="action"
-                        onClick={() => negativeRespone(_id)} />
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
+              {notifications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((product, i) => {
+                  const { informations, _id, isSelected, from } = product
+                  const { productName, description } = informations
+                  return (
+                    <TableRow key={_id}>
+                      <TableCell align="left">
+                        <Checkbox
+                          onChange={() => dispatch({
+                            type: constants.NOTIFICATIONS_REDUCER.CHECK_BYID, id: _id
+                          })}
+                          checked={isSelected}
+                        />
+                      </TableCell>
+                      <TableCell align="left">{productName}</TableCell>
+                      <TableCell align="left">{description}</TableCell>
+                      <TableCell align="left">Images ... </TableCell>
+                      <TableCell align="left">
+                        <ThumbUpIcon
+                          fontSize="medium"
+                          style={{ padding: '5px', cursor: 'pointer' }}
+                          color="primary"
+                          onClick={() => positiveFeedBack(from, _id, productName)} />
+                        <ThumbDownIcon
+                          fontSize="medium"
+                          style={{ padding: '5px', cursor: 'pointer' }}
+                          color="action"
+                          onClick={() => negativeFeedBack(_id)} />
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
             </TableBody>
           </Table>
         </TableContainer>
@@ -193,12 +212,7 @@ const ListOfProduct = ({ notifications, dispatch }) => {
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={(e, newPage) => {
-            console.log("on Change Page", newPage * 2)
-            if (newPage * 2 <= notifications.length
-              && newPage * 2 + 2 <= notifications.length) {
-              setTableData(notifications.slice(newPage * 2, newPage * 2 + 2))
-              setPage(newPage)
-            }
+            setPage(newPage)
           }}
           onChangeRowsPerPage={(e) => {
             setRowsPerPage(parseInt(e.target.value, 10))

@@ -4,7 +4,7 @@ import Axios from 'axios'
 import io from 'socket.io-client'
 
 function useNotifications() {
-  const { userData, type } = React.useContext(LoginContext)
+  const { userData, userType } = React.useContext(LoginContext)
   const [loading, setLoading] = React.useState(true)
   const [state, dispatch] = React.useReducer((state, action) => {
     let newState = [...state]
@@ -42,9 +42,9 @@ function useNotifications() {
   const isConnectedHandler = async () => {
     const config = {
       method: 'POST',
-      url: 'http://localhost:4000/api/notifications/get',
+      url: '/api/notifications/get',
       data: {
-        type: type,
+        userType: userType,
         userId: userData._id
       }
     }
@@ -54,13 +54,8 @@ function useNotifications() {
       return e
     })
     dispatch({ type: 'UPDATE', newNotifications })
+    setLoading(false)
   }
-
-  React.useEffect(() => {
-    if (state.length > 0) {
-      setLoading(false)
-    }
-  }, [state])
 
   const addNotification = (data) => {
     console.log("new notification ", data)
@@ -73,11 +68,12 @@ function useNotifications() {
     const options = {
       query: {
         userId: userData._id,
-        type: type
+        userType: userType
       }
     }
     const pathSocket = process.env.REACT_APP_PATH_SOCKET
     const socket = io(pathSocket, options)
+    console.log("socket user side ", socket)
     socket.on('connect', () => isConnectedHandler())
     socket.on('newNotification', addNotification)
 

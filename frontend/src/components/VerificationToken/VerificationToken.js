@@ -10,8 +10,9 @@ function VerificationToken({ children }) {
     async function authToken() {
       try {
         const { data } = await axios.post('/api/user/verify')
+        console.log("data verify ", data)
         if (data.valideToken) {
-          context.setContext({ ...context, isLoged: true, userData: data.userData })
+          context.setContext({ ...context, isLoged: true, userData: data.userData, userType: data.userType })
           setloading(false)
         }
         else {

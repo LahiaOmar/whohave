@@ -4,9 +4,9 @@ import MyModal from '../Mymodal'
 import StoresInfo from '../StoresInfo'
 import UserMenu from '../UserMenu'
 
-function StoreUser(){
+function StoreUser() {
   return (
-    <React.Fragment> 
+    <React.Fragment>
       <UserMenu />
       {/* <isOpen /> 
         have switch button : to notify others user if he is open or not 

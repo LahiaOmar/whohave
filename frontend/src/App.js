@@ -13,9 +13,11 @@ import './styles/style.css'
 
 function App() {
   const history = useHistory()
+
   const redirectTo = (path) => {
     history.push(path)
   }
+
   const logout = async () => {
     try {
       const config = {
@@ -25,7 +27,7 @@ function App() {
       const response = await Axios(config)
       setContext({
         isLoged: false,
-        type: undefined,
+        userType: undefined,
         userData: {},
         redirect: [],
         logout: logout,
@@ -37,16 +39,14 @@ function App() {
     }
   }
 
-
   const [context, setContext] = React.useState({
     isLoged: false,
-    type: undefined,
+    userType: undefined,
     userData: {},
     redirect: [],
     logout: logout,
     redirectTo: redirectTo
   })
-
 
   return (
     <Grid

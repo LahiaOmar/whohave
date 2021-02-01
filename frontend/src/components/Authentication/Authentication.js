@@ -22,7 +22,7 @@ function Authentication() {
 			context.setContext({
 				...context,
 				isLoged: true,
-				type: data.type,
+				userType: data.userType,
 				userData: data.information,
 				redirect: 'dashboard/notifications'
 			})

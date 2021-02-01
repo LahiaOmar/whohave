@@ -6,14 +6,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import IconButton from '@material-ui/core/IconButton'
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import TableFooter from '@material-ui/core/TableFooter'
-import { useAxios } from '../useHooks';
 import LoginContext from '../ContextAuth';
-import Message from '../Message'
 import constants from '../../constants'
 import Axios from 'axios';
 import MyModal from '../Mymodal';
@@ -23,11 +18,12 @@ import RoomIcon from '@material-ui/icons/Room';
 import DeleteIcon from '@material-ui/icons/Delete';
 import './style.css'
 
-function ListOfResponse({ notifications, dispatch }) {
-  console.log("list of response component")
-  const [data, loading, error, setConfig] = useAxios({})
+function ListOfResponse({ notifications, dispatch, setActionErrors }) {
+  const context = React.useContext(LoginContext)
   const [modalOpen, setModalOpen] = React.useState(false)
   const [selected, setSelected] = React.useState(false)
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(2)
   const [mapPositions, mapDispatch] = React.useReducer(
     (state, action) => {
       switch (action.type) {
@@ -45,46 +41,39 @@ function ListOfResponse({ notifications, dispatch }) {
           throw ("error action type")
       }
     }, [])
-  const context = React.useContext(LoginContext)
-
-  const [tableData, setTableData] = React.useState([])
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(2)
-
-  React.useEffect(() => {
-    if (error) {
-      console.log("error", error)
-    }
-  }, [error])
 
   React.useEffect(() => {
     const findSelected = notifications.find(notification => notification.isSelected === true)
     setSelected(findSelected ? true : false)
   }, [notifications])
 
-  React.useEffect(() => {
-    setTableData(notifications.slice(0, rowsPerPage))
-  }, [rowsPerPage])
-
-  const removeProduct = async (itemIds) => {
-    let config = {
-      method: 'POST',
-      url: process.env.REACT_APP_UPDATE_USER,
-      data: {
-        type: context.type,
-        userId: context.userData._id,
-        forUpdate: {
-          $pull: {
-            notifications: {
-              _id: {
-                $in: itemIds
+  const removeProduct = (itemIds) => {
+    return new Promise(async (resolve, reject) => {
+      let config = {
+        method: 'POST',
+        url: process.env.REACT_APP_UPDATE_USER,
+        data: {
+          userType: context.userType,
+          userId: context.userData._id,
+          forUpdate: {
+            $pull: {
+              notifications: {
+                _id: {
+                  $in: itemIds
+                }
               }
             }
           }
         }
       }
-    }
-    setConfig(config)
+      try {
+        const res = await Axios(config)
+        resolve(res)
+      }
+      catch (e) {
+        reject(e)
+      }
+    })
   }
 
   const deleteItems = async () => {
@@ -100,9 +89,6 @@ function ListOfResponse({ notifications, dispatch }) {
       idsArr: notifCheckedIds
     })
   }
-
-  if (tableData.length === 0)
-    return <div>loading table data </div>
 
   return (
     <Paper>
@@ -155,34 +141,35 @@ function ListOfResponse({ notifications, dispatch }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableData.map((product, i) => {
-              const { informations, _id, isSelected } = product
-              return (
-                <TableRow key={_id}>
-                  <TableCell align="left">
-                    <Checkbox
-                      onChange={() => dispatch({
-                        type: constants.NOTIFICATIONS_REDUCER.CHECK_BYID, id: _id
-                      })}
-                      checked={isSelected}
-                    />
-                  </TableCell>
-                  <TableCell align="left">{informations.productName}</TableCell>
-                  <TableCell align="left">{informations.storeName}</TableCell>
-                  <TableCell align="left">{informations.address}</TableCell>
-                  <TableCell align="left">
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        setModalOpen(true)
-                        mapDispatch({ type: 'SINGLE', location: informations.location })
-                      }}
-                    >show on Map</Button>
-                  </TableCell>
-                </TableRow>
-              )
-            })}
+            {notifications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((product, i) => {
+                const { informations, _id, isSelected } = product
+                return (
+                  <TableRow key={_id}>
+                    <TableCell align="left">
+                      <Checkbox
+                        onChange={() => dispatch({
+                          type: constants.NOTIFICATIONS_REDUCER.CHECK_BYID, id: _id
+                        })}
+                        checked={isSelected}
+                      />
+                    </TableCell>
+                    <TableCell align="left">{informations.productName}</TableCell>
+                    <TableCell align="left">{informations.storeName}</TableCell>
+                    <TableCell align="left">{informations.address}</TableCell>
+                    <TableCell align="left">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          setModalOpen(true)
+                          mapDispatch({ type: 'SINGLE', location: informations.location })
+                        }}
+                      >show on Map</Button>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -193,11 +180,7 @@ function ListOfResponse({ notifications, dispatch }) {
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={(e, newPage) => {
-          if (newPage * 2 <= notifications.length
-            && newPage * 2 + 2 <= notifications.length) {
-            setTableData(notifications.slice(newPage * 2, newPage * 2 + 2))
-            setPage(newPage)
-          }
+          setPage(newPage)
         }}
         onChangeRowsPerPage={(e) => {
           setRowsPerPage(parseInt(e.target.value, 10))
