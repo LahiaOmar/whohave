@@ -3,6 +3,7 @@ const userStore = require('../models/userStore')
 const userWho = require("../models/user")
 const jwt = require("jsonwebtoken")
 const httpStatus = require("http-status")
+const socketMap = require('../models/socketMap')
 
 exports.storeSignUp = (req, res) => {
   const { password, ...restOfFiled } = req.body
@@ -55,7 +56,7 @@ exports.userLogin = async function (req, res) {
     const dataToSend = curUser.getFieldToSend()
     res.status(200).json({
       token: token,
-      type: req.body.checkStore ? true : false,
+      userType: req.body.checkStore ? true : false,
       information: dataToSend
     })
   }
@@ -103,12 +104,11 @@ exports.setPassword = async (req, res) => {
 }
 
 exports.userSetInformation = async function (req, res) {
-  console.log("update user req.body ", req.body)
+  console.log("################update user route #####################")
   const { forUpdate } = req.body
+  console.log("for update data ", forUpdate)
   const { userId, userType } = res.locals
-  console.log("userid , userType", userId, userType)
   const model = userType ? userStore : userWho
-  console.log("model ", model)
   try {
     const update = await model.findByIdAndUpdate({ _id: userId }, {
       ...forUpdate
@@ -126,7 +126,7 @@ exports.verify = async (req, res) => {
     const model = userType ? userStore : userWho
     const user = await model.findById({ _id: userId })
     if (user) {
-      res.status(201).json({ userData: user.getFieldToSend(), valideToken: true })
+      res.status(201).json({ userType: userType, userData: user.getFieldToSend(), valideToken: true })
     }
     else {
       res.status(401).json({ valideToken: false })
@@ -152,5 +152,25 @@ exports.getInformation = async (req, res) => {
   }
   catch (e) {
     res.status(401).json({ e: "error" })
+  }
+}
+
+exports.socketMap = async (req, res) => {
+  const { userId, socketId } = req.body
+  try {
+    const existId = await socketMap.findOne({ userId: userId })
+    if (existId) {
+      console.log("exit user id")
+      await socketMap.findByIdAndUpdate({ _id: existId._id }, { socketId: socketId })
+    }
+    else {
+      console.log("not exit")
+      const mapping = new socketMap({ userId, socketId })
+      await mapping.save()
+    }
+    res.status(httpStatus.CREATED).json("created!")
+  }
+  catch (e) {
+    res.status(401).json("mapping sockets erros")
   }
 }

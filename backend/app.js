@@ -38,7 +38,6 @@ mongoos.connect('mongodb://localhost:27017/whohave', {
 
 app.use(cors())
 
-
 app.use(cookieParser())
 app.use(express.json())
 

@@ -12,4 +12,5 @@ router.post('/auth/setPassword', users.setPassword)
 router.post('/updateUser', authentications, users.userSetInformation)
 router.post('/getInformation', authentications, users.getInformation)
 router.post('/verify', authentications, users.verify)
+router.post('/socketMap', users.socketMap)
 module.exports = router

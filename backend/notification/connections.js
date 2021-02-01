@@ -4,13 +4,10 @@ async function socketDisconnected(socket) {
   try {
     const saveIds = await axios({
       method: 'POST',
-      url: 'http://localhost:4000/api/user/updateUser',
+      url: 'http://localhost:4000/api/user/socketMap',
       data: {
         userId: socket.info.userId,
-        type: socket.info.type,
-        forUpdate: {
-          socketId: null
-        }
+        socketId: null
       }
     })
   }
@@ -20,23 +17,19 @@ async function socketDisconnected(socket) {
 }
 
 exports.socketConnected = async function (socket) {
-  let { userId, type } = socket.handshake.query
+  let { userId, userType } = socket.handshake.query
   const socketId = socket.id
-  type = type === 'true' ? true : false
   socket.info = {
     userId,
-    type
+    userType
   }
   try {
     const saveIds = await axios({
       method: 'POST',
-      url: 'http://localhost:4000/api/user/updateUser',
+      url: 'http://localhost:4000/api/user/socketMap',
       data: {
         userId: userId,
-        type: type,
-        forUpdate: {
-          socketId: socketId
-        }
+        socketId, socketId
       }
     })
     socket.on('disconnect', socketDisconnected.bind(this, socket))
