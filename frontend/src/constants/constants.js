@@ -28,3 +28,34 @@ export const MARKER_TYPE = {
   STOREOWNER: 'storeOwner',
   STORE_POSITON: 'storePosition'
 }
+
+export const ALERT_ERROR = {
+  LOGIN_FAILD: {
+    message: 'wrong credentials',
+    alertProps: {
+      severity: 'error',
+      variant: 'filled'
+    }
+  },
+  SIGNUP_FAILD: {
+    message: 'wrong credentials',
+    alertProps: {
+      severity: 'error',
+      variant: 'filled'
+    }
+  },
+  FEEDBACK_FAILD: {
+    message: 'something wrong! refresh page !',
+    alertProps: {
+      severity: 'error',
+      variant: 'filled'
+    }
+  },
+  FEEDBACK_SUCCESS: {
+    message: 'action success',
+    alertProps: {
+      severity: 'success',
+      variant: 'filled'
+    }
+  }
+}

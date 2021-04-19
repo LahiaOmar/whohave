@@ -1,3 +1,3 @@
 import useAxios from './useAxios'
 
-export {useAxios}
+export default useAxios

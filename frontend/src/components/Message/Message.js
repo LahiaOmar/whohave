@@ -1,16 +1,16 @@
 import React from 'react'
-import MyModal from '../Mymodal'
 import { Grid, TextField, Button, Slider, Typography } from '@material-ui/core'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
-import { SendMessage } from '../ButtonActions'
 import { StoresType } from '../StoresType'
-import { useAxios } from '../useHooks'
+import useAxios from '../useHooks/useAxios'
 import LoginContext from '../ContextAuth'
+import CountrySelector from '../CountrySelector/'
 
-function Message(props) {
+function Message({ sendProduct }) {
   const [data, errors, loading, setConfig] = useAxios({})
   const [open, setOpen] = React.useState(false)
+  const [distance, setDistance] = React.useState(5)
   const imagesInput = React.createRef()
   const context = React.useContext(LoginContext)
 
@@ -22,68 +22,60 @@ function Message(props) {
     setOpen(false)
   }
 
-  let distance = 5
-
   const formik = useFormik({
     initialValues: {
-      productName: '',
-      storeTypes: [],
+      name: '',
+      types: [],
       description: '',
+      city: '',
+      country: '',
       images: []
     },
     validationSchema: Yup.object({
-      productName: Yup.string()
+      name: Yup.string()
         .min(5, 'minimum is 5 character')
         .required('required !'),
-      storeTypes: Yup.array()
+      types: Yup.array()
         .min(1, 'you must select the type(s) of service that your store provide!')
         .required('required !'),
       description: Yup.string(),
+      city: Yup.string().required('must select a city'),
+      country: Yup.string().required('must select a country'),
       images: Yup.array()
     }),
     onSubmit: (values, { resetForm }) => {
+      console.log("values ", values)
       values.images = imagesInput.current.files
-      Object.assign(values, { corrdinates: context.userData.coordinates })
-      Object.assign(values, { type: context.type })
-      Object.assign(values, { userId: context.userData._id })
-      Object.assign(values, { distance })
-      const config = {
-        url: process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
-        method: 'POST',
-        data: values
-      }
       resetForm()
       handleClose()
-      setConfig(config)
+      // setConfig(config)
+      // product : name, description, images
+      console.log("values ", values)
+      sendProduct(values)
     }
   })
 
-  const KmToMetre = km => km * 1000
-
-  const getDistanceValue = value => distance = KmToMetre(value)
-
   return (
-
     <form id="msg-product" onSubmit={formik.handleSubmit}>
       <Grid container spacing={2} justify="center">
         <Grid item xs={12}>
           <Typography variant="h5" align="center">
-            Describe the product that you looking for
+            Describe the Product
             </Typography>
         </Grid>
         <Grid item xs={12}>
           <TextField
-            {...formik.getFieldProps('productName')}
+            {...formik.getFieldProps('name')}
             variant="outlined"
             label="Product Name"
             fullWidth
             error={
-              formik.touched.productName &&
-              formik.errors.productName
+              formik.touched.name &&
+              formik.errors.name
             }
             helperText={
-              formik.touched.productName &&
-              formik.errors.productName
+              formik.touched.name &&
+              formik.errors.name
             }
           />
         </Grid>
@@ -115,27 +107,17 @@ function Message(props) {
               </Button>
           </label>
         </Grid>
-        <Grid item xs={12}>
-          <Typography id="distance-slider">
-            Distance
-            </Typography>
-          <Slider
-            className="distance-slider"
-            defaultValue="5"
-            getAriaValueText={getDistanceValue}
-            valueLabelDisplay="auto"
-            step={5}
-            marks
-            min={distance}
-            max={50}
-          />
+        <Grid container item xs={12} spacing={2}>
+          <CountrySelector formik={formik} />
         </Grid>
-        <Button
-          variant="contained"
-          color="secondary"
-          type="submit">
-          BROADCAST
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            color="secondary"
+            type="submit">
+            BROADCAST
           </Button>
+        </Grid>
       </Grid>
     </form>
 

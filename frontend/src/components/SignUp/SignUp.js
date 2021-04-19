@@ -23,6 +23,7 @@ function TabPanel(props) {
 function SignUp({ clSubmit, error, loading }) {
 	const [value, setValue] = React.useState(0)
 	const signUpCompoNames = ["Store Owner", "User"]
+
 	return (
 		<div id="signup-multi">
 			<Tabs value={value} onChange={(e, v) => setValue(v)} aria-label="simple tabs" centered>
@@ -30,7 +31,7 @@ function SignUp({ clSubmit, error, loading }) {
 				<Tab label={signUpCompoNames[1]} id="simple-tab-1" aria-controls="simple-tabpanel-1" />
 			</Tabs>
 			<TabPanel value={value} index={0}>
-				<SignUpIhave label={signUpCompoNames[0]} error={error} loading={loading} clSubmit={clSubmit} />
+				<SignUpIhave label={signUpCompoNames[0]} clSubmit={clSubmit} />
 			</TabPanel>
 			<TabPanel value={value} index={1} >
 				<SignUpWho label={signUpCompoNames[1]} error={error} loading={loading} clSubmit={clSubmit} />

@@ -1,61 +1,29 @@
-import React from 'react';
-import NavBar from './components/NavBar'
-import HeadLine from './components/HeadLIne'
-import Dashboard from './components/Dashboard'
-import LoginContext from './components/ContextAuth'
-import ProtectedRoute from './components/ProtectedRoute'
-import VerificationToken from './components/VerificationToken'
-import { Grid } from '@material-ui/core'
+import React from 'react'
 import Axios from 'axios'
+import { v4 as uui } from 'uuid'
+import { Grid } from '@material-ui/core'
 import { BrowserRouter as Router, Route, Switch, Redirect, useHistory } from 'react-router-dom'
 
 import './styles/style.css'
 
+import NavBar from './components/NavBar'
+import HeadLine from './components/HeadLIne'
+import ProtectedRoute from './components/ProtectedRoute'
+import AlertMessage from './components/AlertMessage'
+import AlertProvider from './Context/AlertProvider'
+import AuthProvider from './Context/AuthProvider'
+import Dashboard from './components/Dashboard'
+
 function App() {
-  const history = useHistory()
-
-  const redirectTo = (path) => {
-    history.push(path)
-  }
-
-  const logout = async () => {
-    try {
-      const config = {
-        url: '/api/user/auth/logout',
-        method: 'POST'
-      }
-      const response = await Axios(config)
-      setContext({
-        isLoged: false,
-        userType: undefined,
-        userData: {},
-        redirect: [],
-        logout: logout,
-        redirectTo: redirectTo
-      })
-    }
-    catch (e) {
-      // display error. 
-    }
-  }
-
-  const [context, setContext] = React.useState({
-    isLoged: false,
-    userType: undefined,
-    userData: {},
-    redirect: [],
-    logout: logout,
-    redirectTo: redirectTo
-  })
 
   return (
     <Grid
       container
       className="app-container"
-      xs={12}
-    >
-      <LoginContext.Provider value={{ ...context, setContext }}>
-        <VerificationToken>
+      xs={12}>
+      <AuthProvider>
+        <AlertProvider>
+          <AlertMessage />
           <Switch>
             <Route path="/" exact>
               <NavBar />
@@ -65,8 +33,8 @@ function App() {
               <Dashboard />
             </ProtectedRoute>
           </Switch>
-        </VerificationToken>
-      </LoginContext.Provider>
+        </AlertProvider>
+      </AuthProvider>
     </Grid>
   );
 }

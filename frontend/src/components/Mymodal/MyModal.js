@@ -37,9 +37,7 @@ function MyModal({ btnTitle, children, MyButton, open, handleClose, handleOpen, 
 							<CloseSharpIcon onClick={handleClose} />
 						</Tooltip>
 					</div>
-					<div id="mappp">
-						{children}
-					</div>
+					{children}
 				</div>
 			</Modal>
 		</div >

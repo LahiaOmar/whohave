@@ -12,7 +12,6 @@ function NavBar() {
 			<Container maxWidth="lg" style={{ display: 'flex' }}>
 				<Logo />
 				<Menu />
-				{/* should be protected */}
 				<Authentication />
 			</Container>
 		</Grid>

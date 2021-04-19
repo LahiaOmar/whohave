@@ -1,42 +1,20 @@
 import React from 'react'
-import LoginContext from '../ContextAuth'
+import { AuthContext } from '../../Context/AuthProvider'
 import Axios from 'axios'
 import { Avatar } from '@material-ui/core'
 import { Typography } from '@material-ui/core'
 import './style.css'
 
 const UserCard = () => {
-  const context = React.useContext(LoginContext)
-  const [loading, setLoading] = React.useState(true)
+  const { authState: { profile } } = React.useContext(AuthContext)
 
   const getFirstName = () => {
-    return context.userData.firstName
+    return profile.firstName
   }
   const getLastName = () => {
-    return context.userData.lastName
+    return profile.lastName
   }
 
-  React.useEffect(() => {
-    async function fetchUserData() {
-      try {
-        if (Object.keys(context.userData).length === 0) {
-          const { data } = await Axios.post('/api/user/getInformation')
-          context.setContext({ ...context, userData: data.userData })
-          setLoading(false)
-        }
-        else {
-          setLoading(false)
-        }
-      }
-      catch (e) {
-        setLoading(false)
-      }
-    }
-    fetchUserData()
-  }, [])
-
-  if (loading)
-    return <div>Loading user card...</div>
   return (
     <div id="user-menu">
       <Avatar id="avatar">

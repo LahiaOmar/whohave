@@ -1,112 +1,92 @@
 const userStore = require("../models/userStore")
-const notification = require('../models/notification')
+const NotificationsModel = require('../models/notification')
 const user = require("../models/user")
-const { boradCast } = require('../notification/connections')
 const socketMap = require("../models/socketMap")
 const httpStatus = require("http-status")
+const ProductsModel = require("../models/products")
+const ObjectID = require('mongoose').mongo.ObjectID
 
-function consumerHandler(body, userId) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const { corrdinates, distance, storeTypes, productName, images, description } = body
-      const allStores = await userStore.find({
-        location: {
-          $near: {
-            $maxDistance: distance,
-            $geometry: {
-              type: "Point",
-              coordinates: [corrdinates[0], corrdinates[1]]
-            }
-          }
-        },
-        storeTypes: {
-          $in: storeTypes
-        }
-      })
-      const productObject = {
-        from: userId,
-        informations: {
-          productName,
-          description
-        },
-        images
-      }
-      const updateRequests = allStores.map(async (store) => {
-        return await userStore.findByIdAndUpdate({ _id: store._id }, {
-          $push:
-          {
-            notifications: productObject
-          }
-        })
-      })
-
-      await Promise.all(updateRequests)
-      const findSocketIds = allStores.map(async (store) => {
-        return await socketMap.findOne({ userId: store._id })
-      })
-      const socketWithIds = await Promise.all(findSocketIds)
-      const socketIds = socketWithIds.map(mp => mp.socketId)
-      resolve([socketIds, productObject])
-    }
-    catch (e) {
-      reject(e)
-    }
-
-  })
-}
-
-function storeOwnerHandler(body) {
-  return new Promise(async (resolve, reject) => {
-    const { from, to, productId, productName } = body
-    let socketId = ''
-    let fromStore = {}
-    try {
-      const store = await userStore.findByIdAndUpdate({ _id: from }, {
-        $pull: {
-          notifications: {
-            _id: productId
-          }
-        }
-      })
-      const [longitude, latitude] = store.location.coordinates
-      fromStore = {
-        informations: {
-          productName,
-          address: store.address,
-          storeName: store.storeName,
-          location: { longitude, latitude }
-        }
-      }
-      const consumer = await user.findByIdAndUpdate({ _id: to }, {
-        $push: {
-          notifications: fromStore
-        }
-      })
-      const mpSocket = await socketMap.findOne({ userId: consumer._id })
-      socketId = mpSocket.socketId
-      resolve([[socketId], fromStore])
-    }
-    catch (e) {
-      reject(e)
-    }
-  })
-}
-
-exports.broadCastProduct = async function (req, res) {
+exports.delete = async (req, res) => {
   try {
-    const { userType, userId } = res.locals
-    const [socketsIds, data] = userType
-      ? await storeOwnerHandler(req.body)
-      : await consumerHandler(req.body, userId)
-    socketsIds.forEach(socketId => {
-      if (socketId) {
-        req.io.to(socketId).emit("newNotification", JSON.stringify(data))
-      }
-    });
-    res.status(httpStatus.CREATED).json({ msg: "broadCasted!" })
+    const { productId } = req.body
+    const productDeleted = await ProductsModel.findByIdAndDelete({ _id: productId })
+    console.log("product deleted ", productDeleted)
+    await NotificationsModel.deleteMany({
+      $or: [
+        { 'content.productId': productId },
+        { content: new ObjectID(productId) }
+      ]
+    })
+    res.status(httpStatus.OK).json("ok")
   }
-  catch (err) {
+  catch (ex) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: ex })
+  }
+}
+
+exports.storeFeedback = async (req, res) => {
+  try {
+    const { userId } = res.locals
+    const { queryData, content } = req.body
+    const { storeId } = queryData
+
+    const notification = new NotificationsModel({
+      type: 'response',
+      content,
+      from: storeId,
+      to: [userId]
+    })
+    await notification.save()
+    console.log("notification store ", notification)
+    await NotificationsModel.findOneAndUpdate({
+      content: new ObjectID(content.productId),
+      type: 'request'
+    }, {
+      $pull: {
+        to: storeId
+      }
+    })
+    res.status(httpStatus.CREATED).json({ msg: "send!" })
+  }
+  catch (ex) {
     console.log("err ", err)
     res.status(400).json({ err: err })
+  }
+}
+
+exports.send = async (req, res) => {
+  try {
+    const { userId } = res.locals
+    const { product, queryData } = req.body
+    const { storeTypes, city, country } = queryData
+    console.log({ product })
+    console.log({ storeTypes, city, country })
+
+    const storeDocument = new ProductsModel(product)
+    await storeDocument.save()
+
+    const allStores = await userStore.find({
+      types: {
+        $in: storeTypes
+      },
+      country,
+      city
+    }, {
+      _id: 1
+    })
+    if (allStores.length === 0)
+      res.status(200).json("send")
+
+    const storesIds = allStores.map(objId => objId._id)
+
+    const notification = new NotificationsModel({
+      content: storeDocument._id, from: userId, to: storesIds, type: 'request'
+    })
+    await notification.save()
+    res.status(200).json("send")
+  }
+  catch (ex) {
+    res.status(400).json({ err: ex })
+    console.log("send ex", ex)
   }
 }

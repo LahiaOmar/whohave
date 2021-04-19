@@ -1,6 +1,7 @@
 import React from 'react'
 import LoginContext from '../ContextAuth'
-
+import AlertMessage from '../AlertMessage'
+import { ALERT_ERROR } from '../../constants/constants'
 import { Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup } from '@material-ui/core'
 import { AccountCircle } from '@material-ui/icons'
 
@@ -9,19 +10,18 @@ import * as Yup from 'yup'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 function LogIn({ clSubmit, error, loading }) {
+	const [alertError, setAlertError] = React.useState(null)
 
 	const formik = useFormik({
 		initialValues: {
 			email: '',
 			password: '',
-			checkStore: true,
-			checkUser: false
+			userType: '',
 		},
 		validationSchema: Yup.object({
 			email: Yup.string().email("invalid email !").required("Email required !"),
 			password: Yup.string().required("Password Required !"),
-			checkStore: Yup.bool(),
-			checkUser: Yup.bool()
+			userType: Yup.string().required('select user type !')
 		}),
 		onSubmit: function (values) {
 			const config = {
@@ -32,6 +32,12 @@ function LogIn({ clSubmit, error, loading }) {
 			clSubmit(config)
 		}
 	})
+
+	React.useEffect(() => {
+		if (error.status) {
+			setAlertError(ALERT_ERROR.LOGIN_FAILD)
+		}
+	}, [error])
 
 	return (
 		<form className="form-signup" onSubmit={formik.handleSubmit} autoComplete="off">
@@ -51,10 +57,8 @@ function LogIn({ clSubmit, error, loading }) {
 								id="checkStore"
 								name="checkStore"
 								onChange={() => {
-									formik.setFieldValue('checkStore', true)
-									formik.setFieldValue('checkUser', false)
+									formik.setFieldValue('userType', 'STORE')
 								}}
-								checked={formik.values.checkStore}
 							/>}
 							label="store owner" />
 						<FormControlLabel
@@ -63,10 +67,8 @@ function LogIn({ clSubmit, error, loading }) {
 								id="checkUser"
 								name="checkUser"
 								onChange={() => {
-									formik.setFieldValue('checkStore', false)
-									formik.setFieldValue('checkUser', true)
+									formik.setFieldValue('userType', 'USER')
 								}}
-								checked={formik.values.checkUser}
 							/>}
 							label="user" />
 					</RadioGroup>
@@ -112,7 +114,7 @@ function LogIn({ clSubmit, error, loading }) {
 					}
 				</Grid>
 				<Grid item xs={12}>
-					<p>{error}</p>
+					<AlertMessage error={alertError} />
 				</Grid>
 			</Grid>
 		</form>

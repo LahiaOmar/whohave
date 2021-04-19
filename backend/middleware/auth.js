@@ -9,6 +9,7 @@ module.exports = async (req, res, next) => {
   try {
     const decodeToken = await jwt.verify(cookies.token, "RANDOM_SECRECT_KEY")
     const { userId, userType } = decodeToken
+    console.log("decoded token", decodeToken)
     res.locals.userId = userId
     res.locals.userType = userType
     next()

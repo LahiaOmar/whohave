@@ -5,58 +5,49 @@ const jwt = require("jsonwebtoken")
 const httpStatus = require("http-status")
 const socketMap = require('../models/socketMap')
 
-exports.storeSignUp = (req, res) => {
-  const { password, ...restOfFiled } = req.body
-  console.log(restOfFiled)
-  bcrypt.hash(password, 10)
-    .then(hash => {
-      const currentUserStore = new userStore({
-        ...restOfFiled,
-        password: hash
-      })
-      currentUserStore.save()
-        .then(() => res.status(httpStatus.CREATED).json({ message: "object Created", type: true, information: currentUserStore.getFieldToSend() }))
-        .catch((err) => res.status(400).json({ err }))
-    })
-    .catch(error => res.status(500).json({ error }))
-}
-
-exports.userSignUp = (req, res) => {
-  const { password, ...restOfFiled } = req.body
-  bcrypt.hash(password, 10)
-    .then(hash => {
-      const currentUser = new userWho({
-        ...restOfFiled,
-        password: hash
-      })
-      currentUser.save()
-        .then(() => res.status(201).json({ message: "user created !", type: false, information: currentUser.getFieldToSend() }))
-        .catch(err => res.status(400).json({ err }))
-    })
-    .catch(err => res.status(500).json({ err }))
-}
-
-exports.userLogin = async function (req, res) {
-  const model = (req.body.checkStore) ? userStore : userWho
+exports.userSignUp = async (req, res) => {
+  const { userData, userType } = req.body
+  const { password, ...restOfFiled } = userData
   try {
-    let curUser = await model.findOne({ email: req.body.email })
-    if (!curUser) {
+    const hash = await bcrypt.hash(password, 10)
+    const user = userType === 'STORE'
+      ? new userStore({ ...restOfFiled, password: hash })
+      : new userWho({ ...restOfFiled, password: hash })
+    await user.save()
+    const token = jwt.sign({
+      userId: user._id,
+      userType
+    }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
+    res.cookie('token', token, { httpOnly: true })
+    res.status(httpStatus.CREATED).json({ message: "object Created", userType, information: user.getFieldToSend() })
+  }
+  catch (ex) {
+    res.status(500).json({ ex })
+  }
+}
+
+exports.userLogin = async (req, res) => {
+  try {
+    const { userType } = req.body
+    console.log("userType ", userType)
+    const model = (userType === 'STORE') ? userStore : userWho
+    let user = await model.findOne({ email: req.body.email })
+    if (!user) {
       console.log("no user found")
       const errObject = { status: 401, message: "userNotFound" }
       throw new Error(JSON.stringify(errObject))
     }
-    let match = await bcrypt.compare(req.body.password, curUser.password)
+    let match = await bcrypt.compare(req.body.password, user.password)
     if (!match) {
       console.log("match")
       const errObject = { status: 401, message: "userNotFound" }
       throw new Error(JSON.stringify(errObject))
     }
-    const token = jwt.sign({ userId: curUser._id, userType: req.body.checkStore }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
+    const token = jwt.sign({ userId: user._id, userType }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
     res.cookie('token', token, { httpOnly: true })
-    const dataToSend = curUser.getFieldToSend()
+    const dataToSend = user.getFieldToSend()
     res.status(200).json({
-      token: token,
-      userType: req.body.checkStore ? true : false,
+      userType,
       information: dataToSend
     })
   }
@@ -76,22 +67,27 @@ exports.userLogout = (req, res) => {
 }
 
 exports.setPassword = async (req, res) => {
-  const { oldPassword, newPassword, userType } = req.body
-  const { token } = req.cookies
   try {
-    const decodedToken = jwt.verify(token, "RANDOM_SECRECT_KEY")
-    console.log("decodedToken", decodedToken)
-    const model = userType ? userStore : userWho
-    const user = await model.findById({ _id: decodedToken.userId })
+    const { oldPassword, newPassword } = req.body
+    const { userId, userType } = res.locals
+    console.log("userId, userType", userId, userType, oldPassword, newPassword)
+    const model = userType === 'STORE' ? userStore : userWho
+    const user = await model.findById({ _id: userId })
     if (user) {
       const match = await bcrypt.compare(oldPassword, user.password)
-      if (!match) {
-        res.status(401).json("wrong password")
+      console.log("user match", user, match)
+      if (match) {
+        console.log("is matching")
+        const hashPassword = await bcrypt.hash(newPassword, 10)
+        const userUpdated = await model.findByIdAndUpdate({ _id: userId }, { password: hashPassword }, { new: true })
+        res.status(201).json({
+          userData: userUpdated.getFieldToSend(),
+          userType
+        })
       }
       else {
-        const hashPassword = await bcrypt.hash(newPassword, 10)
-        await model.findByIdAndUpdate({ _id: decodedToken.userId }, { password: hashPassword })
-        res.status(201).json("password updated")
+        console.log("not mathing")
+        res.status(401).json("wrong password")
       }
     }
     else {
@@ -104,18 +100,18 @@ exports.setPassword = async (req, res) => {
 }
 
 exports.userSetInformation = async function (req, res) {
-  console.log("################update user route #####################")
-  const { forUpdate } = req.body
-  console.log("for update data ", forUpdate)
-  const { userId, userType } = res.locals
-  const model = userType ? userStore : userWho
   try {
-    const update = await model.findByIdAndUpdate({ _id: userId }, {
+    const { forUpdate } = req.body
+    const { userId, userType } = res.locals
+    const userModel = userType === 'STORE' ? userStore : userWho
+    const updatedUser = await userModel.findByIdAndUpdate({ _id: userId }, {
       ...forUpdate
-    })
-    res.status(200).json({ msg: "updated !" })
+    }, { new: true })
+    console.log("updated data model", updatedUser)
+    res.status(200).json({ msg: "updated !", userData: updatedUser.getFieldToSend(), userType, })
   }
   catch (e) {
+    console.log("e", e)
     res.status(500).json({ msg: e })
   }
 }
@@ -123,17 +119,17 @@ exports.userSetInformation = async function (req, res) {
 exports.verify = async (req, res) => {
   const { userType, userId } = res.locals
   try {
-    const model = userType ? userStore : userWho
+    const model = userType === 'STORE' ? userStore : userWho
     const user = await model.findById({ _id: userId })
     if (user) {
-      res.status(201).json({ userType: userType, userData: user.getFieldToSend(), valideToken: true })
+      res.status(201).json({ userType: userType, userData: user.getFieldToSend() })
     }
     else {
-      res.status(401).json({ valideToken: false })
+      res.status(401).json({ msg: "user not found" })
     }
   }
   catch (e) {
-    res.status(401).json({ userData: null, valideToken: false })
+    res.status(401).json({ err: e })
   }
 }
 

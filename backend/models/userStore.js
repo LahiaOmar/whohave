@@ -1,18 +1,18 @@
 const mongoose = require("mongoose")
 const location = require("../models/location.js")
-const notification = require('../models/notification')
 
 const userStoreSchema = new mongoose.Schema({
-  firstName: { type: String, require: true },
-  lastName: { type: String, require: true },
-  password: { type: String, require: true },
-  email: { type: String, require: true },
-  storeName: { type: String, required: true },
-  address: { type: String, require: true },
-  storeTypes: [{ type: String, require: true }],
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  password: { type: String, required: true },
+  email: { type: String, required: true },
+  name: { type: String, required: true },
+  address: { type: String, required: true },
+  types: [{ type: String, required: true }],
   first: { type: Boolean, default: false },
-  socketId: { type: String, default: "" },
-  notifications: [notification],
+  country: { type: String, required: true },
+  city: { type: String, required: true },
+  unicodeFlag: { type: String, required: true },
   location: { type: location, default: {}, index: "2dsphere" }
 })
 
@@ -25,9 +25,14 @@ userStoreSchema.methods.getFieldToSend = function () {
     first: this.first,
     email: this.email,
     address: this.address,
-    storeTypes: this.storeTypes,
-    storeName: this.storeName,
-    coordinates: this.location.coordinates,
+    storeTypes: this.types,
+    storeName: this.name,
+    city: this.city,
+    country: this.country,
+    unicodeFlag: this.unicodeFlag,
+    location: {
+      coordinates: this.location.coordinates
+    },
   }
 }
 

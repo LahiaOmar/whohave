@@ -1,28 +1,28 @@
 import React from 'react'
 import {
-  Button, Grid, TextField, Typography, MenuItem,
-  InputLabel, Select, Input, Checkbox, ListItemText, FormControl, Divider, Chip, Paper
+  Button, Grid, TextField, Typography
 } from '@material-ui/core'
-import { AccountCircle } from '@material-ui/icons'
-import AddIcon from '@material-ui/icons/Add';
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
-import LoginContext from '../ContextAuth'
-import Map from '../Map'
-import MyModal from '../Mymodal'
-import { useAxios } from '../useHooks/'
+import useAxios from '../useHooks/useAxios'
+import { AuthContext } from '../../Context/AuthProvider'
+import { AlertContext } from '../../Context/AlertProvider'
+import * as ALERT_ACTIONS from '../../Context/actions/AlertTypes'
+import * as AUTH_ACTIONS from '../../Context/actions/AuthTypes'
+import Axios from 'axios'
 
 const UserInformations = () => {
-  const { userData, type } = React.useContext(LoginContext)
+  const { authState: { profile }, authDispatch } = React.useContext(AuthContext)
+  const { alertDispatch } = React.useContext(AlertContext)
   const [modalOpen, setModalOpen] = React.useState(false)
   const refNewType = React.useRef()
   const [data, loading, error, setConfig] = useAxios({})
 
   const formik = useFormik({
     initialValues: {
-      firstName: userData.firstName || '',
-      lastName: userData.lastName || '',
-      email: userData.email || ''
+      firstName: profile.firstName || '',
+      lastName: profile.lastName || '',
+      email: profile.email || ''
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
@@ -35,27 +35,27 @@ const UserInformations = () => {
         .email('format not allowed!')
         .required('required !')
     }),
-    onSubmit: values => {
-      values = { ...values, userType: type }
-      const config = {
-        url: process.env.REACT_APP_UPDATE_USER,
-        data: {
-          type: type,
-          userId: userData._id,
-          forUpdate: {
-            ...values,
-          }
-        },
-        method: 'POST'
+    onSubmit: async (values) => {
+      try {
+        const config = {
+          url: process.env.REACT_APP_UPDATE_USER,
+          data: {
+            forUpdate: {
+              ...values,
+            }
+          },
+          method: 'POST'
+        }
+        const { data } = await Axios(config)
+        console.log("data response ", data)
+        alertDispatch(ALERT_ACTIONS.updateSuccess())
+        authDispatch(AUTH_ACTIONS.login({ userType: data.userType, ...data.userData }))
       }
-      setConfig(config)
+      catch (ex) {
+        alertDispatch(ALERT_ACTIONS.updateFailure())
+      }
     }
   })
-  React.useEffect(() => {
-    if (error) {
-      console.log("error : ", error, data)
-    }
-  }, [error])
 
   const changePassword = useFormik({
     initialValues: {
@@ -75,14 +75,20 @@ const UserInformations = () => {
       confirmPassword: Yup.string()
         .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
     }),
-    onSubmit: values => {
-      values = { ...values, userType: type }
-      const config = {
-        url: '/api/user/auth/setPassword',
-        data: values,
-        method: 'POST'
+    onSubmit: async (values) => {
+      try {
+        const config = {
+          url: process.env.REACT_APP_UPDATE_UPDATE_PASSWORD,
+          data: values,
+          method: 'POST'
+        }
+        const { data } = await Axios(config)
+        console.log("data response ", data)
+        alertDispatch(ALERT_ACTIONS.updateSuccess())
       }
-      setConfig(config)
+      catch (ex) {
+        alertDispatch(ALERT_ACTIONS.updateFailure())
+      }
     }
   })
 

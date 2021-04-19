@@ -10,22 +10,32 @@ import * as Yup from 'yup';
 import LoginContext from '../ContextAuth'
 import Map from '../Map'
 import MyModal from '../Mymodal'
-import { useAxios } from '../useHooks/'
+import useAxios from '../useHooks/useAxios'
+import { AuthContext } from '../../Context/AuthProvider';
+import { AlertContext } from '../../Context/AlertProvider'
+import * as ALERT_ACTIONS from '../../Context/actions/AlertTypes'
+import * as AUTH_ACTIONS from '../../Context/actions/AuthTypes'
+import Axios from 'axios'
+import CountrySelector from '../CountrySelector';
 
 const StoreInformations = () => {
-  const { userData, type } = React.useContext(LoginContext)
+  const { authState: { profile }, authDispatch } = React.useContext(AuthContext)
+  const { alertDispatch } = React.useContext(AlertContext)
   const [modalOpen, setModalOpen] = React.useState(false)
   const refNewType = React.useRef()
   const [data, loading, error, setConfig] = useAxios({})
 
-  const formik = useFormik({
+  const personalInformation = useFormik({
     initialValues: {
-      firstName: userData.firstName || '',
-      lastName: userData.lastName || '',
-      address: userData.address || '',
-      email: userData.email || '',
-      location: userData.coordinates || [],
-      storeTypes: userData.storeTypes || [],
+      firstName: profile.firstName || '',
+      lastName: profile.lastName || '',
+      address: profile.address || '',
+      email: profile.email || '',
+      // location: profile.coordinates || [],
+      // types: profile.types || [],
+      country: profile.country,
+      city: profile.city,
+      unicodeFlag: profile.unicodeFlag
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
@@ -39,36 +49,36 @@ const StoreInformations = () => {
       email: Yup.string()
         .email('format not allowed!')
         .required('required !'),
-      location: Yup.array()
-        .required("must specifie your position onno the map"),
-      storeTypes: Yup.array()
-        .min(1, 'you must select the type(s) of service that your store provide!')
+      country: Yup.string().required('select a country'),
+      city: Yup.string().required('select a city'),
+      unicodeFlag: Yup.string()
+      // location: Yup.array()
+      //   .required("must specifie your position onno the map"),
+      // types: Yup.array()
+      //   .min(1, 'you must select the type(s) of service that your store provide!')
     }),
-    onSubmit: values => {
-      values = { ...values, userType: type }
-      const config = {
-        url: process.env.REACT_APP_UPDATE_USER,
-        data: {
-          type: type,
-          userId: userData._id,
-          forUpdate: {
-            ...values,
-            location: {
-              coordinates: [values.location[0], values.location[1]]
+    onSubmit: async (values) => {
+      try {
+        const config = {
+          url: process.env.REACT_APP_UPDATE_USER,
+          data: {
+            forUpdate: {
+              ...values,
             }
-          }
-        },
-        method: 'POST'
+          },
+          method: 'POST'
+        }
+        const { data } = await Axios(config)
+        alertDispatch(ALERT_ACTIONS.updateSuccess())
+        authDispatch(AUTH_ACTIONS.login({ userType: data.userType, ...data.userData }))
+
       }
-      setConfig(config)
+      catch (ex) {
+        console.log("ex ", ex)
+        alertDispatch(ALERT_ACTIONS.updateFailure())
+      }
     }
   })
-  React.useEffect(() => {
-    if (error) {
-      console.log("error : ", error, data)
-    }
-  }, [error])
-
   const changePassword = useFormik({
     initialValues: {
       oldPassword: '',
@@ -87,35 +97,36 @@ const StoreInformations = () => {
       confirmPassword: Yup.string()
         .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
     }),
-    onSubmit: values => {
-      values = { ...values, userType: type }
-      const config = {
-        url: '/api/user/auth/setPassword',
-        data: values,
-        method: 'POST'
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const config = {
+          url: process.env.REACT_APP_UPDATE_UPDATE_PASSWORD,
+          data: values,
+          method: 'POST'
+        }
+        const { data } = await Axios(config)
+        alertDispatch(ALERT_ACTIONS.updateSuccess())
+        resetForm()
+        authDispatch(AUTH_ACTIONS.login({ userType: data.userType, ...data.userData }))
       }
-      setConfig(config)
+      catch (ex) {
+        console.log("ex ", ex)
+        alertDispatch(ALERT_ACTIONS.updateFailure())
+      }
     }
   })
 
-  React.useEffect(() => {
-    if (error) {
-      console.log("error", error)
-    }
-  }, [error])
-
   const addNewType = () => {
     const newType = refNewType.current.value
-    formik.setFieldValue('storeTypes', formik.values.storeTypes.concat(newType))
+    personalInformation.setFieldValue('types', personalInformation.values.types.concat(newType))
   }
 
   const deleteType = (typeName) => {
+
     console.log("typeName", typeName)
     const config = {
       url: process.env.REACT_APP_UPDATE_USER,
       data: {
-        type: type,
-        userId: userData._id,
         forUpdate: {
           $pull: {
             storeTypes: {
@@ -127,106 +138,122 @@ const StoreInformations = () => {
       method: 'POST'
     }
     setConfig(config)
-    formik.setFieldValue('storeTypes', formik.values.storeTypes.filter(cur => cur !== typeName))
+    personalInformation.setFieldValue('types', personalInformation.values.types.filter(cur => cur !== typeName))
   }
 
   const selfPositionOnChange = (lngLat) => {
-    formik.setFieldValue('location', lngLat)
+    personalInformation.setFieldValue('location', lngLat)
   }
   return (
     <Grid className="form-signup" container spacing={2}>
-      <Grid container item spacing={2} component="form" onSubmit={formik.handleSubmit}>
+      <Grid container item spacing={2} component="form" onSubmit={personalInformation.handleSubmit}>
         <Grid container justify="center" alignItems="center">
           <Typography component="h1" variant="h5">
             Update Your Informations
             </Typography>
         </Grid>
-        <Grid item xs={12} sm={6} >
-          <TextField
-            {...formik.getFieldProps('firstName')}
-            error={
-              formik.touched.firstName && formik.errors.firstName
-                ? true : false}
-            helperText={formik.touched.firstName && formik.errors.firstName
-              ? formik.errors.firstName : null}
-            name="firstName"
-            variant="outlined"
-            fullWidth
-            label="First Name"
-            size="small"
-          />
+        <Grid item container xs={6} spacing={2}>
+          <Grid item xs={12} sm={6} >
+            <TextField
+              {...personalInformation.getFieldProps('firstName')}
+              error={
+                personalInformation.touched.firstName && personalInformation.errors.firstName
+                  ? true : false}
+              helperText={personalInformation.touched.firstName && personalInformation.errors.firstName
+                ? personalInformation.errors.firstName : null}
+              name="firstName"
+              variant="outlined"
+              fullWidth
+              label="First Name"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} >
+            <TextField
+              {...personalInformation.getFieldProps('lastName')}
+              error={
+                personalInformation.touched.lastName && personalInformation.errors.lastName
+                  ? true : false}
+              helperText={personalInformation.touched.lastName && personalInformation.errors.lastName
+                ? personalInformation.errors.lastName : null}
+              name="lastName"
+              variant="outlined"
+              fullWidth
+              label="Last Name"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              {...personalInformation.getFieldProps('address')}
+              error={
+                personalInformation.touched.address && personalInformation.errors.address
+                  ? true : false}
+              helperText={personalInformation.touched.address && personalInformation.errors.address
+                ? personalInformation.errors.address : null}
+              name="address"
+              variant="outlined"
+              fullWidth
+              label="Address"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              {...personalInformation.getFieldProps('email')}
+              error={
+                personalInformation.touched.email && personalInformation.errors.email
+                  ? true : false}
+              helperText={personalInformation.touched.email && personalInformation.errors.email
+                ? personalInformation.errors.email : null}
+              size="small"
+              name="email"
+              variant="outlined"
+              fullWidth
+              label="email"
+            />
+          </Grid>
+          <Grid container item spacing={2} xs={12}>
+            <CountrySelector formik={personalInformation} />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6} >
-          <TextField
-            {...formik.getFieldProps('lastName')}
-            error={
-              formik.touched.lastName && formik.errors.lastName
-                ? true : false}
-            helperText={formik.touched.lastName && formik.errors.lastName
-              ? formik.errors.lastName : null}
-            name="lastName"
-            variant="outlined"
-            fullWidth
-            label="Last Name"
-            size="small"
-          />
+        <Grid item container xs={6}>
+          <Map
+            userPositionHandler={selfPositionOnChange}
+            userCoordinates={personalInformation.values.location}
+            listOfPosition={[]}
+          >
+          </Map>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            {...formik.getFieldProps('address')}
-            error={
-              formik.touched.address && formik.errors.address
-                ? true : false}
-            helperText={formik.touched.address && formik.errors.address
-              ? formik.errors.address : null}
-            name="address"
-            variant="outlined"
-            fullWidth
-            label="Address"
-            size="small"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            {...formik.getFieldProps('email')}
-            error={
-              formik.touched.email && formik.errors.email
-                ? true : false}
-            helperText={formik.touched.email && formik.errors.email
-              ? formik.errors.email : null}
-            size="small"
-            name="email"
-            variant="outlined"
-            fullWidth
-            label="email"
-          />
-        </Grid>
-        <Grid item xs={12}>
+
+        {/* <Grid item xs={12}>
           <MyModal
+            useBtn
             btnTitle="Set Your Position"
             open={modalOpen}
             handleOpen={() => setModalOpen(true)}
             handleClose={() => setModalOpen(false)}
           >
             <Map
-              selfPositionOnChange={selfPositionOnChange}
-              userCoordinates={formik.values.location}
+              userPositionHandler={selfPositionOnChange}
+              userCoordinates={personalInformation.values.location}
+              listOfPosition={[]}
             >
             </Map>
           </MyModal>
-        </Grid>
-        <Grid item xs={12} container direction="row" justify="space-around" >
+        </Grid> */}
+        {/* <Grid item xs={12} container direction="row" justify="space-around" >
           <div style={
             { maxHeight: "100px", width: '300px', overflow: 'auto', display: "flex", flexWrap: 'wrap', justifyContent: 'space-around' }}>
             {
-              formik.values.storeTypes.map(type => <Chip label={type}
+              personalInformation.values.storeTypes.map(type => <Chip label={type}
                 onDelete={() => deleteType(type)} />)
             }
           </div>
           <div>
             <TextField inputRef={refNewType} label="add new type" InputProps={{ endAdornment: (<AddIcon onClick={addNewType} />) }} />
           </div>
-        </Grid>
+        </Grid> */}
         <Grid item justify="center" xs={12}>
           <Button
             type="submit"

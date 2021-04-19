@@ -1,171 +1,72 @@
 import React from 'react'
-import ReactMapGL from 'react-map-gl'
+import mapboxgl from 'mapbox-gl'
+
 import { PositionAction } from '../ButtonActions'
-import MyMarker from '../MyMarker'
-import MyModal from '../Mymodal'
-import constants from '../../constants'
-import LoginContext from '../ContextAuth'
-import { Tooltip } from '@material-ui/core'
-import { WebMercatorViewport } from 'react-map-gl'
 
-function reducer(state, action) {
-	let newState = { ...state }
-
-	switch (action.type) {
-		case constants.MAP_REDUCER_CONST.ADDMARKER:
-			newState.markers.push(action.data)
-			break;
-		case constants.MAP_REDUCER_CONST.SET_USER_MARKER:
-			newState = { ...newState, userMarker: action.data }
-			break;
-		case constants.MAP_REDUCER_CONST.SET_MARKERS:
-			newState = { ...newState, markers: action.data }
-			break;
-		case constants.MAP_REDUCER_CONST.SET_VIWEPORT:
-			newState = { ...newState, viewport: action.data }
-			break;
-		case constants.MAP_REDUCER_CONST.SET_SELF_POSITION_LNGLAT:
-			newState = { ...newState, userLngLat: action.data }
-			break;
-		case constants.MAP_REDUCER_CONST.SET_VIEWPORT:
-			newState = { ...newState, viewport: action.data }
-			break;
-		default:
-			console.log("action", action)
-			throw Error("wrong action type")
-	}
-	return newState
-}
-
-function Map({ listOfPosition, selfPositionOnChange, userCoordinates }) {
-	const { type } = React.useContext(LoginContext)
-	const key = process.env.REACT_APP_MAP_KEY
-	const [state, dispatch] = React.useReducer(reducer, {
-		viewport: constants.MAP_INIT_CONST.VIEWPROT,
-		markers: [],
-		userMarker: null,
-		userLngLat: null
-	})
+function Map({ markersPosition = [], style = {}, userPositionHandler }) {
+	const [mp, setMp] = React.useState(null)
+	const [userCoordination, setUserCoordination] = React.useState(null)
+	const [selfPosition, setSelfPosition] = React.useState()
 
 	React.useEffect(() => {
-		let newViewPort = {}
-		const positions = listOfPosition.map(position => [position.longitude, position.latitude])
-		if (positions.length === 1) {
-			// the centre of the map is the singel positions we have in the array.
-			newViewPort = {
-				...constants.MAP_INIT_CONST.VIEWPROT,
-				longitude: positions[0][0],
-				latitude: positions[0][1]
-			}
-			dispatch({
-				type: constants.MAP_REDUCER_CONST.SET_VIWEPORT,
-				data: newViewPort
-			})
-		}
-		else {
-			newViewPort = new WebMercatorViewport({ width: 500, height: 500 })
-				.fitBounds(positions, {
-					padding: 20, offset: [0, 100]
-				})
-			dispatch({
-				type: constants.MAP_REDUCER_CONST.SET_VIWEPORT,
-				data: { ...newViewPort, width: state.viewport.width, height: state.viewport.height }
-			})
-		}
-	}, [])
-
-	React.useEffect(() => {
-		if (userCoordinates) {
-			setUserLngLat(userCoordinates)
-		}
-	}, [])
-
-	React.useEffect(() => {
-		console.log("update list of positions.")
-	}, [listOfPosition])
-
-	const setUserLngLat = (lngLat) => {
-		const longitude = lngLat[0]
-		const latitude = lngLat[1]
-		dispatch({
-			type: constants.MAP_REDUCER_CONST.SET_SELF_POSITION_LNGLAT,
-			data: { longitude, latitude }
+		mapboxgl.accessToken = process.env.REACT_APP_MAP_KEY
+		const _mp = new mapboxgl.Map({
+			container: "map",
+			style: "mapbox://styles/mapbox/streets-v11",
+			center: [-74, 40],
+			zoom: 9
 		})
-	}
+		setMp(_mp)
+	}, [])
 
-	const getSelfPosition = () => {
+	const getUserPosition = () => {
+		console.log("getUserPosition")
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition((position) => {
 				const { longitude, latitude } = position.coords
-				const lngLat = [longitude, latitude]
-				selfPositionOnChange({ longitude, latitude })
-				setUserLngLat(lngLat)
+				userPositionHandler([longitude, latitude])
+				setUserCoordination([longitude, latitude])
 			})
-		}
-		else {
-			return false
 		}
 	}
 
 	React.useEffect(() => {
-		if (state.userLngLat) {
-			const { longitude, latitude } = state.userLngLat
-			let typeUser = ''
-			if (type) {
-				typeUser = type ? constants.MARKER_TYPE.STOREOWNER : constants.MARKER_TYPE.CONSUMER
-			}
-			else {
-				typeUser = constants.MARKER_TYPE.STOREOWNER
-			}
-			const userMarker = <MyMarker
-				handleChangeMarker={({ lngLat }) => {
-					setUserLngLat(lngLat)
-					selfPositionOnChange(lngLat)
-				}}
-				lngLat={{ longitude, latitude }}
-				isDraggeble={true}
-				iconType={typeUser} />
-			dispatch({
-				type: constants.MAP_REDUCER_CONST.SET_USER_MARKER,
-				data: userMarker
+		if (userCoordination) {
+			const userMarker = getMarker(userCoordination, { draggable: true })
+			userMarker.on('dragend', ({ target }) => {
+				const { lng, lat } = target._lngLat
+				userPositionHandler([lng, lat])
 			})
+			userMarker.addTo(mp)
+			const boundes = new mapboxgl.LngLatBounds()
+			boundes.extend(new mapboxgl.LngLat(userCoordination[0], userCoordination[1]))
+			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
 		}
-	}, [state.userLngLat])
+	}, [userCoordination])
+
+	const getMarker = (position, config = {}) => {
+		const marker = new mapboxgl.Marker({ color: '#FFFFFF', ...config })
+		marker.setLngLat(position)
+		return marker
+	}
 
 	React.useEffect(() => {
-		if (listOfPosition) {
-			const mapMarkers = listOfPosition.map(({ longitude, latitude }) =>
-				<MyMarker
-					lngLat={{ longitude, latitude }}
-					isDraggeble={false}
-					iconType={constants.MARKER_TYPE.STORE_POSITON} />)
-			dispatch({
-				type: constants.MAP_REDUCER_CONST.SET_MARKERS,
-				data: mapMarkers
+		if (markersPosition.length > 0 && mp) {
+			const boundes = new mapboxgl.LngLatBounds()
+			markersPosition.forEach(position => {
+				const marker = getMarker(position)
+				marker.addTo(mp)
+				boundes.extend(new mapboxgl.LngLat(position[0], position[1]))
 			})
+			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
 		}
-	}, [])
+	}, [markersPosition, mp])
+
 	return (
-		<div id="map">
+		<div id="map" style={style}>
 			<div className="btnPosition">
-				<PositionAction onClick={getSelfPosition} />
+				<PositionAction onClick={getUserPosition} />
 			</div>
-			<ReactMapGL
-				{...state.viewport}
-				mapboxApiAccessToken={key}
-				onViewportChange={nextViewport => {
-					dispatch({
-						type: constants.MAP_REDUCER_CONST.SET_VIWEPORT,
-						data: nextViewport
-					})
-				}}>
-				{
-					state.userMarker && state.userMarker
-				}
-				{
-					state.markers && state.markers.map(marker => marker)
-				}
-			</ReactMapGL>
 		</div >
 	)
 }

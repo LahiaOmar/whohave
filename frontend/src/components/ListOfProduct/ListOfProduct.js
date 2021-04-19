@@ -7,124 +7,19 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import { Divider, IconButton, Tooltip, Typography, TablePagination } from '@material-ui/core'
-import { v4 as uuidv4 } from 'uuid';
-import { useAxios } from '../useHooks';
-import LoginContext from '../ContextAuth';
-import constants from '../../constants'
+import { Divider, IconButton, Tooltip, Typography, TablePagination, Grid } from '@material-ui/core'
+import { v4 as uui } from 'uuid';
 import './style.css'
-import { Grid } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
-import Axios from 'axios';
 
-const ListOfProduct = ({ notifications, dispatch }) => {
-  const context = React.useContext(LoginContext)
+import { NotificationsOff } from '@material-ui/icons';
+
+const ListOfProduct = ({ products, feedback }) => {
   const [selected, setSelected] = React.useState(false)
-
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(2)
-
-  React.useEffect(() => {
-    const findSelected = notifications.find(notification => notification.isSelected === true)
-    setSelected(findSelected ? true : false)
-  }, [notifications])
-
-  const sendResponse = (consumerId, productId, productName) => {
-    return new Promise(async (resolve, reject) => {
-      const from = context.userData._id
-      let config = {
-        method: 'POST',
-        url: process.env.REACT_APP_PATH_PRODUCT_BROADCAST,
-        data: {
-          userType: context.userType,
-          from: from,
-          to: consumerId,
-          productId,
-          productName
-        }
-      }
-      try {
-        const res = await Axios(config)
-        resolve(res)
-      }
-      catch (e) {
-        reject(e)
-      }
-    })
-  }
-  const removeProduct = (itemIds) => {
-    return new Promise(async (resolve, reject) => {
-      let config = {
-        method: 'POST',
-        url: process.env.REACT_APP_UPDATE_USER,
-        data: {
-          type: context.type,
-          userId: context.userData._id,
-          forUpdate: {
-            $pull: {
-              notifications: {
-                _id: {
-                  $in: itemIds
-                }
-              }
-            }
-          }
-        }
-      }
-      try {
-        const res = await Axios(config)
-        resolve(res)
-      }
-      catch (e) {
-        reject(e)
-      }
-    })
-
-  }
-
-  const deleteSelectedProduct = () => {
-    const notifCheckedIds = notifications.reduce((prev, curr) => {
-      if (curr.isSelected) {
-        prev.push(curr._id)
-      }
-      return prev
-    }, [])
-    dispatch({
-      type: constants.NOTIFICATIONS_REDUCER.DELETE,
-      idsArr: notifCheckedIds
-    })
-  }
-
-  const positiveFeedBack = async (consumerId, productId, productName) => {
-    try {
-      await sendResponse(consumerId, productId, productName)
-      await removeProduct([productId])
-      dispatch({
-        type: constants.NOTIFICATIONS_REDUCER.DELETE,
-        idsArr: [productId]
-      })
-    }
-    catch (e) {
-      // shoow some error to the user.
-      console.log("positive err", e)
-    }
-  }
-
-  const negativeFeedBack = async (productId) => {
-    try {
-      await removeProduct([productId])
-      dispatch({
-        type: constants.NOTIFICATIONS_REDUCER.DELETE,
-        idsArr: [productId]
-      })
-    }
-    catch (e) {
-      // show error to the user,
-      console.log("nagative err", e)
-    }
-  }
 
   return (
     <Paper>
@@ -137,29 +32,24 @@ const ListOfProduct = ({ notifications, dispatch }) => {
           }>
             {
               selected ?
-                <>
-                  <Tooltip title="delete">
-                    <IconButton aria-label="delete" onClick={() => deleteSelectedProduct()}>
-                      <DeleteIcon size="large" color="action" />
-                    </IconButton>
-                  </Tooltip>
-                </>
+                <Tooltip title="delete">
+                  <IconButton aria-label="delete" onClick={() => console.log("clicked select all")}>
+                    <DeleteIcon size="large" color="action" />
+                  </IconButton>
+                </Tooltip>
                 : <Typography>
                   <h3>List of product</h3>
                 </Typography>
             }
           </div>
           <Divider />
-          <Table aria-label="simple table">
+          <Table aria-label="simple table" size="small">
             <TableHead>
               <TableRow>
                 <TableCell align="left">
                   <Checkbox
                     inputProps={{ 'aria-label': 'uncontrolled-checkbox' }}
-                    onChange={(e) => dispatch({
-                      type: constants.NOTIFICATIONS_REDUCER.CHECK_ALL,
-                      isSelected: e.target.checked
-                    })}
+                    onChange={() => console.log("click")}
                   />
                 select all
               </TableCell>
@@ -170,34 +60,36 @@ const ListOfProduct = ({ notifications, dispatch }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {notifications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((product, i) => {
-                  const { informations, _id, isSelected, from } = product
-                  const { productName, description } = informations
+              {products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map(product => {
+                  const key = uui()
                   return (
-                    <TableRow key={_id}>
+                    <TableRow key={key}>
                       <TableCell align="left">
                         <Checkbox
-                          onChange={() => dispatch({
-                            type: constants.NOTIFICATIONS_REDUCER.CHECK_BYID, id: _id
-                          })}
-                          checked={isSelected}
+                          onChange={() => console.log("check")}
+                          checked={product.isSelected}
                         />
                       </TableCell>
-                      <TableCell align="left">{productName}</TableCell>
-                      <TableCell align="left">{description}</TableCell>
+                      <TableCell align="left">{product.productName}</TableCell>
+                      <TableCell align="left">{product.description}</TableCell>
                       <TableCell align="left">Images ... </TableCell>
                       <TableCell align="left">
-                        <ThumbUpIcon
-                          fontSize="medium"
-                          style={{ padding: '5px', cursor: 'pointer' }}
-                          color="primary"
-                          onClick={() => positiveFeedBack(from, _id, productName)} />
-                        <ThumbDownIcon
-                          fontSize="medium"
-                          style={{ padding: '5px', cursor: 'pointer' }}
-                          color="action"
-                          onClick={() => negativeFeedBack(_id)} />
+                        <IconButton
+                          onClick={() => feedback(product._id, product.from, 1)} >
+                          <ThumbUpIcon
+                            fontSize="medium"
+                            style={{ padding: '5px', cursor: 'pointer' }}
+                            color="primary"
+                          />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => feedback(product._id, product.from, 0)}>
+                          <ThumbDownIcon
+                            fontSize="medium"
+                            style={{ padding: '5px', cursor: 'pointer' }}
+                            color="action" />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   )
@@ -208,7 +100,7 @@ const ListOfProduct = ({ notifications, dispatch }) => {
         <TablePagination
           rowsPerPageOptions={[2, 4, 6]}
           component="div"
-          count={notifications.length}
+          count={products.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={(e, newPage) => {

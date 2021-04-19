@@ -1,3 +1,6 @@
+*,*:focus,*:hover{
+	outline:none;
+}
 /* body */
 body{
 	margin:0px;
@@ -14,10 +17,15 @@ body{
 .multi-select-form{
 	width: 100%;
 }
+.stepper-content{
+}	
 #signup-multi{
-	width: calc(40vw);
-	height: calc(80vh);
+	width: calc(80vw);
+	height: calc(90vh);
 	background-color: white;
+}
+.signup-store{
+	height: 100%;
 }
 .container-modal{
 	display: flex;
@@ -116,6 +124,8 @@ body{
 /* MAP */
 #map{
 	position: relative;
+	width: 500px;
+	height: 500px;
 }
 
 .btnPosition{
