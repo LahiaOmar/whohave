@@ -144,13 +144,15 @@ function ListOfResponse({ notification, responses, actions: { deleteProduct, del
           const storeIndex = responses.products.findIndex(product => product._id === pyload.productId)
           if (storeIndex >= 0) {
             const store = responses.stores[storeIndex].find(store => store._id === pyload.storeId)
-            return { open: true, listPosition: [store.location.coordinates] }
+            return { open: true, listPosition: [{ coordinates: store.location.coordinates, draggable: false, type: 'STORE' }] }
           }
           return newState
         case 'PRODUCT':
           pyload = action.pyload
           const storesIndex = responses.products.findIndex(product => product._id === pyload.productId)
-          const listCoordinates = responses.stores[storesIndex].map(store => store.location.coordinates)
+          const listCoordinates = responses.stores[storesIndex].map(store => ({
+            coordinates: store.location.coordinates, draggable: false, type: 'STORE'
+          }))
           return { open: true, listPosition: listCoordinates }
         case 'CLOSE':
           return { ...state, open: false }
