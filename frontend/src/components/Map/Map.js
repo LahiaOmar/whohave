@@ -3,10 +3,27 @@ import mapboxgl from 'mapbox-gl'
 
 import { PositionAction } from '../ButtonActions'
 
-function Map({ markersPosition = [], style = {}, userPositionHandler }) {
+function Map({ markersPosition = [], style = {}, selfLocation }) {
 	const [mp, setMp] = React.useState(null)
-	const [userCoordination, setUserCoordination] = React.useState(null)
-	const [selfPosition, setSelfPosition] = React.useState()
+	const [userLocation, setUserLocation] = React.useState(selfLocation)
+	const [userMarker, setUserMarker] = React.useState(null)
+
+	React.useEffect(() => {
+		if (userMarker) {
+			const boundes = markersBoundes([userMarker])
+			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
+		}
+	}, [userMarker])
+
+	React.useEffect(() => {
+		if (mp && userLocation) {
+			if (userLocation.coordinates.length > 0) {
+				if (userMarker) userMarker.remove()
+				const marker = createMarker(userLocation)
+				setUserMarker(marker)
+			}
+		}
+	}, [mp, userLocation])
 
 	React.useEffect(() => {
 		mapboxgl.accessToken = process.env.REACT_APP_MAP_KEY
@@ -20,53 +37,50 @@ function Map({ markersPosition = [], style = {}, userPositionHandler }) {
 	}, [])
 
 	const getUserPosition = () => {
-		console.log("getUserPosition")
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition((position) => {
 				const { longitude, latitude } = position.coords
-				userPositionHandler([longitude, latitude])
-				setUserCoordination([longitude, latitude])
+				setUserLocation(prev => ({ ...prev, coordinates: [longitude, latitude] }))
 			})
 		}
 	}
 
-	React.useEffect(() => {
-		if (userCoordination) {
-			const userMarker = getMarker(userCoordination, { draggable: true })
-			userMarker.on('dragend', ({ target }) => {
-				const { lng, lat } = target._lngLat
-				userPositionHandler([lng, lat])
-			})
-			userMarker.addTo(mp)
-			const boundes = new mapboxgl.LngLatBounds()
-			boundes.extend(new mapboxgl.LngLat(userCoordination[0], userCoordination[1]))
-			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
+	const createMarker = ({ coordinates, type, draggable, changePosition }) => {
+		const markerColor = type === 'STORE' ? 'red' : 'blue'
+		const marker = new mapboxgl.Marker({ color: markerColor, draggable })
+		marker.setLngLat(coordinates)
+		if (draggable) {
+			marker.on('dragend', (mr) => changePosition(mr))
 		}
-	}, [userCoordination])
-
-	const getMarker = (position, config = {}) => {
-		const marker = new mapboxgl.Marker({ color: '#FFFFFF', ...config })
-		marker.setLngLat(position)
 		return marker
+	}
+
+	const markersBoundes = (markers) => {
+		const boundes = new mapboxgl.LngLatBounds()
+		markers.forEach(marker => {
+			marker.addTo(mp)
+			const lngLat = marker.getLngLat()
+			boundes.extend(new mapboxgl.LngLat(lngLat.lng, lngLat.lat))
+		})
+		return boundes
 	}
 
 	React.useEffect(() => {
 		if (markersPosition.length > 0 && mp) {
-			const boundes = new mapboxgl.LngLatBounds()
-			markersPosition.forEach(position => {
-				const marker = getMarker(position)
-				marker.addTo(mp)
-				boundes.extend(new mapboxgl.LngLat(position[0], position[1]))
-			})
+			const markers = markersPosition.map(marker => createMarker(marker))
+			const boundes = markersBoundes(markers)
 			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
 		}
 	}, [markersPosition, mp])
 
 	return (
 		<div id="map" style={style}>
-			<div className="btnPosition">
-				<PositionAction onClick={getUserPosition} />
-			</div>
+			{
+				selfLocation
+				&& <div className="btnPosition">
+					<PositionAction onClick={getUserPosition} />
+				</div>
+			}
 		</div >
 	)
 }

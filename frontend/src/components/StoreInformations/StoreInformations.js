@@ -1,15 +1,10 @@
 import React from 'react'
 import {
-  Button, Grid, TextField, Typography, MenuItem,
-  InputLabel, Select, Input, Checkbox, ListItemText, FormControl, Divider, Chip, Paper
+  Button, Grid, TextField, Typography
 } from '@material-ui/core'
-import { AccountCircle } from '@material-ui/icons'
-import AddIcon from '@material-ui/icons/Add';
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
-import LoginContext from '../ContextAuth'
 import Map from '../Map'
-import MyModal from '../Mymodal'
 import useAxios from '../useHooks/useAxios'
 import { AuthContext } from '../../Context/AuthProvider';
 import { AlertContext } from '../../Context/AlertProvider'
@@ -21,17 +16,20 @@ import CountrySelector from '../CountrySelector';
 const StoreInformations = () => {
   const { authState: { profile }, authDispatch } = React.useContext(AuthContext)
   const { alertDispatch } = React.useContext(AlertContext)
-  const [modalOpen, setModalOpen] = React.useState(false)
   const refNewType = React.useRef()
   const [data, loading, error, setConfig] = useAxios({})
-
+  const storePosition = React.useMemo(() => ({
+    coordinates: profile.location.coordinates,
+    type: profile.userType,
+    draggable: true,
+  }), [])
   const personalInformation = useFormik({
     initialValues: {
       firstName: profile.firstName || '',
       lastName: profile.lastName || '',
       address: profile.address || '',
       email: profile.email || '',
-      // location: profile.coordinates || [],
+      location: profile.location || { coordinates: [] },
       // types: profile.types || [],
       country: profile.country,
       city: profile.city,
@@ -141,8 +139,9 @@ const StoreInformations = () => {
     personalInformation.setFieldValue('types', personalInformation.values.types.filter(cur => cur !== typeName))
   }
 
-  const selfPositionOnChange = (lngLat) => {
-    personalInformation.setFieldValue('location', lngLat)
+  const changePosition = ({ target }) => {
+    const lngLat = target.getLngLat()
+    personalInformation.setFieldValue('location', { coordinates: [lngLat.lng, lngLat.lat] })
   }
   return (
     <Grid className="form-signup" container spacing={2}>
@@ -219,41 +218,10 @@ const StoreInformations = () => {
         </Grid>
         <Grid item container xs={6}>
           <Map
-            userPositionHandler={selfPositionOnChange}
-            userCoordinates={personalInformation.values.location}
-            listOfPosition={[]}
+            selfLocation={{ ...storePosition, changePosition }}
           >
           </Map>
         </Grid>
-
-        {/* <Grid item xs={12}>
-          <MyModal
-            useBtn
-            btnTitle="Set Your Position"
-            open={modalOpen}
-            handleOpen={() => setModalOpen(true)}
-            handleClose={() => setModalOpen(false)}
-          >
-            <Map
-              userPositionHandler={selfPositionOnChange}
-              userCoordinates={personalInformation.values.location}
-              listOfPosition={[]}
-            >
-            </Map>
-          </MyModal>
-        </Grid> */}
-        {/* <Grid item xs={12} container direction="row" justify="space-around" >
-          <div style={
-            { maxHeight: "100px", width: '300px', overflow: 'auto', display: "flex", flexWrap: 'wrap', justifyContent: 'space-around' }}>
-            {
-              personalInformation.values.storeTypes.map(type => <Chip label={type}
-                onDelete={() => deleteType(type)} />)
-            }
-          </div>
-          <div>
-            <TextField inputRef={refNewType} label="add new type" InputProps={{ endAdornment: (<AddIcon onClick={addNewType} />) }} />
-          </div>
-        </Grid> */}
         <Grid item justify="center" xs={12}>
           <Button
             type="submit"
