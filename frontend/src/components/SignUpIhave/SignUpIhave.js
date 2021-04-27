@@ -126,8 +126,8 @@ function SignUpIhave({ clSubmit, label }) {
 		}
 		clSubmit(config)
 	}
-	const userPositionHandler = (coordination) => {
-		storeInformation.setFieldValue('location', { coordinates: coordination })
+	const userPositionHandler = (coordinates) => {
+		storeInformation.setFieldValue('location', { coordinates })
 	}
 	const USER_INFORMATION = 0
 	const STORE_INFORMATION = 1
@@ -245,7 +245,9 @@ function SignUpIhave({ clSubmit, label }) {
 							</Grid>
 						</Grid>
 						<Grid item container xs={6} spacing={2}>
-							<Map style={{ width: '100%', height: '400px' }} userPositionHandler={userPositionHandler} />
+							<Map style={{ width: '100%', height: '400px' }} selfLocation={
+								{ coordinates: [], draggable: true, changePosition: userPositionHandler }
+							} />
 						</Grid>
 						<Grid item xs={12}>
 							<button type="submit" style={{ display: 'none' }}></button>

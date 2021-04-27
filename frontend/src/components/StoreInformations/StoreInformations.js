@@ -139,9 +139,9 @@ const StoreInformations = () => {
     personalInformation.setFieldValue('types', personalInformation.values.types.filter(cur => cur !== typeName))
   }
 
-  const changePosition = ({ target }) => {
-    const lngLat = target.getLngLat()
-    personalInformation.setFieldValue('location', { coordinates: [lngLat.lng, lngLat.lat] })
+  const changePosition = (coordinates) => {
+    console.log("store information", coordinates)
+    personalInformation.setFieldValue('location', { coordinates })
   }
   return (
     <Grid className="form-signup" container spacing={2}>

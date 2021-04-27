@@ -41,6 +41,8 @@ function Map({ markersPosition = [], style = {}, selfLocation }) {
 			navigator.geolocation.getCurrentPosition((position) => {
 				const { longitude, latitude } = position.coords
 				setUserLocation(prev => ({ ...prev, coordinates: [longitude, latitude] }))
+				if (userLocation)
+					userLocation.changePosition([longitude, latitude])
 			})
 		}
 	}
@@ -50,7 +52,10 @@ function Map({ markersPosition = [], style = {}, selfLocation }) {
 		const marker = new mapboxgl.Marker({ color: markerColor, draggable })
 		marker.setLngLat(coordinates)
 		if (draggable) {
-			marker.on('dragend', (mr) => changePosition(mr))
+			marker.on('dragend', ({ target }) => {
+				const lngLat = target.getLngLat()
+				changePosition([lngLat.lng, lngLat.lat])
+			})
 		}
 		return marker
 	}
