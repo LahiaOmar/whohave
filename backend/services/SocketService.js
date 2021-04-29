@@ -44,7 +44,7 @@ class SocketService {
         const { from, content: { productId }, to } = notification
         const userSocketId = await socketMap.findOne({ userId: to[0] })
         if (userSocketId.socketId) {
-          const store = await StoresModel.findOne({ _id: new ObjectID(from) }, { storeName: 1, address: 1, location: 1 })
+          const store = await StoresModel.findOne({ _id: new ObjectID(from) }, { name: 1, address: 1, location: 1 })
           this.io.to(userSocketId.socketId).emit('notification', JSON.stringify({ store, productId }))
         }
       }

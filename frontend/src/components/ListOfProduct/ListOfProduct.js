@@ -14,10 +14,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 
-import { NotificationsOff } from '@material-ui/icons';
-
 const ListOfProduct = ({ products, feedback }) => {
-  const [selected, setSelected] = React.useState(false)
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(2)
 
@@ -25,38 +22,19 @@ const ListOfProduct = ({ products, feedback }) => {
     <Paper>
       <div className="list-products">
         <TableContainer component={Paper} className="table-products" style={{ heigth: '100vh' }}>
-          <div className="table-actions" style={
-            selected ? {
-              animation: 'bg-animation 0.3s ease-in-out forwards'
-            } : {}
-          }>
-            {
-              selected ?
-                <Tooltip title="delete">
-                  <IconButton aria-label="delete" onClick={() => console.log("clicked select all")}>
-                    <DeleteIcon size="large" color="action" />
-                  </IconButton>
-                </Tooltip>
-                : <Typography>
-                  <h3>List of product</h3>
-                </Typography>
-            }
+          <div className="table-actions">
+            <Typography>
+              <h3>List of product</h3>
+            </Typography>
           </div>
           <Divider />
           <Table aria-label="simple table" size="small">
             <TableHead>
               <TableRow>
-                <TableCell align="left">
-                  <Checkbox
-                    inputProps={{ 'aria-label': 'uncontrolled-checkbox' }}
-                    onChange={() => console.log("click")}
-                  />
-                select all
-              </TableCell>
-                <TableCell align="left">Product Name</TableCell>
-                <TableCell align="left">Description</TableCell>
-                <TableCell align="left">Images</TableCell>
-                <TableCell align="left">Response</TableCell>
+                <TableCell align="center">Product Name</TableCell>
+                <TableCell align="center">Description</TableCell>
+                <TableCell align="center">Images</TableCell>
+                <TableCell align="center">Response</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -65,16 +43,10 @@ const ListOfProduct = ({ products, feedback }) => {
                   const key = uui()
                   return (
                     <TableRow key={key}>
-                      <TableCell align="left">
-                        <Checkbox
-                          onChange={() => console.log("check")}
-                          checked={product.isSelected}
-                        />
-                      </TableCell>
-                      <TableCell align="left">{product.productName}</TableCell>
-                      <TableCell align="left">{product.description}</TableCell>
-                      <TableCell align="left">Images ... </TableCell>
-                      <TableCell align="left">
+                      <TableCell align="center">{product.productName}</TableCell>
+                      <TableCell align="center">{product.description}</TableCell>
+                      <TableCell align="center">Images ... </TableCell>
+                      <TableCell align="center">
                         <IconButton
                           onClick={() => feedback(product._id, product.from, 1)} >
                           <ThumbUpIcon

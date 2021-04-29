@@ -25,18 +25,18 @@ const CollapsRow = ({ product, stores, deleteProduct, deleteResponse, mapDispatc
   return (
     <>
       <TableRow>
-        <TableCell>
+        <TableCell align="center">
           <IconButton size="sm" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>
+        <TableCell align="center">
           {product.productName}
         </TableCell>
-        <TableCell>
+        <TableCell align="center">
           {product.description}
         </TableCell>
-        <TableCell>
+        <TableCell align="center">
           <Tooltip title={`You have ${stores.length} responses`}>
             <IconButton>
               <Badge badgeContent={stores.length} color="secondary">
@@ -45,7 +45,7 @@ const CollapsRow = ({ product, stores, deleteProduct, deleteResponse, mapDispatc
             </IconButton>
           </Tooltip>
         </TableCell>
-        <TableCell>
+        <TableCell align="center">
           <Tooltip title="Show All Responses" color="primary">
             <IconButton
               label="Show All Responses"
@@ -130,8 +130,6 @@ const CollapsRow = ({ product, stores, deleteProduct, deleteResponse, mapDispatc
 }
 
 function ListOfResponse({ notification, responses, actions: { deleteProduct, deleteResponse } }) {
-  const [modalOpen, setModalOpen] = React.useState(false)
-  const [selected, setSelected] = React.useState(false)
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(2)
   const [mapState, mapDispatch] = React.useReducer(
@@ -165,49 +163,21 @@ function ListOfResponse({ notification, responses, actions: { deleteProduct, del
 
   return (
     <Paper>
-      <div className="table-actions" style={
-        selected ? {
-          animation: 'bg-animation 0.3s ease-in-out forwards'
-        } : {}
-      }>
-        {
-          selected ?
-            <>
-              <Tooltip title="Delete">
-                <IconButton aria-label="delete" onClick={() => console.log("selecte all")}>
-                  <DeleteIcon size="large" color="action" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Map">
-                <IconButton aria-label="map" onClick={() => {
-                  setModalOpen(true)
-                  mapDispatch({ type: 'ALL_SELECTED' })
-                }}>
-                  <RoomIcon size="large" />
-                </IconButton>
-              </Tooltip>
-            </>
-            : <Typography>
-              <h3>List of Response</h3>
-            </Typography>
-        }
+      <div className="table-actions">
+        <Typography>
+          <h3>List of Response</h3>
+        </Typography>
       </div>
       <Divider />
       <TableContainer component={Paper}>
         <Table aria-label="simple table" size="small">
           <TableHead>
             <TableRow>
-              <TableCell align="left">
-                <Checkbox
-                  inputProps={{ 'aria-label': 'uncontrolled-checkbox' }}
-                  onChange={() => console.log("click")}
-                />
-                SELECT ALL
-              </TableCell>
-              <TableCell align="left">Product Name</TableCell>
-              <TableCell align="left">Description </TableCell>
-              <TableCell align="left">Responses</TableCell>
-              <TableCell align="left">Actions</TableCell>
+              <TableCell></TableCell>
+              <TableCell align="center">Product Name</TableCell>
+              <TableCell align="center">Description </TableCell>
+              <TableCell align="center">Responses</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
