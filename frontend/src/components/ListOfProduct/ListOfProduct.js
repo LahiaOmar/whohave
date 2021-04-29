@@ -1,18 +1,16 @@
-import React from 'react'
+import React from 'react';
+import { Divider, IconButton, TablePagination, Typography } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import { Divider, IconButton, Tooltip, Typography, TablePagination, Grid } from '@material-ui/core'
-import { v4 as uui } from 'uuid';
-import './style.css'
-import DeleteIcon from '@material-ui/icons/Delete';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown'
+import { v4 as uui } from 'uuid';
+import './style.css';
 
 const ListOfProduct = ({ products, feedback }) => {
   const [page, setPage] = React.useState(0)

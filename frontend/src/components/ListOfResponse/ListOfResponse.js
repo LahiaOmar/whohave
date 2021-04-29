@@ -1,133 +1,17 @@
-import React from 'react'
+import { Divider, TablePagination, Typography } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import IconButton from '@material-ui/core/IconButton'
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
+import React from 'react';
+import { v4 as uui } from 'uuid';
+import Map from '../Map';
 import MyModal from '../Mymodal';
-import Map from '../Map'
-import { Box, Collapse, Typography, Tooltip, Divider, TablePagination, Badge } from '@material-ui/core';
-import RoomIcon from '@material-ui/icons/Room';
-import DeleteIcon from '@material-ui/icons/Delete';
-import './style.css'
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import MailIcon from '@material-ui/icons/Mail'
-import { v4 as uui } from 'uuid'
-
-const CollapsRow = ({ product, stores, deleteProduct, deleteResponse, mapDispatch }) => {
-  const [open, setOpen] = React.useState(false)
-
-  return (
-    <>
-      <TableRow>
-        <TableCell align="center">
-          <IconButton size="sm" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell align="center">
-          {product.productName}
-        </TableCell>
-        <TableCell align="center">
-          {product.description}
-        </TableCell>
-        <TableCell align="center">
-          <Tooltip title={`You have ${stores.length} responses`}>
-            <IconButton>
-              <Badge badgeContent={stores.length} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-        <TableCell align="center">
-          <Tooltip title="Show All Responses" color="primary">
-            <IconButton
-              label="Show All Responses"
-              onClick={() => mapDispatch({
-                type: 'PRODUCT',
-                pyload: {
-                  productId: product._id
-                }
-              })}>
-              <RoomIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete Product" color="secondary">
-            <IconButton
-              label="Delete Product"
-              onClick={() => deleteProduct(product._id)}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-      </TableRow>
-      <TableRow >
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">
-                      Store Name
-                    </TableCell>
-                    <TableCell align="center">
-                      address
-                    </TableCell>
-                    <TableCell align="center">
-                      Actions
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {
-                    stores.map(store => {
-                      return (
-                        <TableRow>
-                          <TableCell align="center">
-                            {store.name}
-                          </TableCell>
-                          <TableCell align="center">
-                            {store.address}
-                          </TableCell>
-                          <TableCell align="center">
-                            <Tooltip title="Show All Responses" color="primary">
-                              <IconButton
-                                label="Show this Response"
-                                onClick={() => mapDispatch({
-                                  type: 'STORE',
-                                  pyload: { productId: product._id, storeId: store._id }
-                                })}>
-                                <RoomIcon />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete response" color="secondary">
-                              <IconButton
-                                label="Delete this response"
-                                onClick={() => deleteResponse(product._id, store._id)}>
-                                <DeleteIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })
-                  }
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </>
-  )
-}
+import CollapsRow from './CollapsRow';
+import './style.css';
 
 function ListOfResponse({ notification, responses, actions: { deleteProduct, deleteResponse } }) {
   const [page, setPage] = React.useState(0)
