@@ -52,24 +52,15 @@ const UserDashboard = () => {
       .catch(err => { console.log("logout err", err) })
   }
 
-
   const sendProduct = async (values) => {
-    const product = {
-      productName: values.name,
-      description: values.description,
-      images: values.images,
-      from: _id,
-    }
-    const data = {
-      product,
-      queryData: {
-        storeTypes: values.types,
-        city: values.city,
-        country: values.country
-      }
-    }
-    console.log("data ", data)
-    dashboardAPI.sendProduct(data)
+    const { files, ...reqProduct } = values
+    reqProduct.from = _id
+    const formData = new FormData()
+    const keys = Object.keys(reqProduct)
+    keys.forEach(key => formData.append(key, reqProduct[key]))
+    files.forEach(img => formData.append('files', img))
+
+    dashboardAPI.sendProduct(formData)
       .then(res => {
         alertDispatch(ALERT_TYPES.sendProductSuccess())
         fetchData()

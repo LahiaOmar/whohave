@@ -35,7 +35,7 @@ const UserInformations = () => {
         .email('format not allowed!')
         .required('required !')
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
         const config = {
           url: process.env.REACT_APP_UPDATE_USER,
@@ -50,6 +50,7 @@ const UserInformations = () => {
         console.log("data response ", data)
         alertDispatch(ALERT_ACTIONS.updateSuccess())
         authDispatch(AUTH_ACTIONS.login({ userType: data.userType, ...data.userData }))
+        resetForm()
       }
       catch (ex) {
         alertDispatch(ALERT_ACTIONS.updateFailure())
@@ -75,7 +76,7 @@ const UserInformations = () => {
       confirmPassword: Yup.string()
         .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
         const config = {
           url: process.env.REACT_APP_UPDATE_UPDATE_PASSWORD,
@@ -85,6 +86,7 @@ const UserInformations = () => {
         const { data } = await Axios(config)
         console.log("data response ", data)
         alertDispatch(ALERT_ACTIONS.updateSuccess())
+        resetForm()
       }
       catch (ex) {
         alertDispatch(ALERT_ACTIONS.updateFailure())

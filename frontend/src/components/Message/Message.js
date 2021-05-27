@@ -12,7 +12,6 @@ function Message({ sendProduct }) {
   const [open, setOpen] = React.useState(false)
   const [distance, setDistance] = React.useState(5)
   const imagesInput = React.createRef()
-  const context = React.useContext(LoginContext)
 
   const handleOpen = () => {
     setOpen(true)
@@ -29,7 +28,7 @@ function Message({ sendProduct }) {
       description: '',
       city: '',
       country: '',
-      images: []
+      files: []
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -41,16 +40,12 @@ function Message({ sendProduct }) {
       description: Yup.string(),
       city: Yup.string().required('must select a city'),
       country: Yup.string().required('must select a country'),
-      images: Yup.array()
+      files: Yup.array()
     }),
     onSubmit: (values, { resetForm }) => {
       console.log("values ", values)
-      values.images = imagesInput.current.files
       resetForm()
       handleClose()
-      // setConfig(config)
-      // product : name, description, images
-      console.log("values ", values)
       sendProduct(values)
     }
   })
@@ -100,6 +95,10 @@ function Message({ sendProduct }) {
             multiple
             id="contained-button-file"
             type="file"
+            onChange={(e) => {
+              console.log("files", e.target.files.item(0))
+              formik.setFieldValue('files', Array.from(e.target.files))
+            }}
           />
           <label htmlFor="contained-button-file">
             <Button variant="contained" color="primary" component="span">

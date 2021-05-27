@@ -27,7 +27,7 @@ const CollapsRow = ({ product, stores, deleteProduct, deleteResponse, mapDispatc
           </IconButton>
         </TableCell>
         <TableCell align="center">
-          {product.productName}
+          {product.name}
         </TableCell>
         <TableCell align="center">
           {product.description}

@@ -1,0 +1,41 @@
+#carousel{
+  padding: 5px;
+}
+
+#carousel-title {
+  text-align: center;
+}
+
+#carousel-container {
+  position: relative;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+}
+
+#carousel-container-btn {
+  position: absolute;
+  display: flex;
+  z-index: 1;
+  width: 400px;
+  height: 400px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.carousel-btn {
+  cursor: pointer;
+}
+
+#carousel-container-images {
+  display: flex;
+  flex-direction : row,
+}
+
+.carousel-image {
+  width: 400px;
+  height: 400px;
+}
