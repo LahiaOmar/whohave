@@ -57,17 +57,20 @@ exports.storeFeedback = async (req, res) => {
 exports.send = async (req, res) => {
   try {
     const { userId } = res.locals
-    const { product, queryData } = req.body
-    const { storeTypes, city, country } = queryData
-    console.log({ product })
-    console.log({ storeTypes, city, country })
+    const { name, description, from } = req.body
+    const { types, city, country } = req.body
+    const images = req.files.map(file => file.buffer.toString('base64'))
+    console.log("send product images ", images)
+    // image => (through a File interface / blob ) Buffer => Image
+    const product = { name, description, from, images }
+    const storesTypes = types.split(',')
 
     const storeDocument = new ProductsModel(product)
     await storeDocument.save()
 
     const allStores = await userStore.find({
       types: {
-        $in: storeTypes
+        $in: storesTypes
       },
       country,
       city
