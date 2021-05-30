@@ -59,3 +59,8 @@ export const ALERT_ERROR = {
     }
   }
 }
+
+export const ILLUSTRATION_TYPES = {
+  NO_PRODUCTS: 'NO_PRODUCTS',
+  NO_RESPONSES: 'NO_RESPONSES'
+}

@@ -11,7 +11,9 @@ import { v4 as uui } from 'uuid';
 import Map from '../Map';
 import MyModal from '../Mymodal';
 import CollapsRow from './CollapsRow';
+import IllustrationDisplay from '../IllustrationDisplay'
 import './style.css';
+import { ILLUSTRATION_TYPES } from '../../constants/constants'
 
 function ListOfResponse({ notification, responses, actions: { deleteProduct, deleteResponse } }) {
   const [page, setPage] = React.useState(0)
@@ -65,6 +67,14 @@ function ListOfResponse({ notification, responses, actions: { deleteProduct, del
             </TableRow>
           </TableHead>
           <TableBody>
+            {
+              responses.products.length == 0 &&
+              <TableRow>
+                <TableCell align="center" colSpan={5}>
+                  <IllustrationDisplay type={ILLUSTRATION_TYPES.NO_RESPONSES} />
+                </TableCell>
+              </TableRow>
+            }
             {
               responses.products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((product, index) => {

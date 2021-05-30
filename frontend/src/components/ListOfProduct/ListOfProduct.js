@@ -14,6 +14,8 @@ import './style.css';
 import ImageIcon from '@material-ui/icons/Image';
 import MyModal from '../Mymodal/MyModal';
 import Carousel from '../Carousel'
+import IllustrationDisplay from '../IllustrationDisplay'
+import { ILLUSTRATION_TYPES } from '../../constants/constants'
 
 const ListOfProduct = ({ products, feedback }) => {
   const [page, setPage] = React.useState(0)
@@ -24,7 +26,7 @@ const ListOfProduct = ({ products, feedback }) => {
   return (
     <div className="list-products">
       <Paper>
-        <TableContainer component={Paper} className="table-products" style={{ height: '75vh' }}>
+        <TableContainer component={Paper} className="table-products">
           <div className="table-actions">
             <Typography>
               <h3>List of product</h3>
@@ -41,6 +43,14 @@ const ListOfProduct = ({ products, feedback }) => {
               </TableRow>
             </TableHead>
             <TableBody>
+              {
+                products.length == 0 &&
+                <TableRow className="dashboard-msg">
+                  <TableCell align="center" colSpan={5}>
+                    <IllustrationDisplay type={ILLUSTRATION_TYPES.NO_PRODUCTS} />
+                  </TableCell>
+                </TableRow>
+              }
               {products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(product => {
                   const key = uui()

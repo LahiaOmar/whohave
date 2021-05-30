@@ -1,0 +1,6 @@
+.dashboard-msg {
+}
+
+.dashboard-msg-img > img {
+  max-height: calc(50vh);
+}
