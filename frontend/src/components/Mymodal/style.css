@@ -1,10 +1,8 @@
 .modal-close-btn{
   position: absolute;
   z-index : 1000;
-  border: 3px solid black;
-  border-radius: 50%;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  left: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,4 +18,8 @@
 
 .modal-btn{
 	margin-left : 10px;
+}
+
+.btn-close {
+  color : white;
 }
