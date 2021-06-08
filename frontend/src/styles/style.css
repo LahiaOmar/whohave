@@ -47,7 +47,6 @@ body{
 }
 
 .nav-bar{
-	height: 50px;
 	box-shadow: 0px -10px 20px 0px black;
 }
 .menu-link{
@@ -66,7 +65,7 @@ body{
 
 .auth-btn{
 	display: flex;
-	justify-content: flex-end;
+	justify-content: center;
 	align-items: center;
 	height: 100%;
 }
