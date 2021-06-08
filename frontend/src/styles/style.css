@@ -65,7 +65,7 @@ body{
 
 .auth-btn{
 	display: flex;
-	justify-content: center;
+	justify-content: flex-end;
 	align-items: center;
 	height: 100%;
 }
