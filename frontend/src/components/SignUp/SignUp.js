@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tabs, Tab, Box, Typography } from '@material-ui/core'
+import { Tabs, Tab, Grid, Container } from '@material-ui/core'
 import SignUpIhave from '../SignUpIhave'
 import SignUpWho from '../SignUpWho'
 
@@ -25,17 +25,21 @@ function SignUp({ clSubmit, error, loading }) {
 	const signUpCompoNames = ["Store Owner", "User"]
 
 	return (
-		<div id="signup-multi">
-			<Tabs value={value} onChange={(e, v) => setValue(v)} aria-label="simple tabs" centered>
-				<Tab label={signUpCompoNames[0]} id="simple-tab-0" aria-controls="simple-tabpanel-0" />
-				<Tab label={signUpCompoNames[1]} id="simple-tab-1" aria-controls="simple-tabpanel-1" />
-			</Tabs>
-			<TabPanel value={value} index={0}>
-				<SignUpIhave label={signUpCompoNames[0]} clSubmit={clSubmit} />
-			</TabPanel>
-			<TabPanel value={value} index={1} >
-				<SignUpWho label={signUpCompoNames[1]} error={error} loading={loading} clSubmit={clSubmit} />
-			</TabPanel>
+		<div className="auth-modal-contaier" >
+			<div>
+				<Tabs value={value} onChange={(e, v) => setValue(v)} aria-label="simple tabs" centered>
+					<Tab label={signUpCompoNames[0]} id="simple-tab-0" aria-controls="simple-tabpanel-0" />
+					<Tab label={signUpCompoNames[1]} id="simple-tab-1" aria-controls="simple-tabpanel-1" />
+				</Tabs>
+			</div>
+			<div>
+				<TabPanel value={value} index={0}>
+					<SignUpIhave label={signUpCompoNames[0]} clSubmit={clSubmit} />
+				</TabPanel>
+				<TabPanel value={value} index={1} >
+					<SignUpWho label={signUpCompoNames[1]} error={error} loading={loading} clSubmit={clSubmit} />
+				</TabPanel>
+			</div>
 		</div>
 	)
 }

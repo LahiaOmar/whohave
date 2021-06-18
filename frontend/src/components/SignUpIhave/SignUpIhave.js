@@ -1,14 +1,38 @@
 import React from 'react'
-import { Button, Grid, Stepper, Step, StepLabel, TextField, ListItem, FormLabel, List, ListItemText } from '@material-ui/core'
+import { Button, Grid, Stepper, Step, StepLabel, TextField, makeStyles, Hidden } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
 import { StoresType } from '../StoresType'
 import Map from '../Map'
 import CountrySelector from '../CountrySelector';
 
+const useStyles = makeStyles((theme) => ({
+	mapBrderError: {
+		border: `1px solid ${theme.palette.error.main}`
+	},
+}))
+
 function SignUpIhave({ clSubmit, label }) {
 	const [activeStep, setActiveStep] = React.useState(0)
 	const [storeCoord, setStoreCoord] = React.useState(null)
+	const [stepsLabels] = React.useState(['Personal information', 'Store information', 'Store Position', 'Credentials'])
+	const [stepsComplete, setStepsComplete] = React.useState(new Array(4).fill(false))
+
+	const classes = useStyles()
+
+	const STEP_START = 0, STEP_END = 3
+	const USER_INFORMATION = 0
+	const STORE_INFORMATION = 1
+	const STORE_CREDENTIELS = 3
+	const STORE_POSITION = 2
+
+	React.useEffect(() => {
+		if (activeStep > 0) {
+			setStepsComplete(steps => steps.map((step, ind) => {
+				return (ind === activeStep - 1)
+			}))
+		}
+	}, [activeStep])
 
 	const personalInformation = useFormik({
 		initialValues: {
@@ -24,7 +48,7 @@ function SignUpIhave({ clSubmit, label }) {
 				.required('required !'),
 		}),
 		onSubmit: values => {
-			setActiveStep(activeStep => activeStep + 1 <= 2 ? activeStep + 1 : activeStep)
+			setActiveStep(activeStep => activeStep + 1 <= 3 ? activeStep + 1 : activeStep)
 		}
 	})
 
@@ -34,9 +58,6 @@ function SignUpIhave({ clSubmit, label }) {
 			name: '',
 			phone: '',
 			types: [],
-			location: {
-				coordinates: []
-			},
 			city: '',
 			country: '',
 			unicodeFlag: ''
@@ -50,10 +71,7 @@ function SignUpIhave({ clSubmit, label }) {
 				.matches(/(\+212|0)([ \-_/]*)(\d[ \-_/]*){9}/g, 'wrong format'),
 			types: Yup.array()
 				.min(1, 'the type(s) of service that your store provide!'),
-			location: Yup.object()
-				.shape({
-					coordinates: Yup.array().required('select store position')
-				}),
+
 			city: Yup.string()
 				.required('select your city !'),
 			country: Yup.string()
@@ -62,7 +80,25 @@ function SignUpIhave({ clSubmit, label }) {
 		}),
 		onSubmit: values => {
 			console.log("submit, activeStep", activeStep)
-			setActiveStep(activeStep => activeStep + 1 <= 2 ? activeStep + 1 : activeStep)
+			setActiveStep(activeStep => activeStep + 1 <= 3 ? activeStep + 1 : activeStep)
+		}
+	})
+
+	const storeMapPosition = useFormik({
+		initialValues: {
+			location: {
+				coordinates: []
+			},
+		},
+		validationSchema: Yup.object({
+			location: Yup.object()
+				.shape({
+					coordinates: Yup.array().required('select store position')
+				}),
+		}),
+		onSubmit: values => {
+			console.log("submit, activeStep", activeStep)
+			setActiveStep(activeStep => activeStep + 1 <= 3 ? activeStep + 1 : activeStep)
 		}
 	})
 
@@ -99,6 +135,11 @@ function SignUpIhave({ clSubmit, label }) {
 				.catch(err => console.log("err ", err))
 		}
 		if (activeStep == 2) {
+			storeMapPosition.submitForm()
+				.then((res) => console.log("res", res))
+				.catch(err => console.log("err ", err))
+		}
+		if (activeStep == 3) {
 			credentials.submitForm()
 				.then(() => { })
 		}
@@ -112,6 +153,7 @@ function SignUpIhave({ clSubmit, label }) {
 		const store = {
 			...personalInformation.values,
 			...storeInformation.values,
+			...storeMapPosition.values,
 			...credentials.values,
 			storeCoord,
 		}
@@ -127,27 +169,32 @@ function SignUpIhave({ clSubmit, label }) {
 		clSubmit(config)
 	}
 	const userPositionHandler = (coordinates) => {
-		storeInformation.setFieldValue('location', { coordinates })
+		storeMapPosition.setFieldValue('location', { coordinates })
 	}
-	const USER_INFORMATION = 0
-	const STORE_INFORMATION = 1
-	const STORE_CREDENTIELS = 2
+
 	return (
-		<Grid container xs={12} className="signup-store" justify="center" alignContent="center" alignItems="center">
+		<Grid container xs={12} className="signup-store" justify="center" alignContent="center" alignItems="center" spacing={2}>
 			<Grid item xs={12}>
-				<Stepper activeStep={activeStep}>
-					<Step>
-						<StepLabel>Personal information</StepLabel>
-					</Step>
-					<Step>
-						<StepLabel>Store information</StepLabel>
-					</Step>
-					<Step>
-						<StepLabel>Credentials</StepLabel>
-					</Step>
-				</Stepper>
+				<Hidden smUp>
+					<Stepper>
+						<Step completed={stepsComplete[activeStep]}>
+							<StepLabel icon={activeStep + 1}> {stepsLabels[activeStep]} </StepLabel>
+						</Step>
+					</Stepper>
+				</Hidden>
+				<Hidden xsDown>
+					<Stepper activeStep={activeStep}>
+						{
+							stepsLabels.map(stepLabel =>
+								<Step>
+									<StepLabel> {stepLabel} </StepLabel>
+								</Step>
+							)
+						}
+					</Stepper>
+				</Hidden>
 			</Grid>
-			<Grid item container xs={12} spacing={2} className="stepper-content">
+			<Grid item container xs={12} spacing={2} justify="center" className="stepper-content">
 				{
 					(activeStep === USER_INFORMATION)
 					&&
@@ -188,9 +235,9 @@ function SignUpIhave({ clSubmit, label }) {
 				{
 					(activeStep === STORE_INFORMATION)
 					&&
-					<Grid item container alignContent="center"
-						justify="flex-start" xs={12} spacing={2} component="form" onSubmit={storeInformation.handleSubmit}>
-						<Grid item container xs={6} spacing={2}>
+					<Grid item container xs={12} justify="center"
+						xs={12} spacing={2} component="form" onSubmit={storeInformation.handleSubmit}>
+						<Grid item container sm={12} xs={12} spacing={2}>
 							<Grid item xs={12}>
 								<TextField
 									{...storeInformation.getFieldProps('name')}
@@ -244,10 +291,27 @@ function SignUpIhave({ clSubmit, label }) {
 								<CountrySelector formik={storeInformation} />
 							</Grid>
 						</Grid>
-						<Grid item container xs={6} spacing={2}>
-							<Map style={{ width: '100%', height: '400px' }} selfLocation={
+						<Grid item xs={12}>
+							<button type="submit" style={{ display: 'none' }}></button>
+						</Grid>
+					</Grid>
+				}
+				{
+					(activeStep === STORE_POSITION)
+					&&
+					<Grid container item xs={12}>
+						<Grid item container xs={12} component="form" onSubmit={storeMapPosition.handleSubmit}>
+							<Map style={{
+								width: '100%',
+								height: '350px',
+							}} selfLocation={
 								{ coordinates: [], draggable: true, changePosition: userPositionHandler }
 							} />
+							<p style={{ color: 'red' }}>
+								{
+									storeMapPosition.errors.location ? 'You must select the store location' : ''
+								}
+							</p>
 						</Grid>
 						<Grid item xs={12}>
 							<button type="submit" style={{ display: 'none' }}></button>
@@ -312,7 +376,7 @@ function SignUpIhave({ clSubmit, label }) {
 			</Grid>
 			<Grid item container xs={12} className="stepper-button" justify="center" spacing={2} >
 				{
-					(activeStep > 0)
+					(activeStep > STEP_START)
 					&&
 					<Grid item xs={4}>
 						<Button
@@ -325,7 +389,7 @@ function SignUpIhave({ clSubmit, label }) {
 					</Grid>
 				}
 				{
-					(activeStep < 2)
+					(activeStep >= STEP_START && activeStep < STEP_END)
 					&&
 					<Grid item xs={4}>
 						<Button
@@ -338,7 +402,7 @@ function SignUpIhave({ clSubmit, label }) {
 					</Grid>
 				}
 				{
-					(activeStep === 2)
+					(activeStep === STEP_END)
 					&&
 					<Grid item xs={4}>
 						<Button

@@ -37,9 +37,7 @@ function MyModal({ btnTitle, children, MyButton, open, handleClose, handleOpen, 
 							<CloseIcon className="btn-close" fontSize="large" onClick={handleClose} />
 						</Tooltip>
 					</div>
-					<div className="modal-content-container">
-						{children}
-					</div>
+					{children}
 				</>
 			</Modal>
 		</div >

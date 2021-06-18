@@ -185,7 +185,7 @@ function SignUpWho({ clSubmit, label }) {
 					</Grid>
 				}
 			</Grid>
-			<Grid container spacing={2} xs={12} justify="center" className="stepper-button">
+			<Grid item container spacing={2} xs={12} justify="center" className="stepper-button">
 				{
 					(activeStep > 0)
 					&&

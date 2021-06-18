@@ -2,7 +2,7 @@ import React from 'react'
 import LoginContext from '../ContextAuth'
 import AlertMessage from '../AlertMessage'
 import { ALERT_ERROR } from '../../constants/constants'
-import { Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup } from '@material-ui/core'
+import { Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup, Container } from '@material-ui/core'
 import { AccountCircle } from '@material-ui/icons'
 
 import { useFormik } from 'formik'
@@ -40,14 +40,14 @@ function LogIn({ clSubmit, error, loading }) {
 	}, [error])
 
 	return (
-		<form className="form-signup" onSubmit={formik.handleSubmit} autoComplete="off">
-			<Grid container justify="center" alignItems="center">
+		<div className="auth-modal-contaier">
+			<Grid container item justify="center" alignItems="center">
 				<AccountCircle style={{ fontSize: 100, color: 'blue' }} />
 				<Typography component="h1" variant="h5">
 					LogIn
-				</Typography>
+					</Typography>
 			</Grid>
-			<Grid id container spacing={2}>
+			<Grid container component="form" item spacing={2} onSubmit={formik.handleSubmit} autoComplete="off" >
 				<Grid item xs={12}>
 					<FormLabel >Are you :  </FormLabel>
 					<RadioGroup >
@@ -106,7 +106,7 @@ function LogIn({ clSubmit, error, loading }) {
 						variant="contained"
 						color="primary">
 						LogIn
-				</Button>
+					</Button>
 				</Grid>
 				<Grid item xs={12}>
 					{
@@ -117,7 +117,7 @@ function LogIn({ clSubmit, error, loading }) {
 					<AlertMessage error={alertError} />
 				</Grid>
 			</Grid>
-		</form>
+		</div>
 	)
 }
 

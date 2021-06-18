@@ -18,11 +18,19 @@ body{
 	width: 100%;
 }
 .stepper-content{
-}	
-#signup-multi{
+}
+
+.auth-modal-contaier{
 	width: calc(80vw);
-	height: calc(90vh);
+	max-width: 1280px;
 	background-color: white;
+	border-radius: 4px;
+	padding: 16px;
+	max-height: calc(100vh);
+}
+
+#signup-multi{
+	
 }
 .signup-store{
 	height: 100%;
@@ -32,9 +40,11 @@ body{
 	justify-content: center;
 	align-items: center;
 	border-radius: 4px;
+	padding: 40px;
 }
 
 .form-signup{
+	width: calc(80vw);
 	background-color: white;
 	border-radius: 4px;
 	padding: 16px;

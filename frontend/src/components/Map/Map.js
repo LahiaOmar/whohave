@@ -1,6 +1,6 @@
 import React from 'react'
 import mapboxgl from 'mapbox-gl'
-
+import { Grid } from '@material-ui/core'
 import { PositionAction } from '../ButtonActions'
 
 function Map({ markersPosition = [], style = {}, selfLocation }) {
@@ -79,14 +79,14 @@ function Map({ markersPosition = [], style = {}, selfLocation }) {
 	}, [markersPosition, mp])
 
 	return (
-		<div id="map" style={style}>
+		<Grid id="map" style={style}>
 			{
 				selfLocation
 				&& <div className="btnPosition">
 					<PositionAction onClick={getUserPosition} />
 				</div>
 			}
-		</div >
+		</Grid >
 	)
 }
 
