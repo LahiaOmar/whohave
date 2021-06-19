@@ -9,6 +9,7 @@ import './style.css'
 const Carousel = ({ images }) => {
   const [trValue, setTrValue] = React.useState(0)
   const trStep = 400
+  const PRODUCT_IMAGE_URL = process.env.REACT_APP_GET_PRODUCT_IMAGE
 
   const nextHandler = () => {
     const maxNext = images.length * trStep
@@ -35,7 +36,10 @@ const Carousel = ({ images }) => {
         }}>
           {
             images.map((image) => {
-              return <img className="carousel-image" src={`data:image/png;base64,${image}`} />
+              return <img
+                className="carousel-image"
+                alt="product image"
+                src={`${PRODUCT_IMAGE_URL}${image}`} />
             })
           }
         </div>

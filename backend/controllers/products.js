@@ -1,10 +1,9 @@
 const userStore = require("../models/userStore")
 const NotificationsModel = require('../models/notification')
-const user = require("../models/user")
-const socketMap = require("../models/socketMap")
 const httpStatus = require("http-status")
 const ProductsModel = require("../models/products")
 const ObjectID = require('mongoose').mongo.ObjectID
+const path = require('path')
 
 exports.delete = async (req, res) => {
   try {
@@ -59,9 +58,7 @@ exports.send = async (req, res) => {
     const { userId } = res.locals
     const { name, description, from } = req.body
     const { types, city, country } = req.body
-    const images = req.files.map(file => file.buffer.toString('base64'))
-    console.log("send product images ", images)
-    // image => (through a File interface / blob ) Buffer => Image
+    const images = req.files.map(file => file.filename)
     const product = { name, description, from, images }
     const storesTypes = types.split(',')
 
@@ -92,4 +89,13 @@ exports.send = async (req, res) => {
     res.status(400).json({ err: ex })
     console.log("send ex", ex)
   }
+}
+
+exports.sendImage = (req, res) => {
+  const imageId = req.params.imageId
+  res.sendFile(path.join(__dirname, '..', 'uploadImages', imageId), {
+    Headers: {
+      'content-type': 'image/png'
+    }
+  })
 }
