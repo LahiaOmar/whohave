@@ -27,8 +27,7 @@ const PORT = normalizePort(process.env.PORT || '4000');
 const app = express()
 const httpServer = http.Server(app)
 
-const hostNames = ['localhost:27017', 'localhost:27018', 'localhost:27019']
-const uri = `mongodb://${hostNames.join(',')}/whohave`
+const uri = 'mongodb+srv://justask-admin:justask00@justask.ricqn.mongodb.net/whohave'
 
 const dbService = new DBService(uri, (data) => console.log("onchage", data))
 const socketService = new SocketService(httpServer)
@@ -49,3 +48,5 @@ app.use('/api/storesType', storesType)
 app.use('/api/notifications', notifications)
 
 httpServer.listen(PORT, () => console.log(`app listen on port ${PORT} ...`))
+
+module.exports = app
