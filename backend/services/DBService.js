@@ -2,9 +2,8 @@ const mongoos = require('mongoose')
 const notificationModel = require('../models/notification')
 
 class DBService {
-
-  constructor(uri) {
-    this.uri = uri
+  uri = 'mongodb+srv://justask-admin:justask00@justask.ricqn.mongodb.net/whohave'
+  constructor() {
   }
 
   async connect() {

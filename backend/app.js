@@ -27,9 +27,7 @@ const PORT = normalizePort(process.env.PORT || '4000');
 const app = express()
 const httpServer = http.Server(app)
 
-const uri = 'mongodb+srv://justask-admin:justask00@justask.ricqn.mongodb.net/whohave'
-
-const dbService = new DBService(uri, (data) => console.log("onchage", data))
+const dbService = new DBService()
 const socketService = new SocketService(httpServer)
 
 dbService.connect().catch(console.dir)
