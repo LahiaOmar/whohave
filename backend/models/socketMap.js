@@ -11,4 +11,4 @@ const socketMapSchema = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('socketMapSchema', socketMapSchema)
+module.exports = mongoose.model('SockeMaptModel', socketMapSchema)

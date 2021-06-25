@@ -1,10 +1,10 @@
 const mongoose = require("mongoose")
 
 const storesType = new mongoose.Schema({
-  specialty : {
-      type : String,
-      require : true,
-    }
+  specialty: {
+    type: String,
+    require: true,
+  }
 })
 
-module.exports = mongoose.model('storesTypes', storesType)
+module.exports = mongoose.model('TypesModel', storesType)

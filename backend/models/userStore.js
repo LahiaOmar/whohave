@@ -12,7 +12,7 @@ const userStoreSchema = new mongoose.Schema({
   first: { type: Boolean, default: false },
   country: { type: String, required: true },
   city: { type: String, required: true },
-  unicodeFlag: { type: String, required: true },
+  unicodeFlag: { type: String },
   location: { type: location, default: {}, index: "2dsphere" }
 })
 
@@ -36,4 +36,4 @@ userStoreSchema.methods.getFieldToSend = function () {
   }
 }
 
-module.exports = mongoose.model('userStore', userStoreSchema)
+module.exports = mongoose.model('StoreModel', userStoreSchema)
