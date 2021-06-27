@@ -12,18 +12,6 @@ const notifications = require('./routes/notifications')
 const DBService = require('./services/DBService')
 const SocketService = require('./services/SocketService')
 
-const normalizePort = val => {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    return val;
-  }
-  if (port >= 0) {
-    return port;
-  }
-  return false;
-};
-const PORT = normalizePort(process.env.PORT || '4000');
 const app = express()
 const httpServer = http.Server(app)
 
@@ -45,6 +33,5 @@ app.use('/api/positions', positions)
 app.use('/api/storesType', storesType)
 app.use('/api/notifications', notifications)
 
-httpServer.listen(PORT, () => console.log(`app listen on port ${PORT} ...`))
 
-module.exports = app
+module.exports = httpServer
