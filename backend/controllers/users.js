@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
-const userStore = require('../models/userStore')
-const userWho = require("../models/user")
+const StoreModel = require('../models/userStore')
+const UserModel = require("../models/user")
 const jwt = require("jsonwebtoken")
 const httpStatus = require("http-status")
 const socketMap = require('../models/socketMap')
@@ -11,8 +11,8 @@ exports.userSignUp = async (req, res) => {
   try {
     const hash = await bcrypt.hash(password, 10)
     const user = userType === 'STORE'
-      ? new userStore({ ...restOfFiled, password: hash })
-      : new userWho({ ...restOfFiled, password: hash })
+      ? new StoreModel({ ...restOfFiled, password: hash })
+      : new UserModel({ ...restOfFiled, password: hash })
     await user.save()
     const token = jwt.sign({
       userId: user._id,
@@ -29,17 +29,14 @@ exports.userSignUp = async (req, res) => {
 exports.userLogin = async (req, res) => {
   try {
     const { userType } = req.body
-    console.log("userType ", userType)
-    const model = (userType === 'STORE') ? userStore : userWho
+    const model = (userType === 'STORE') ? StoreModel : UserModel
     let user = await model.findOne({ email: req.body.email })
     if (!user) {
-      console.log("no user found")
       const errObject = { status: 401, message: "userNotFound" }
       throw new Error(JSON.stringify(errObject))
     }
     let match = await bcrypt.compare(req.body.password, user.password)
     if (!match) {
-      console.log("match")
       const errObject = { status: 401, message: "userNotFound" }
       throw new Error(JSON.stringify(errObject))
     }
@@ -52,7 +49,6 @@ exports.userLogin = async (req, res) => {
     })
   }
   catch (e) {
-    console.log("err ", e)
     const message = JSON.parse(e.message)
     if (typeof message === "object")
       res.status(message.status).json({ message: message.message })
@@ -71,7 +67,7 @@ exports.setPassword = async (req, res) => {
     const { oldPassword, newPassword } = req.body
     const { userId, userType } = res.locals
     console.log("userId, userType", userId, userType, oldPassword, newPassword)
-    const model = userType === 'STORE' ? userStore : userWho
+    const model = userType === 'STORE' ? StoreModel : UserModel
     const user = await model.findById({ _id: userId })
     if (user) {
       const match = await bcrypt.compare(oldPassword, user.password)
@@ -103,7 +99,7 @@ exports.userSetInformation = async function (req, res) {
   try {
     const { forUpdate } = req.body
     const { userId, userType } = res.locals
-    const userModel = userType === 'STORE' ? userStore : userWho
+    const userModel = userType === 'STORE' ? StoreModel : UserModel
     const updatedUser = await userModel.findByIdAndUpdate({ _id: userId }, {
       ...forUpdate
     }, { new: true })
@@ -119,7 +115,7 @@ exports.userSetInformation = async function (req, res) {
 exports.verify = async (req, res) => {
   const { userType, userId } = res.locals
   try {
-    const model = userType === 'STORE' ? userStore : userWho
+    const model = userType === 'STORE' ? StoreModel : UserModel
     const user = await model.findById({ _id: userId })
     if (user) {
       res.status(201).json({ userType: userType, userData: user.getFieldToSend() })
@@ -137,7 +133,7 @@ exports.getInformation = async (req, res) => {
   console.log("get informatios ", res.locals)
   const { userType, userId } = res.locals
   try {
-    const model = userType ? userStore : userWho
+    const model = userType ? StoreModel : UserModel
     const user = await model.findById({ _id: userId })
     if (user) {
       res.status(201).json({ userData: user.getFieldToSend() })
