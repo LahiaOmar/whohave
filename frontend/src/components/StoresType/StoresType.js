@@ -9,7 +9,7 @@ function StoresType({ formik, showAddNewType }) {
   React.useEffect(() => {
     const baseConfig = {
       url: '/api/storesType/get',
-      method: 'POST',
+      method: 'GET',
     }
     setConfig(baseConfig)
   }, [])
