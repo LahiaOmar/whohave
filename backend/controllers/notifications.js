@@ -112,7 +112,7 @@ exports.storeResponse = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    const { productId, storeId } = req.body
+    const { productId, storeId } = req.params
     await NotificationsModel.deleteOne({
       type: 'response',
       'content.productId': productId,

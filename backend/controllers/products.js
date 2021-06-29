@@ -7,7 +7,7 @@ const path = require('path')
 
 exports.delete = async (req, res) => {
   try {
-    const { productId } = req.body
+    const { productId } = req.params
     const productDeleted = await ProductsModel.findByIdAndDelete({ _id: productId })
     console.log("product deleted ", productDeleted)
     await NotificationsModel.deleteMany({

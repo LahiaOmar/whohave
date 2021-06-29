@@ -20,26 +20,24 @@ export const sendProduct = (data) => {
     .catch(err => err)
 }
 
-export const deleteProduct = (data) => {
-  return Axios.post(
-    REACT_APP_PRODUCT_DELETE,
-    data
+export const deleteProduct = ({ productId }) => {
+  return Axios.delete(
+    `${REACT_APP_PRODUCT_DELETE}\\${productId}` ,
   )
     .then(response => response.data)
     .catch(err => err)
 }
 
-export const deleteResponse = (data) => {
-  return Axios.post(
-    REACT_APP_NOTIFICATION_DELETE,
-    data
+export const deleteResponse = ({ productId, storeId }) => {
+  return Axios.delete(
+    `${REACT_APP_NOTIFICATION_DELETE}\\${storeId}\\${productId}`
   )
     .then(response => response.data)
     .catch(err => err)
 }
 
 export const getUserResponses = (data) => {
-  return Axios.post(
+  return Axios.get(
     REACT_APP_NOTIFICATION_USER_GET,
     data
   )
@@ -48,7 +46,7 @@ export const getUserResponses = (data) => {
 }
 
 export const getStoreProducts = (data) => {
-  return Axios.post(
+  return Axios.get(
     REACT_APP_NOTIFICATION_STORE_GET,
     data
   )
