@@ -5,19 +5,19 @@ import {
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
 import Map from '../Map'
-import useAxios from '../useHooks/useAxios'
 import { AuthContext } from '../../Context/AuthProvider';
 import { AlertContext } from '../../Context/AlertProvider'
 import * as ALERT_ACTIONS from '../../Context/actions/AlertTypes'
 import * as AUTH_ACTIONS from '../../Context/actions/AuthTypes'
-import Axios from 'axios'
 import CountrySelector from '../CountrySelector';
+import dashboardApi from '../../api/CoreAPI'
+
+
 
 const StoreInformations = () => {
   const { authState: { profile }, authDispatch } = React.useContext(AuthContext)
   const { alertDispatch } = React.useContext(AlertContext)
-  const refNewType = React.useRef()
-  const [data, loading, error, setConfig] = useAxios({})
+
   const storePosition = React.useMemo(() => ({
     coordinates: profile.location.coordinates,
     type: profile.userType,
@@ -30,7 +30,6 @@ const StoreInformations = () => {
       address: profile.address || '',
       email: profile.email || '',
       location: profile.location || { coordinates: [] },
-      // types: profile.types || [],
       country: profile.country,
       city: profile.city,
       unicodeFlag: profile.unicodeFlag
@@ -50,29 +49,15 @@ const StoreInformations = () => {
       country: Yup.string().required('select a country'),
       city: Yup.string().required('select a city'),
       unicodeFlag: Yup.string()
-      // location: Yup.array()
-      //   .required("must specifie your position onno the map"),
-      // types: Yup.array()
-      //   .min(1, 'you must select the type(s) of service that your store provide!')
     }),
     onSubmit: async (values) => {
       try {
-        const config = {
-          url: process.env.REACT_APP_UPDATE_USER,
-          data: {
-            forUpdate: {
-              ...values,
-            }
-          },
-          method: 'POST'
-        }
-        const { data } = await Axios(config)
+        const data = await dashboardApi.updateUser(values)
         alertDispatch(ALERT_ACTIONS.updateSuccess())
         authDispatch(AUTH_ACTIONS.login({ userType: data.userType, ...data.userData }))
 
       }
       catch (ex) {
-        console.log("ex ", ex)
         alertDispatch(ALERT_ACTIONS.updateFailure())
       }
     }
@@ -97,47 +82,16 @@ const StoreInformations = () => {
     }),
     onSubmit: async (values, { resetForm }) => {
       try {
-        const config = {
-          url: process.env.REACT_APP_UPDATE_UPDATE_PASSWORD,
-          data: values,
-          method: 'POST'
-        }
-        const { data } = await Axios(config)
+        const data = await dashboardApi.setPassword(values)
         alertDispatch(ALERT_ACTIONS.updateSuccess())
         resetForm()
         authDispatch(AUTH_ACTIONS.login({ userType: data.userType, ...data.userData }))
       }
       catch (ex) {
-        console.log("ex ", ex)
         alertDispatch(ALERT_ACTIONS.updateFailure())
       }
     }
   })
-
-  const addNewType = () => {
-    const newType = refNewType.current.value
-    personalInformation.setFieldValue('types', personalInformation.values.types.concat(newType))
-  }
-
-  const deleteType = (typeName) => {
-
-    console.log("typeName", typeName)
-    const config = {
-      url: process.env.REACT_APP_UPDATE_USER,
-      data: {
-        forUpdate: {
-          $pull: {
-            storeTypes: {
-              $in: [typeName]
-            }
-          }
-        }
-      },
-      method: 'POST'
-    }
-    setConfig(config)
-    personalInformation.setFieldValue('types', personalInformation.values.types.filter(cur => cur !== typeName))
-  }
 
   const changePosition = (coordinates) => {
     console.log("store information", coordinates)
