@@ -22,7 +22,7 @@ import { AlertContext } from '../../Context/AlertProvider'
 import * as ALERT_TYPES from '../../Context/actions/AlertTypes'
 import * as AUTH_ACTIONS from '../../Context/actions/AuthTypes'
 import { AuthContext } from '../../Context/AuthProvider'
-import dashboardAPI from './dashboardAPI'
+import dashboardAPI from '../../api/CoreAPI'
 
 const UserDashboard = () => {
   const { authState: { userType, profile: { _id, coordinates } }, authDispatch } = React.useContext(AuthContext)

@@ -1,28 +1,35 @@
 import * as provider from './provider'
 
-export default class CoreAPI {
-
-  constructor(config) {
-    if (config.sendProduct) {
+class CoreAPI {
+  constructor() {
+    if (provider.setPassword) {
+      this.setPassword = provider.setPassword
+    }
+    if (provider.updateUser) {
+      this.updateUser = provider.updateUser
+    }
+    if (provider.sendProduct) {
       this.sendProduct = provider.sendProduct
     }
-    if (config.deleteProduct) {
+    if (provider.deleteProduct) {
       this.deleteProduct = provider.deleteProduct
     }
-    if (config.deleteResponse) {
+    if (provider.deleteResponse) {
       this.deleteResponse = provider.deleteResponse
     }
-    if (config.getUserResponses) {
+    if (provider.getUserResponses) {
       this.getUserResponses = provider.getUserResponses
     }
-    if (config.logout) {
+    if (provider.logout) {
       this.logout = provider.logout
     }
-    if (config.getStoreProducts) {
+    if (provider.getStoreProducts) {
       this.getStoreProducts = provider.getStoreProducts
     }
-    if (config.storeFeedback) {
+    if (provider.storeFeedback) {
       this.storeFeedback = provider.storeFeedback
     }
   }
 }
+
+export default new CoreAPI()

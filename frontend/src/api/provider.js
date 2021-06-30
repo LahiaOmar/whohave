@@ -9,7 +9,31 @@ const {
   REACT_APP_PRODUCT_DELETE,
   REACT_APP_PATH_LOGIN,
   REACT_APP_LOGOUT,
+  REACT_APP_UPDATE_USER,
+  REACT_APP_UPDATE_PASSWORD
 } = process.env
+
+export const setPassword = (data) => {
+  return Axios.post(
+    REACT_APP_UPDATE_PASSWORD,
+    data
+  )
+    .then(response => response.data)
+    .catch(err => err)
+}
+
+export const updateUser = (data) => {
+  return Axios.post(
+    REACT_APP_UPDATE_USER,
+    {
+      forUpdate: {
+        ...data
+      }
+    }
+  )
+    .then(response => response.data)
+    .catch(err => err)
+}
 
 export const sendProduct = (data) => {
   return Axios.post(
