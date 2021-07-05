@@ -1,46 +1,62 @@
 import React from 'react'
-import { Tabs, Tab, Grid, Container } from '@material-ui/core'
+import { Tabs, Tab, Grid, makeStyles } from '@material-ui/core'
 import SignUpIhave from '../SignUpIhave'
 import SignUpWho from '../SignUpWho'
 
-function TabPanel(props) {
-	const { children, value, index, ...other } = props;
+const useStyles = makeStyles((theme) => ({
+	root: {
+		width: 'calc(80vw)',
+		maxWidth: '1280px',
+		backgroundColor: 'white',
+		borderRadius: '4px',
+		padding: '16px',
+		maxHeight: 'calc(100vh)'
+	}
+}))
+
+const TabPanel = ({ children, value, index, ...other }) => {
+	if (value !== index)
+		return <></>
 
 	return (
 		<div
 			className="tab-panel"
 			role="tabpanel"
-			hidden={value !== index}
 			id={`simple-tabpanel-${index}`}
 			aria-labelledby={`simple-tab-${index}`}
 			{...other}
 		>
-			{value === index && (children)}
+			{children}
 		</div>
 	)
 }
 
 function SignUp({ clSubmit, error, loading }) {
+	const classes = useStyles()
 	const [value, setValue] = React.useState(0)
 	const signUpCompoNames = ["Store Owner", "User"]
 
 	return (
-		<div className="auth-modal-contaier" >
-			<div>
+		<Grid container className={classes.root} justify="center">
+			<Grid item xs={12}>
 				<Tabs value={value} onChange={(e, v) => setValue(v)} aria-label="simple tabs" centered>
 					<Tab label={signUpCompoNames[0]} id="simple-tab-0" aria-controls="simple-tabpanel-0" />
 					<Tab label={signUpCompoNames[1]} id="simple-tab-1" aria-controls="simple-tabpanel-1" />
 				</Tabs>
-			</div>
-			<div>
-				<TabPanel value={value} index={0}>
-					<SignUpIhave label={signUpCompoNames[0]} clSubmit={clSubmit} />
-				</TabPanel>
-				<TabPanel value={value} index={1} >
-					<SignUpWho label={signUpCompoNames[1]} error={error} loading={loading} clSubmit={clSubmit} />
-				</TabPanel>
-			</div>
-		</div>
+			</Grid>
+			<Grid container item xs={12} spacing={2} >
+				<Grid item xs={12}>
+					<TabPanel value={value} index={0}>
+						<SignUpIhave clSubmit={clSubmit} />
+					</TabPanel>
+				</Grid>
+				<Grid item xs={12}>
+					<TabPanel value={value} index={1} >
+						<SignUpWho error={error} loading={loading} clSubmit={clSubmit} />
+					</TabPanel>
+				</Grid>
+			</Grid>
+		</Grid>
 	)
 }
 
