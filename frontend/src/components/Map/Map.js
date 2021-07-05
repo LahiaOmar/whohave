@@ -3,10 +3,11 @@ import mapboxgl from 'mapbox-gl'
 import { Grid } from '@material-ui/core'
 import { PositionAction } from '../ButtonActions'
 
-function Map({ markersPosition = [], style = {}, selfLocation }) {
+function Map({ markersPosition = [], style = {}, selfLocation, ...rest }) {
 	const [mp, setMp] = React.useState(null)
 	const [userLocation, setUserLocation] = React.useState(selfLocation)
 	const [userMarker, setUserMarker] = React.useState(null)
+	const [isLoading, setIsLoading] = React.useState(true)
 
 	React.useEffect(() => {
 		if (userMarker) {
@@ -79,10 +80,11 @@ function Map({ markersPosition = [], style = {}, selfLocation }) {
 	}, [markersPosition, mp])
 
 	return (
-		<Grid id="map" style={style}>
+		<Grid item xs={12} id="map" style={style} {...rest}>
 			{
 				selfLocation
-				&& <div className="btnPosition">
+				&&
+				<div className="btnPosition">
 					<PositionAction onClick={getUserPosition} />
 				</div>
 			}

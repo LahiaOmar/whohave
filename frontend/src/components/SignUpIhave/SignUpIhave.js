@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Grid, makeStyles } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
 
@@ -8,22 +8,10 @@ import StoreInformation from './StoreInformation'
 import OwnerInformation from './OwnerInformation'
 import StorePosition from './StorePosition'
 import StoreCredentials from './StoreCredentials'
-import { StoresType } from '../StoresType'
-import Map from '../Map'
-import CountrySelector from '../CountrySelector';
-
-const useStyles = makeStyles((theme) => ({
-	mapBrderError: {
-		border: `1px solid ${theme.palette.error.main}`
-	},
-}))
 
 function SignUpIhave({ clSubmit }) {
-	// active Step : is which component is visible
 	const [activeStep, setActiveStep] = React.useState(0)
-	// if the component had validate his form.
 	const [stepsComplete, setStepsComplete] = React.useState(new Array(4).fill(false))
-	// component labels.
 	const [stepsLabels] = React.useState(['Owner information', 'Store information', 'Store Position', 'Credentials'])
 
 	const credentials = useFormik({

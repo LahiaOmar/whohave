@@ -6,7 +6,7 @@ import SignUpWho from '../SignUpWho'
 const useStyles = makeStyles((theme) => ({
 	root: {
 		width: 'calc(80vw)',
-		maxWidth: '1280px',
+		maxWidth: '1100px',
 		backgroundColor: 'white',
 		borderRadius: '4px',
 		padding: '16px',

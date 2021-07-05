@@ -133,8 +133,6 @@ body{
 /* MAP */
 #map{
 	position: relative;
-	width: 500px;
-	height: 500px;
 }
 
 .btnPosition{
