@@ -50,9 +50,11 @@ function LogIn({ clSubmit, error, loading }) {
 			<Grid container component="form" item spacing={2} onSubmit={formik.handleSubmit} autoComplete="off" >
 				<Grid item xs={12}>
 					<FormLabel >Are you :  </FormLabel>
+				</Grid>
+				<Grid item xs={12}>
 					<RadioGroup >
 						<FormControlLabel
-							value="store"
+							value="Store"
 							control={<Radio
 								id="checkStore"
 								name="checkStore"
@@ -62,7 +64,7 @@ function LogIn({ clSubmit, error, loading }) {
 							/>}
 							label="store owner" />
 						<FormControlLabel
-							value="user"
+							value="User"
 							control={<Radio
 								id="checkUser"
 								name="checkUser"
@@ -89,7 +91,7 @@ function LogIn({ clSubmit, error, loading }) {
 					<TextField
 						{...formik.getFieldProps('password')}
 						error={formik.touched.password && formik.errors.password}
-						helperText={formik.touched && formik.errors.password
+						helperText={formik.touched.password && formik.errors.password
 							? formik.errors.password : null}
 						size="small"
 						name="password"
