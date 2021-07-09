@@ -2,6 +2,12 @@ import * as provider from './provider'
 
 class CoreAPI {
   constructor() {
+    if (provider.signup) {
+      this.signup = provider.signup
+    }
+    if (provider.login) {
+      this.login = provider.login
+    }
     if (provider.setPassword) {
       this.setPassword = provider.setPassword
     }
