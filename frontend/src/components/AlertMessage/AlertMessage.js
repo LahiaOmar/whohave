@@ -1,49 +1,22 @@
 import React from 'react'
-import { default as AlertUI } from '@material-ui/lab/Alert'
+import { makeStyles } from '@material-ui/core'
 import { AlertContext } from '../../Context/AlertProvider'
-import * as ALERT_ACTIONS from '../../Context/actions/AlertTypes'
+import Alert from './Alert'
 
-const Alert = ({ alert, alertDispatch, bottom }) => {
-
-  const onCloseHandler = () => {
-    alertDispatch(ALERT_ACTIONS.removeByKey(alert.key))
+const useStyles = makeStyles((theme) => ({
+  root: {
+    position: 'fixed',
+    bottom: '0px',
+    right: '0px',
   }
-
-  React.useEffect(() => {
-    const timeToDelete = setTimeout(() => alertDispatch(ALERT_ACTIONS.removeTop()), 4000)
-    return () => clearTimeout(timeToDelete)
-  })
-
-  return (
-    <div style={{
-      position: 'fixed',
-      bottom: `${bottom * 50}px`,
-      right: '0px',
-      margin: '0px 10px 10px 0px'
-    }}>
-      <AlertUI
-
-        onClose={onCloseHandler}
-        severity={alert.severity}>
-        {alert.title}
-      </AlertUI>
-    </div>
-  )
-}
+}))
 
 const AlertMessage = () => {
   const { alertState, alertDispatch } = React.useContext(AlertContext)
-
-  React.useEffect(() => {
-    console.log("adding new alert ")
-  }, [alertState])
+  const classes = useStyles()
 
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '0px',
-      right: '0px',
-    }}>
+    <div className={classes.root}>
       {
         alertState.map((alert, i) =>
           <Alert
