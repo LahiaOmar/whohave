@@ -1,7 +1,7 @@
 import React from 'react'
 import { Tabs, Tab, Grid, makeStyles } from '@material-ui/core'
-import SignUpIhave from '../SignUpIhave'
-import SignUpWho from '../SignUpWho'
+import SignUpStore from '../SignUpStore'
+import SignUpUser from '../SignUpUser'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -47,12 +47,12 @@ function SignUp() {
 			<Grid container item xs={12} spacing={2} >
 				<Grid item xs={12}>
 					<TabPanel value={value} index={0}>
-						<SignUpIhave />
+						<SignUpStore />
 					</TabPanel>
 				</Grid>
 				<Grid item xs={12}>
 					<TabPanel value={value} index={1} >
-						<SignUpWho />
+						<SignUpUser />
 					</TabPanel>
 				</Grid>
 			</Grid>
