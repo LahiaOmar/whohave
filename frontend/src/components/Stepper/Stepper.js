@@ -57,7 +57,7 @@ const Stepper = ({
           </Grid>
         }
         {
-          (activeStep >= 0 && activeStep < children.length - 1)
+          (activeStep >= 0 && activeStep < children.length)
           &&
           <Grid item xs={4}>
             <Button
@@ -65,21 +65,10 @@ const Stepper = ({
               fullWidth
               variant="contained"
               color="primary">
-              NEXT
-						</Button>
-          </Grid>
-        }
-        {
-          (activeStep === children.length - 1)
-          &&
-          <Grid item xs={4}>
-            <Button
-              onClick={() => onFinish()}
-              fullWidth
-              variant="contained"
-              color="primary">
-              FINISH
-						</Button>
+              {
+                activeStep === children.length - 1 ? 'FINISH' : 'NEXT'
+              }
+            </Button>
           </Grid>
         }
       </Grid>

@@ -44,6 +44,7 @@ function SignUpIhave() {
 				.oneOf([Yup.ref('password'), null], 'Passwords must match'),
 		}),
 		onSubmit: values => {
+			setStepsHandler()
 			finishHandler()
 		},
 	})
@@ -112,7 +113,6 @@ function SignUpIhave() {
 				.required('required !'),
 		}),
 		onSubmit: values => {
-			console.log("")
 			onSubmitHandler()
 		},
 	})
@@ -150,7 +150,6 @@ function SignUpIhave() {
 	}
 
 	const finishHandler = async () => {
-
 		try {
 			const store = {
 				...personalInformation.values,
@@ -180,7 +179,7 @@ function SignUpIhave() {
 				activeStep={activeStep}
 				stepsComplete={stepsComplete}
 				labels={stepsLabels}
-				onNext={nextHandler} onBack={backHandler} onFinish={finishHandler}>
+				onNext={nextHandler} onBack={backHandler}>
 				<OwnerInformation formikValidator={personalInformation} />
 				<StoreInformation formikValidator={storeInformation} />
 				<StorePosition formikValidator={mapPosition} />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Grid, Stepper, Step, StepLabel, TextField, Typography } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
 import { useHistory } from 'react-router-dom'
@@ -9,14 +9,18 @@ import { AlertContext } from '../../Context/AlertProvider'
 import { AuthContext } from '../../Context/AuthProvider'
 import * as ALERT_TYPES from '../../Context/actions/AlertTypes'
 import * as AUTH_TYPES from '../../Context/actions/AuthTypes'
+import Stepper from '../Stepper'
+import UserInformation from './UserInformation'
+import UserCredentials from './UserCredentials'
 
 function SignUpWho() {
+	const REDIRECT_PATH = process.env.REACT_APP_LOGIN_REDIRECT
+	const labels = ['Personal information', 'Credentials']
 	const [activeStep, setActiveStep] = React.useState(0)
-
+	const [stepsComplete, setStepsComplete] = React.useState(new Array(2).fill(false))
 	const { alertDispatch } = React.useContext(AlertContext)
 	const { authDispatch } = React.useContext(AuthContext)
 	const history = useHistory()
-	const REDIRECT_PATH = process.env.REACT_APP_LOGIN_REDIRECT
 
 	const personalInformation = useFormik({
 		initialValues: {
@@ -32,10 +36,10 @@ function SignUpWho() {
 				.required('required !'),
 		}),
 		onSubmit: values => {
-			setActiveStep(activeStep =>
-				activeStep + 1 <= 1 ? activeStep + 1 : activeStep)
+			onSubmitHandler()
 		}
 	})
+
 	const credentials = useFormik({
 		initialValues: {
 			email: '',
@@ -54,20 +58,28 @@ function SignUpWho() {
 				.oneOf([Yup.ref('password'), null], 'Passwords must match'),
 		}),
 		onSubmit: values => {
-			setActiveStep(activeStep =>
-				activeStep + 1 <= 1 ? activeStep + 1 : activeStep)
+			onSubmitHandler()
+			finishHandler()
 		}
 	})
-	const nextHandler = () => {
-		console.log("next ", activeStep)
+
+	const setStepsHandler = () => {
+		const _steps = [...stepsComplete]
+		_steps[activeStep] = true
+		setStepsComplete(_steps)
+	}
+
+	const onSubmitHandler = () => {
+		setStepsHandler()
+		setActiveStep(activeStep => activeStep + 1)
+	}
+
+	const nextHandler = async () => {
 		if (activeStep == 0) {
-			personalInformation.submitForm()
-				.then((res) => console.log("res ", res))
-				.catch(err => console.log("err", err))
+			await personalInformation.submitForm()
 		}
 		if (activeStep == 1) {
-			credentials.submitForm()
-				.then(() => { })
+			await credentials.submitForm()
 		}
 	}
 
@@ -96,153 +108,17 @@ function SignUpWho() {
 			alertDispatch(ALERT_TYPES.loginFailure())
 		}
 	}
+
 	return (
 		<Grid container xs={12} spacing={2} className="signup-user" >
-			<Grid item xs={12}>
-				<Stepper activeStep={activeStep}>
-					<Step>
-						<StepLabel>Personal information</StepLabel>
-					</Step>
-					<Step>
-						<StepLabel>Credentials</StepLabel>
-					</Step>
-				</Stepper>
-			</Grid>
-			<Grid item container xs={12} className="stepper-content">
-				{
-					(activeStep === 0)
-					&&
-					<Grid item container xs={12} spacing={2} component="form" onSubmit={personalInformation.handleSubmit}>
-						<Grid item xs={12} sm={6} >
-							<TextField
-								{...personalInformation.getFieldProps('firstName')}
-								error={
-									personalInformation.touched.firstName && personalInformation.errors.firstName
-										? true : false}
-								helperText={personalInformation.touched.firstName && personalInformation.errors.firstName
-									? personalInformation.errors.firstName : null}
-								name="firstName"
-								variant="outlined"
-								fullWidth
-								label="First Name"
-								size="small"
-							/>
-						</Grid>
-						<Grid item xs={12} sm={6} >
-							<TextField
-								{...personalInformation.getFieldProps('lastName')}
-								error={
-									personalInformation.touched.lastName && personalInformation.errors.lastName
-										? true : false}
-								helperText={personalInformation.touched.lastName && personalInformation.errors.lastName
-									? personalInformation.errors.lastName : null}
-								name="lastName"
-								variant="outlined"
-								fullWidth
-								label="Last Name"
-								size="small"
-							/>
-						</Grid>
-						<button type="submit" style={{ display: 'none' }}></button>
-					</Grid>
-				}
-				{
-					(activeStep === 1)
-					&&
-					<Grid item container xs={12} spacing={2} component="form" onSubmit={credentials.handleSubmit}>
-						<Grid item xs={12}>
-							<TextField
-								{...credentials.getFieldProps('email')}
-								error={
-									credentials.touched.email && credentials.errors.email
-										? true : false}
-								helperText={credentials.touched.email && credentials.errors.email
-									? credentials.errors.email : null}
-								size="small"
-								name="email"
-								variant="outlined"
-								fullWidth
-								label="email"
-							/>
-						</Grid>
-						<Grid item xs={12}  >
-							<TextField
-								{...credentials.getFieldProps('password')}
-								error={
-									credentials.touched.password && credentials.errors.password
-										? true : false}
-								helperText={credentials.touched.password && credentials.errors.password
-									? credentials.errors.password : null}
-								size="small"
-								name="password"
-								variant="outlined"
-								fullWidth
-								type="password"
-								label="Password"
-							/>
-						</Grid>
-						<Grid item xs={12}  >
-							<TextField
-								{...credentials.getFieldProps('confirmPassword')}
-								error={
-									credentials.touched.confirmPassword && credentials.errors.confirmPassword
-										? true : false}
-								helperText={credentials.touched.confirmPassword && credentials.errors.confirmPassword
-									? credentials.errors.confirmPassword
-									: null}
-								size="small"
-								name="confirmPassword"
-								variant="outlined"
-								fullWidth
-								type="password"
-								label="Confirmation Password"
-							/>
-						</Grid>
-						<button type="submit" style={{ display: 'none' }}></button>
-					</Grid>
-				}
-			</Grid>
-			<Grid item container spacing={2} xs={12} justify="center" className="stepper-button">
-				{
-					(activeStep > 0)
-					&&
-					<Grid item xs={4}>
-						<Button
-							onClick={() => backHandler()}
-							fullWidth
-							variant="contained"
-							color="primary">
-							BACK
-						</Button>
-					</Grid>
-				}
-				{
-					(activeStep < 1)
-					&&
-					<Grid item xs={4}>
-						<Button
-							onClick={() => nextHandler()}
-							fullWidth
-							variant="contained"
-							color="primary">
-							NEXT
-						</Button>
-					</Grid>
-				}
-				{
-					(activeStep === 1)
-					&&
-					<Grid item xs={4}>
-						<Button
-							onClick={() => finishHandler()}
-							fullWidth
-							variant="contained"
-							color="primary">
-							FINISH
-						</Button>
-					</Grid>
-				}
-			</Grid>
+			<Stepper
+				activeStep={activeStep}
+				stepsComplete={stepsComplete}
+				labels={labels}
+				onNext={nextHandler} onBack={backHandler}>
+				<UserInformation formikValidator={personalInformation} />
+				<UserCredentials formikValidator={credentials} />
+			</Stepper>
 		</Grid>
 	)
 }
