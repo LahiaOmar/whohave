@@ -24,8 +24,8 @@ const StorePosition = ({
     return <></>
 
   return (
-    <Grid container item xs={12}>
-      <Grid item container xs={12} spacing={2}
+    <Grid container item xs={12} spacing={2} justify="center">
+      <Grid item container xs={12}
         component="form"
         onSubmit={formikValidator.handleSubmit}>
         <Map
