@@ -1,16 +1,22 @@
 import React from 'react'
-import LoginContext from '../ContextAuth'
-import AlertMessage from '../AlertMessage'
-import { ALERT_ERROR } from '../../constants/constants'
-import { Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup, Container } from '@material-ui/core'
 import { AccountCircle } from '@material-ui/icons'
-
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup, Container } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { useHistory } from 'react-router-dom'
 
-function LogIn({ clSubmit, error, loading }) {
-	const [alertError, setAlertError] = React.useState(null)
+import API from '../../api/CoreAPI'
+import { AlertContext } from '../../Context/AlertProvider'
+import { AuthContext } from '../../Context/AuthProvider'
+import * as ALERT_TYPES from '../../Context/actions/AlertTypes'
+import * as AUTH_TYPES from '../../Context/actions/AuthTypes'
+
+function LogIn() {
+	const { alertDispatch } = React.useContext(AlertContext)
+	const { authDispatch } = React.useContext(AuthContext)
+	const history = useHistory()
+	const REDIRECT_PATH = process.env.REACT_APP_LOGIN_REDIRECT
 
 	const formik = useFormik({
 		initialValues: {
@@ -23,21 +29,21 @@ function LogIn({ clSubmit, error, loading }) {
 			password: Yup.string().required("Password Required !"),
 			userType: Yup.string().required('select user type !')
 		}),
-		onSubmit: function (values) {
-			const config = {
-				url: process.env.REACT_APP_PATH_LOGIN,
-				data: values,
-				method: 'POST'
+		onSubmit: async (values) => {
+			try {
+				const { userType, information } = await API.login(values)
+				authDispatch(AUTH_TYPES.login({
+					userType,
+					...information
+				}))
+				alertDispatch(ALERT_TYPES.loginSuccess())
+				history.push(REDIRECT_PATH)
 			}
-			clSubmit(config)
+			catch (ex) {
+				alertDispatch(ALERT_TYPES.loginFailure())
+			}
 		}
 	})
-
-	React.useEffect(() => {
-		if (error.status) {
-			setAlertError(ALERT_ERROR.LOGIN_FAILD)
-		}
-	}, [error])
 
 	return (
 		<div className="auth-modal-contaier">
@@ -109,14 +115,6 @@ function LogIn({ clSubmit, error, loading }) {
 						color="primary">
 						LogIn
 					</Button>
-				</Grid>
-				<Grid item xs={12}>
-					{
-						loading && <CircularProgress />
-					}
-				</Grid>
-				<Grid item xs={12}>
-					<AlertMessage error={alertError} />
 				</Grid>
 			</Grid>
 		</div>

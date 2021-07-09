@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const UserNotLogged = ({ modalState, setModalHandler, error, clSubmit }) => {
+const UserNotLogged = ({ modalState, setModalHandler }) => {
   const classes = useStyles()
 
   return (
@@ -33,14 +33,14 @@ const UserNotLogged = ({ modalState, setModalHandler, error, clSubmit }) => {
         handleClose={() => setModalHandler({ bool: false, who: 'signUpOpen' })}
         handleOpen={() => setModalHandler({ bool: true, who: 'signUpOpen' })}
       >
-        <SignUp error={error} clSubmit={clSubmit} />
+        <SignUp />
       </MyModal>
       <MyModal
         open={modalState.loginOpen}
         handleClose={() => setModalHandler({ bool: false, who: 'loginOpen' })}
         handleOpen={() => setModalHandler({ bool: true, who: 'loginOpen' })}
       >
-        <LogIn error={error} clSubmit={clSubmit} />
+        <LogIn />
       </MyModal>
       <Hidden xsDown>
         <div className="auth-btn">

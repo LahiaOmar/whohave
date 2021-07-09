@@ -1,11 +1,23 @@
 import React from 'react'
 import { Button, Grid, Stepper, Step, StepLabel, TextField, Typography } from '@material-ui/core'
-import { AccountCircle } from '@material-ui/icons'
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
+import { useHistory } from 'react-router-dom'
 
-function SignUpWho({ clSubmit, label }) {
+import API from '../../api/CoreAPI'
+import { AlertContext } from '../../Context/AlertProvider'
+import { AuthContext } from '../../Context/AuthProvider'
+import * as ALERT_TYPES from '../../Context/actions/AlertTypes'
+import * as AUTH_TYPES from '../../Context/actions/AuthTypes'
+
+function SignUpWho() {
 	const [activeStep, setActiveStep] = React.useState(0)
+
+	const { alertDispatch } = React.useContext(AlertContext)
+	const { authDispatch } = React.useContext(AuthContext)
+	const history = useHistory()
+	const REDIRECT_PATH = process.env.REACT_APP_LOGIN_REDIRECT
+
 	const personalInformation = useFormik({
 		initialValues: {
 			firstName: '',
@@ -63,21 +75,26 @@ function SignUpWho({ clSubmit, label }) {
 		setActiveStep(activeStep => activeStep - 1 >= 0 ? activeStep - 1 : activeStep)
 	}
 
-	const finishHandler = () => {
-		const user = {
-			...personalInformation.values,
-			...credentials.values,
+	const finishHandler = async () => {
+		try {
+			const user = {
+				...personalInformation.values,
+				...credentials.values,
+			}
+			const { userType, information } = await API.signup({
+				userType: 'USER',
+				userData: user
+			})
+			authDispatch(AUTH_TYPES.login({
+				userType,
+				...information
+			}))
+			alertDispatch(ALERT_TYPES.loginSuccess())
+			history.push(REDIRECT_PATH)
 		}
-		console.log("user ", user)
-		const config = {
-			url: process.env.REACT_APP_PATH_SIGNUP,
-			data: {
-				userData: user,
-				userType: 'USER'
-			},
-			method: 'POST'
+		catch (ex) {
+			alertDispatch(ALERT_TYPES.loginFailure())
 		}
-		clSubmit(config)
 	}
 	return (
 		<Grid container xs={12} spacing={2} className="signup-user" >

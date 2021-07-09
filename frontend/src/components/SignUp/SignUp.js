@@ -31,7 +31,7 @@ const TabPanel = ({ children, value, index, ...other }) => {
 	)
 }
 
-function SignUp({ clSubmit, error, loading }) {
+function SignUp() {
 	const classes = useStyles()
 	const [value, setValue] = React.useState(0)
 	const signUpCompoNames = ["Store Owner", "User"]
@@ -47,12 +47,12 @@ function SignUp({ clSubmit, error, loading }) {
 			<Grid container item xs={12} spacing={2} >
 				<Grid item xs={12}>
 					<TabPanel value={value} index={0}>
-						<SignUpIhave clSubmit={clSubmit} />
+						<SignUpIhave />
 					</TabPanel>
 				</Grid>
 				<Grid item xs={12}>
 					<TabPanel value={value} index={1} >
-						<SignUpWho error={error} loading={loading} clSubmit={clSubmit} />
+						<SignUpWho />
 					</TabPanel>
 				</Grid>
 			</Grid>

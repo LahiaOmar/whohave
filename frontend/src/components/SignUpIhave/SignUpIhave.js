@@ -2,6 +2,13 @@ import React from 'react'
 import { Grid } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
+import { useHistory } from 'react-router-dom'
+
+import API from '../../api/CoreAPI'
+import { AlertContext } from '../../Context/AlertProvider'
+import { AuthContext } from '../../Context/AuthProvider'
+import * as ALERT_TYPES from '../../Context/actions/AlertTypes'
+import * as AUTH_TYPES from '../../Context/actions/AuthTypes'
 
 import Stepper from '../Stepper'
 import StoreInformation from './StoreInformation'
@@ -9,10 +16,15 @@ import OwnerInformation from './OwnerInformation'
 import StorePosition from './StorePosition'
 import StoreCredentials from './StoreCredentials'
 
-function SignUpIhave({ clSubmit }) {
+function SignUpIhave() {
 	const [activeStep, setActiveStep] = React.useState(0)
 	const [stepsComplete, setStepsComplete] = React.useState(new Array(4).fill(false))
 	const [stepsLabels] = React.useState(['Owner information', 'Store information', 'Store Position', 'Credentials'])
+
+	const { alertDispatch } = React.useContext(AlertContext)
+	const { authDispatch } = React.useContext(AuthContext)
+	const history = useHistory()
+	const REDIRECT_PATH = process.env.REACT_APP_LOGIN_REDIRECT
 
 	const credentials = useFormik({
 		initialValues: {
@@ -137,23 +149,29 @@ function SignUpIhave({ clSubmit }) {
 		}
 	}
 
-	const finishHandler = () => {
-		const store = {
-			...personalInformation.values,
-			...storeInformation.values,
-			...mapPosition.values,
-			...credentials.values,
+	const finishHandler = async () => {
+
+		try {
+			const store = {
+				...personalInformation.values,
+				...storeInformation.values,
+				...mapPosition.values,
+				...credentials.values,
+			}
+			const { userType, information } = await API.signup({
+				userType: 'STORE',
+				userData: store
+			})
+			authDispatch(AUTH_TYPES.login({
+				userType,
+				...information
+			}))
+			alertDispatch(ALERT_TYPES.loginSuccess())
+			history.push(REDIRECT_PATH)
 		}
-		console.log("store ", store)
-		const config = {
-			url: process.env.REACT_APP_PATH_SIGNUP,
-			data: {
-				userData: store,
-				userType: 'STORE'
-			},
-			method: 'POST'
+		catch (ex) {
+			alertDispatch(ALERT_TYPES.loginFailure())
 		}
-		clSubmit(config)
 	}
 
 	return (
