@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
+    "faker": "^5.5.3",
     "jest": "^27.0.5",
     "mocha": "^9.0.1",
     "nodemon": "^2.0.4",
