@@ -1,6 +1,6 @@
 const userStore = require("../models/userStore")
 const NotificationsModel = require('../models/notification')
-const httpStatus = require("http-status")
+const { OK, UNAUTHORIZED } = require("http-status")
 const ProductsModel = require("../models/products")
 const ObjectID = require('mongoose').mongo.ObjectID
 const path = require('path')
@@ -9,17 +9,16 @@ exports.delete = async (req, res) => {
   try {
     const { productId } = req.params
     const productDeleted = await ProductsModel.findByIdAndDelete({ _id: productId })
-    console.log("product deleted ", productDeleted)
     await NotificationsModel.deleteMany({
       $or: [
         { 'content.productId': productId },
         { content: new ObjectID(productId) }
       ]
     })
-    res.status(httpStatus.OK).json("ok")
+    res.status(OK).json({ message: "is deleted" })
   }
   catch (ex) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: ex })
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
 }
 
@@ -36,7 +35,6 @@ exports.storeFeedback = async (req, res) => {
       to: [userId]
     })
     await notification.save()
-    console.log("notification store ", notification)
     await NotificationsModel.findOneAndUpdate({
       content: new ObjectID(content.productId),
       type: 'request'
@@ -45,11 +43,10 @@ exports.storeFeedback = async (req, res) => {
         to: storeId
       }
     })
-    res.status(httpStatus.CREATED).json({ msg: "send!" })
+    res.status(CREATED).json({ message: "send!" })
   }
   catch (ex) {
-    console.log("err ", err)
-    res.status(400).json({ err: err })
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
 }
 
@@ -75,7 +72,7 @@ exports.send = async (req, res) => {
       _id: 1
     })
     if (allStores.length === 0)
-      res.status(200).json("send")
+      res.status(OK).json({ message: " notidication is send" })
 
     const storesIds = allStores.map(objId => objId._id)
 
@@ -83,16 +80,15 @@ exports.send = async (req, res) => {
       content: storeDocument._id, from: userId, to: storesIds, type: 'request'
     })
     await notification.save()
-    res.status(200).json("send")
+    res.status(OK).json({ message: '' })
   }
   catch (ex) {
-    res.status(400).json({ err: ex })
-    console.log("send ex", ex)
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
 }
 
 exports.sendImage = (req, res) => {
-  const imageId = req.params.imageId
+  const { imageId } = req.params
   res.sendFile(path.join(__dirname, '..', 'uploadImages', imageId), {
     Headers: {
       'content-type': 'image/png'

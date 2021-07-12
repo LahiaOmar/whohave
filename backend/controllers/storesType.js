@@ -1,14 +1,14 @@
 const storesType = require('../models/storesType')
-const httpStatus = require('http-status')
+const { OK, UNAUTHORIZED } = require('http-status')
 
 exports.get = async (req, res) => {
   try {
     const types = await storesType.find()
 
-    res.status(httpStatus.OK).json(types)
+    res.status(OK).json(types)
   }
   catch (ex) {
-    res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR)
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
 }
 
@@ -21,9 +21,9 @@ exports.add = async (req, res) => {
     storeType = await storeType.save()
     const allTypes = await storesType.find()
 
-    res.status(httpStatus.CREATED).json(allTypes)
+    res.status(CREATED).json(allTypes)
   }
   catch (ex) {
-    res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR)
+    res.status(UNAUTHORIZED).json({ message: ex.message })
   }
 }

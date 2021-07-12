@@ -2,14 +2,13 @@ const NotificationsModel = require('../models/notification')
 const ProductModel = require('../models/products')
 const StoreModel = require("../models/userStore")
 const ObjectID = require("mongoose").mongo.ObjectID
-const httpCode = require('http-status')
+const { OK, UNAUTHORIZED } = require('http-status')
 
 exports.user = async (req, res) => {
   try {
-    const { userType, userId } = res.locals
-    console.log("user id ", userId)
+    const { userId } = res.locals
+
     let products = await ProductModel.find({ from: userId })
-    // for every product, find all reponse
     let productsResponses = products.map(async product => {
       return await NotificationsModel.find({
         'content.productId': product._id.toString(),
@@ -31,37 +30,30 @@ exports.user = async (req, res) => {
       return currentResponses
     })
     stores = await Promise.all(stores)
-    console.log("all stores ", stores)
-    console.log("user products ", products)
-    res.status(httpCode.OK).json({ stores, products })
+    res.status(OK).json({ stores, products })
   }
-  catch (e) {
-    console.log("err ", e)
-    res.status(httpCode.INTERNAL_SERVER_ERROR).json({ err: e })
+  catch (ex) {
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
 }
 
 exports.store = async (req, res) => {
   try {
     const { userId } = res.locals
-    // product sent from user to storeUser. => content of notification is unique
     const notifications = await NotificationsModel.find({
       to: {
         $in: [userId]
       },
       type: 'request'
     })
-    console.log("notification sotre", notifications)
     let products = notifications.map(async ({ content }) => {
       return await ProductModel.findOne({ _id: content })
     })
     products = await Promise.all(products)
-    console.log("product ", products)
-    res.status(httpCode.OK).json({ products })
+    res.status(OK).json({ products })
   }
-  catch (e) {
-    console.log("err ", e)
-    res.status(httpCode.INTERNAL_SERVER_ERROR).json({ err: e })
+  catch (ex) {
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
 }
 
@@ -70,8 +62,8 @@ exports.storeResponse = async (req, res) => {
     const { queryData, content } = req.body
     const { userId, storeId } = queryData
     const { productId } = content
+
     const product = await ProductModel.findOne({ _id: productId })
-    console.log("product  store response ", product)
     if (product) {
       const notification = new NotificationsModel({
         type: 'response',
@@ -80,7 +72,6 @@ exports.storeResponse = async (req, res) => {
         to: [userId]
       })
       await notification.save()
-      console.log("notification store ", notification)
       await NotificationsModel.findOneAndUpdate({
         content: new ObjectID(content.productId),
         type: 'request'
@@ -89,7 +80,7 @@ exports.storeResponse = async (req, res) => {
           to: storeId
         }
       })
-      res.status(200).json("feedback")
+      res.status(OK).json("feedback")
     }
     else {
       await NotificationsModel.findOneAndUpdate({
@@ -100,14 +91,12 @@ exports.storeResponse = async (req, res) => {
           to: storeId
         }
       })
-      res.status(200).json("feedback")
+      res.status(OK).json("feedback")
     }
   }
   catch (ex) {
-    console.log("ex feedback", ex)
-    res.status(400).json({ err: ex })
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
-  res.status(200)
 }
 
 exports.delete = async (req, res) => {
@@ -118,9 +107,9 @@ exports.delete = async (req, res) => {
       'content.productId': productId,
       from: storeId
     })
-    res.status(httpCode.OK).json("deleted")
+    res.status(OK).json({ message: "deleted" })
   }
   catch (ex) {
-    res.status(httpCode.INTERNAL_SERVER_ERROR).json({ error: ex })
+    res.status(UNAUTHORIZED).json({ error: ex.message })
   }
 }
