@@ -2,12 +2,29 @@ const mongoose = require("mongoose")
 const location = require("../models/location.js")
 
 const userSchema = new mongoose.Schema({
-  firstName: { type: String, require: true },
-  lastName: { type: String, require: true },
-  password: { type: String, require: true },
-  email: { type: String, require: true },
+  firstName: {
+    type: String,
+    required: [true, 'firstName is required !'],
+    min: 3,
+    max: 20
+  },
+  lastName: {
+    type: String,
+    required: [true, 'lastName is required !'],
+    min: 3,
+    max: 20
+  },
+  password: {
+    type: String,
+    required: [true, 'password is required !'],
+    minlength: 5
+  },
+  email: {
+    type: String,
+    required: [true, 'email is required !'],
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w +)*(\.\w{2,3})+$/, `email : format error`]
+  },
   socketId: { type: String, default: "" },
-  location: { type: location, default: {} }
 })
 
 userSchema.methods.getFieldToSend = function () {
