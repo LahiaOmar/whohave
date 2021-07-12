@@ -4,21 +4,11 @@ const request = require('supertest')(server)
 const { assert, expect } = require('chai')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
-const { ACCEPTED } = require('http-status')
+const { ACCEPTED, CREATED } = require('http-status')
 
 const User = require('../../../models/user')
 const Store = require('../../../models/userStore')
 const { getStore, getUser } = require('../../mockData')
-
-/**
- * Login :
- *  - User : 
- *    - wrong credentials
- *    - Good credentials
- *  - Store : 
- *    - wrong credentials
- *    - Good credentials
- */
 
 describe('ROUTE:LOGIN', () => {
 
@@ -26,21 +16,27 @@ describe('ROUTE:LOGIN', () => {
 
   // create users
   before(async () => {
-    fakeStore = getStore()
-    fakeUser = getUser()
-    const hashStorePassword = await bcrypt.hash(fakeStore.password, 10)
-    const hashUserPassword = await bcrypt.hash(fakeUser.password, 10)
+    try {
+      fakeStore = getStore({ allField: true })
+      fakeUser = getUser({ allField: true })
 
-    user = new User({
-      ...fakeUser,
-      password: hashUserPassword
-    })
-    user = await user.save()
-    store = new Store({
-      ...fakeStore,
-      password: hashStorePassword
-    })
-    store = await store.save()
+      const hashStorePassword = await bcrypt.hash(fakeStore.password, 10)
+      const hashUserPassword = await bcrypt.hash(fakeUser.password, 10)
+
+      user = new User({
+        ...fakeUser,
+        password: hashUserPassword
+      })
+      user = await user.save()
+      store = new Store({
+        ...fakeStore,
+        password: hashStorePassword
+      })
+      store = await store.save()
+    }
+    catch (ex) {
+      console.log("before login ex ", ex)
+    }
   })
 
   // remove the users
@@ -60,14 +56,13 @@ describe('ROUTE:LOGIN', () => {
     it('should log in with the correct credentials', async () => {
       const { email, password, userType } = fakeUser
 
-      const { status } = await request
+      const { status, text, body } = await request
         .post('/api/user/auth/login')
         .send({
           email,
           password,
           userType
         })
-
       assert.equal(status, ACCEPTED)
     })
     it('should not log in with wrong credentials', async () => {
@@ -84,6 +79,18 @@ describe('ROUTE:LOGIN', () => {
       assert.notEqual(status, ACCEPTED)
     })
 
+    it('should not log in  with missing password or email', async () => {
+      const { email, userType } = fakeUser
+
+      const { status } = await request
+        .post('/api/user/auth/login')
+        .send({
+          email,
+          userType
+        })
+
+      assert.notEqual(status, ACCEPTED)
+    })
   })
   describe('when the Store Log in', () => {
     it('should log in with the correct credentials', async () => {
@@ -113,5 +120,4 @@ describe('ROUTE:LOGIN', () => {
       assert.notEqual(status, ACCEPTED)
     })
   })
-
 })

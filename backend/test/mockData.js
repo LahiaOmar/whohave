@@ -1,28 +1,35 @@
-const faker = require('faker')
+const mongooseDummy = require('mongoose-dummy')
 
-const getStore = () => ({
-  firstName: faker.name.firstName(),
-  lastName: faker.name.lastName(),
-  password: faker.lorem.word(10),
-  email: faker.internet.email(),
-  name: faker.company.companyName(),
-  address: faker.address.streetAddress(),
-  types: faker.random.words(4).split(' '),
-  country: faker.address.country(),
-  city: faker.address.city(),
-  location: {
-    coordinates: [-5.0008, 34.0368]
-  },
-  userType: 'STORE'
-})
+const UserModel = require('../models/user')
+const StoreModel = require('../models/userStore')
 
-const getUser = () => ({
-  firstName: faker.name.firstName(),
-  lastName: faker.name.lastName(),
-  password: faker.lorem.word(10),
-  email: faker.internet.email(),
-  userType: 'USER'
-})
+const ignore = ['location', '_id', '__v', 'socketId']
 
+const remove = () => Math.round(Math.random())
+
+const getStore = ({ allField }) => {
+  return mockUser('STORE', allField)
+}
+
+const getUser = ({ allField }) => {
+  return mockUser('USER', allField)
+}
+
+const mockUser = (userType, allField) => {
+
+  const model = userType == "STORE" ? StoreModel : UserModel
+
+  const dummy = mongooseDummy(model, { ignore })
+  if (allField) {
+    return { ...dummy, userType }
+  }
+  else {
+    for (const key in dummy) {
+      if (remove())
+        delete dummy[key]
+    }
+    return { ...dummy, userType }
+  }
+}
 
 module.exports = { getStore, getUser }
