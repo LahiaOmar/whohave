@@ -1,5 +1,6 @@
 const server = require('../index')
 const request = require('supertest')(server)
+const { parseTokenCookie } = require('../../utils')
 
 const { assert, expect } = require('chai')
 const bcrypt = require('bcrypt')
@@ -56,13 +57,17 @@ describe('ROUTE:LOGIN', () => {
     it('should log in with the correct credentials', async () => {
       const { email, password, userType } = fakeUser
 
-      const { status, text, body } = await request
+      const { status, headers } = await request
         .post('/api/user/auth/login')
         .send({
           email,
           password,
           userType
         })
+      const [token, httpOnly] = parseTokenCookie(headers, ['HttpOnly'])
+
+      assert.notEqual(httpOnly, undefined, 'Token is not HttpOnly')
+      assert.notEqual(token, undefined, 'No token found !')
       assert.equal(status, ACCEPTED)
     })
     it('should not log in with wrong credentials', async () => {
@@ -96,14 +101,17 @@ describe('ROUTE:LOGIN', () => {
     it('should log in with the correct credentials', async () => {
       const { email, password, userType } = fakeStore
 
-      const { status } = await request
+      const { status, headers } = await request
         .post('/api/user/auth/login')
         .send({
           email,
           password,
           userType
         })
+      const [token, httpOnly] = parseTokenCookie(headers, ['HttpOnly'])
 
+      assert.notEqual(httpOnly, undefined, 'Token is not HttpOnly')
+      assert.notEqual(token, undefined, 'No token found !')
       assert.equal(status, ACCEPTED)
     })
     it('should not log in with wrong credentials', async () => {

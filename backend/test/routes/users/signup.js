@@ -7,6 +7,7 @@ const { CREATED, UNAUTHORIZED } = require('http-status')
 const StoreModel = require('../../../models/userStore')
 const UserModel = require('../../../models/user')
 
+const { parseTokenCookie } = require('../../utils')
 const { getStore, getUser } = require('../../mockData')
 
 describe('ROUTE:SIGNUP', () => {
@@ -23,16 +24,19 @@ describe('ROUTE:SIGNUP', () => {
     server.close()
   })
 
-  describe('The user signup with data form', () => {
+  describe('The user signup', () => {
     it('should signup with correct data', async () => {
       const user = getUser({ allField: true })
 
-      const { status, body } = await request
+      const { status, body, headers } = await request
         .post('/api/user/auth/signup')
         .send({
           ...user
         })
+      const [token, httpOnly] = parseTokenCookie(headers, ['HttpOnly'])
 
+      assert.notEqual(httpOnly, undefined, 'Token is not HttpOnly')
+      assert.notEqual(token, undefined, 'No token found !')
       assert.equal(status, CREATED)
       expect(body).to.contains.keys('userType', 'information')
       assert.isString(body.userType)
@@ -56,17 +60,21 @@ describe('ROUTE:SIGNUP', () => {
     })
   })
 
-  describe('The store signup with data form', () => {
+  describe('The store signup', () => {
     it('should signup with correct data', async () => {
       const store = getStore({ allField: true })
 
-      const { status, body } = await request
+      const { status, body, headers } = await request
         .post('/api/user/auth/signup')
         .send({
           ...store
         })
+      const [token, httpOnly] = parseTokenCookie(headers, ['HttpOnly'])
 
+      assert.notEqual(httpOnly, undefined, 'Token is not HttpOnly')
+      assert.notEqual(token, undefined, 'No token found !')
       assert.equal(status, CREATED)
+
       // to remove store from DB
       const { _id } = body.information
       storesToDelete.push(_id)
