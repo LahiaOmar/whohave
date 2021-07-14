@@ -1,14 +1,17 @@
-const bcrypt = require('bcrypt')
 const { CREATED, ACCEPTED, UNAUTHORIZED, OK } = require("http-status")
 
 const socketMap = require('../models/socketMap')
-const { getUserModel, createJwtToken } = require('../helpers')
+const {
+  getUserModel,
+  createJwtToken,
+  createHash,
+  compareHash } = require('../helpers')
 
 exports.userSignUp = async (req, res) => {
   try {
     const { userType, ...userData } = req.body
     const { password, ...restOfFiled } = userData
-    const hash = await bcrypt.hash(password, 10)
+    const hash = await createHash(password)
 
     const User = getUserModel(userType)
     const user = new User({ ...restOfFiled, password: hash })
@@ -36,7 +39,7 @@ exports.userLogin = async (req, res) => {
       res.status(UNAUTHORIZED).json({ message: 'user not found !' })
     }
 
-    let match = await bcrypt.compare(password, user.password)
+    let match = await compareHash(password, user.password)
     if (!match) {
       res.status(UNAUTHORIZED).json({ message: 'user not found !' })
     }
@@ -69,9 +72,9 @@ exports.setPassword = async (req, res) => {
     const user = await model.findById({ _id: userId })
 
     if (user) {
-      const match = await bcrypt.compare(oldPassword, user.password)
+      const match = await compareHash(oldPassword, user.password)
       if (match) {
-        const hashPassword = await bcrypt.hash(newPassword, 10)
+        const hashPassword = await createHash(newPassword)
         const userUpdated = await model.findByIdAndUpdate({ _id: userId }, { password: hashPassword }, { new: true })
 
         res.status(OK).json({
