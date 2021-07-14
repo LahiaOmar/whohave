@@ -80,7 +80,7 @@ exports.storeResponse = async (req, res) => {
           to: storeId
         }
       })
-      res.status(OK).json("feedback")
+      res.status(OK).json({ message: "feedback" })
     }
     else {
       await NotificationsModel.findOneAndUpdate({
@@ -91,7 +91,7 @@ exports.storeResponse = async (req, res) => {
           to: storeId
         }
       })
-      res.status(OK).json("feedback")
+      res.status(OK).json({ message: "feedback" })
     }
   }
   catch (ex) {

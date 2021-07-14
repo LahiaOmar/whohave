@@ -1,10 +1,8 @@
 const bcrypt = require('bcrypt')
-const jwt = require("jsonwebtoken")
 const { CREATED, ACCEPTED, UNAUTHORIZED, OK } = require("http-status")
 
-const StoreModel = require('../models/userStore')
-const UserModel = require("../models/user")
 const socketMap = require('../models/socketMap')
+const { getUserModel, createJwtToken } = require('../helpers')
 
 exports.userSignUp = async (req, res) => {
   try {
@@ -12,17 +10,16 @@ exports.userSignUp = async (req, res) => {
     const { password, ...restOfFiled } = userData
     const hash = await bcrypt.hash(password, 10)
 
-    const user = userType === 'STORE'
-      ? new StoreModel({ ...restOfFiled, password: hash })
-      : new UserModel({ ...restOfFiled, password: hash })
+    const User = getUserModel(userType)
+    const user = new User({ ...restOfFiled, password: hash })
     await user.save()
 
-    const token = jwt.sign({
+    const token = createJwtToken({
       userId: user._id,
       userType
-    }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
-
+    })
     res.cookie('token', token, { httpOnly: true })
+
     res.status(CREATED).json({ userType, information: user.getFieldToSend() })
   }
   catch (ex) {
@@ -33,7 +30,7 @@ exports.userSignUp = async (req, res) => {
 exports.userLogin = async (req, res) => {
   try {
     const { userType, password, email } = req.body
-    const model = (userType === 'STORE') ? StoreModel : UserModel
+    const model = getUserModel(userType)
     let user = await model.findOne({ email })
     if (!user) {
       res.status(UNAUTHORIZED).json({ message: 'user not found !' })
@@ -44,7 +41,7 @@ exports.userLogin = async (req, res) => {
       res.status(UNAUTHORIZED).json({ message: 'user not found !' })
     }
 
-    const token = jwt.sign({ userId: user._id, userType }, "RANDOM_SECRECT_KEY", { expiresIn: '24h' })
+    const token = createJwtToken({ userId: user._id, userType })
     res.cookie('token', token, { httpOnly: true })
 
     const dataToSend = user.getFieldToSend()
@@ -68,7 +65,7 @@ exports.setPassword = async (req, res) => {
     const { oldPassword, newPassword } = req.body
     const { userId, userType } = res.locals
 
-    const model = userType === 'STORE' ? StoreModel : UserModel
+    const model = getUserModel(userType)
     const user = await model.findById({ _id: userId })
 
     if (user) {
@@ -87,7 +84,7 @@ exports.setPassword = async (req, res) => {
       }
     }
     else {
-      res.status(UNAUTHORIZED).json("wrong credentials")
+      res.status(UNAUTHORIZED).json({ messge: 'Wrong credentials' })
     }
   }
   catch (ex) {
@@ -100,7 +97,7 @@ exports.userSetInformation = async function (req, res) {
     const { forUpdate } = req.body
     const { userId, userType } = res.locals
 
-    const userModel = userType === 'STORE' ? StoreModel : UserModel
+    const userModel = getUserModel(userType)
     const updatedUser = await userModel.findByIdAndUpdate({ _id: userId }, {
       ...forUpdate
     }, { new: true })
@@ -115,7 +112,7 @@ exports.userSetInformation = async function (req, res) {
 exports.verify = async (req, res) => {
   try {
     const { userType, userId } = res.locals
-    const model = userType === 'STORE' ? StoreModel : UserModel
+    const model = getUserModel(userType)
 
     const user = await model.findById({ _id: userId })
     if (user) {
@@ -133,7 +130,7 @@ exports.verify = async (req, res) => {
 exports.getInformation = async (req, res) => {
   try {
     const { userType, userId } = res.locals
-    const model = userType ? StoreModel : UserModel
+    const model = getUserType(userType)
     const user = await model.findById({ _id: userId })
 
     if (user) {
@@ -160,7 +157,7 @@ exports.socketMap = async (req, res) => {
       const mapping = new socketMap({ userId, socketId })
       await mapping.save()
     }
-    res.status(CREATED).json("created!")
+    res.status(CREATED).json({ message: "created!" })
   }
   catch (ex) {
     res.status(UNAUTHORIZED).json({ error: ex.message })
