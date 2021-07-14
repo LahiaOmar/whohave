@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 const UserModel = require('../models/user')
 const StoreModel = require('../models/userStore')
@@ -35,7 +36,18 @@ const createJwtToken = (payload, options) => {
   }
 }
 
+const createHash = (password) => {
+  const SALT_ROUNDS = 10
+  return bcrypt.hash(password, SALT_ROUNDS)
+}
+
+const compareHash = (password, encryptedPassword) => {
+  return bcrypt.compare(password, encryptedPassword)
+}
+
 module.exports = {
   getUserModel,
-  createJwtToken
+  createJwtToken,
+  createHash,
+  compareHash
 }
