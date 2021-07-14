@@ -3,14 +3,13 @@ const request = require('supertest')(server)
 const { parseTokenCookie } = require('../../utils')
 
 const { assert, expect } = require('chai')
-const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const { ACCEPTED, CREATED } = require('http-status')
 
 const User = require('../../../models/user')
 const Store = require('../../../models/userStore')
 const { getStore, getUser } = require('../../mockData')
-
+const { createHash } = require('../../../helpers')
 describe('ROUTE:LOGIN', () => {
 
   let user, store, fakeUser, fakeStore
@@ -21,8 +20,8 @@ describe('ROUTE:LOGIN', () => {
       fakeStore = getStore({ allField: true })
       fakeUser = getUser({ allField: true })
 
-      const hashStorePassword = await bcrypt.hash(fakeStore.password, 10)
-      const hashUserPassword = await bcrypt.hash(fakeUser.password, 10)
+      const hashStorePassword = await createHash(fakeStore.password)
+      const hashUserPassword = await createHash(fakeUser.password)
 
       user = new User({
         ...fakeUser,
