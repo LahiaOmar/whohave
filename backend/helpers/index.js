@@ -3,6 +3,37 @@ const bcrypt = require('bcrypt')
 
 const UserModel = require('../models/user')
 const StoreModel = require('../models/userStore')
+const ProductModel = require('../models/products')
+
+/**
+ * models Names
+ */
+const modelNames = {
+  PRODUCT: 'PRODUCT',
+  STORE: 'STORE',
+  USER: 'USER',
+}
+
+/**
+ * 
+ * @param {string} name - model name 
+ * @returns Mongoose Model
+ */
+const getModel = (name) => {
+  const { PRODUCT, STORE, USER } = modelNames
+
+  switch (name) {
+    case PRODUCT:
+      return ProductModel
+    case STORE:
+      return StoreModel
+    case USER:
+      return UserModel
+    default:
+      throw Error(`Wrong Model Name ${name}`)
+  }
+}
+
 
 /**
  * 
@@ -67,6 +98,8 @@ const compareHash = (password, encryptedPassword) => {
 }
 
 module.exports = {
+  modelNames,
+  getModel,
   getUserModel,
   createJwtToken,
   verifyToken,
