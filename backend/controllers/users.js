@@ -60,7 +60,7 @@ exports.userLogin = async (req, res) => {
 
 exports.userLogout = (req, res) => {
   res.clearCookie('token')
-  res.status(httpStatus.OK).json("token removed")
+  res.status(OK).json("token removed")
 }
 
 exports.setPassword = async (req, res) => {
@@ -83,11 +83,11 @@ exports.setPassword = async (req, res) => {
         })
       }
       else {
-        res.status(UNAUTHORIZED).json({ messge: 'Wrong credentials' })
+        res.status(UNAUTHORIZED).json({ message: 'Wrong password' })
       }
     }
     else {
-      res.status(UNAUTHORIZED).json({ messge: 'Wrong credentials' })
+      res.status(UNAUTHORIZED).json({ message: 'User not found !' })
     }
   }
   catch (ex) {
