@@ -1,14 +1,15 @@
-const userStore = require("../models/userStore")
-const NotificationsModel = require('../models/notification')
-const { OK, UNAUTHORIZED } = require("http-status")
-const ProductsModel = require("../models/products")
 const ObjectID = require('mongoose').mongo.ObjectID
 const path = require('path')
+const { OK, UNAUTHORIZED } = require("http-status")
+
+const userStore = require("../models/userStore")
+const NotificationsModel = require('../models/notification')
+const ProductsModel = require("../models/products")
 
 exports.delete = async (req, res) => {
   try {
     const { productId } = req.params
-    const productDeleted = await ProductsModel.findByIdAndDelete({ _id: productId })
+    await ProductsModel.findByIdAndDelete({ _id: productId })
     await NotificationsModel.deleteMany({
       $or: [
         { 'content.productId': productId },
