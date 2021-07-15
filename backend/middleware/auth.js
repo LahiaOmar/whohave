@@ -1,10 +1,10 @@
-const jwt = require("jsonwebtoken")
 const { UNAUTHORIZED } = require('http-status')
+const { verifyToken } = require('../helpers')
 
 module.exports = async (req, res, next) => {
   try {
     const { cookies } = req
-    const decodeToken = await jwt.verify(cookies.token, "RANDOM_SECRECT_KEY")
+    const decodeToken = await verifyToken(cookies.token)
     const { userId, userType } = decodeToken
     res.locals.userId = userId
     res.locals.userType = userType

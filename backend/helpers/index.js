@@ -36,11 +36,32 @@ const createJwtToken = (payload, options) => {
   }
 }
 
+/**
+ * verify token validation, and decode the payload
+ * @param {string} token 
+ * @returns decoded token
+ */
+const verifyToken = (token) => {
+  const PRIVATE_KEY = "RANDOM-KEY"
+  return jwt.verify(token, PRIVATE_KEY)
+}
+
+/**
+ * create a hash from a string password
+ * @param {string} password 
+ * @returns hash password
+ */
 const createHash = (password) => {
   const SALT_ROUNDS = 10
   return bcrypt.hash(password, SALT_ROUNDS)
 }
 
+/**
+ * compart password and his hash
+ * @param {string} password 
+ * @param {string} encryptedPassword 
+ * @returns {boolean}
+ */
 const compareHash = (password, encryptedPassword) => {
   return bcrypt.compare(password, encryptedPassword)
 }
@@ -48,6 +69,7 @@ const compareHash = (password, encryptedPassword) => {
 module.exports = {
   getUserModel,
   createJwtToken,
+  verifyToken,
   createHash,
   compareHash
 }
