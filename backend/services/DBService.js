@@ -1,13 +1,14 @@
-const mongoos = require('mongoose')
+const mongoose = require('mongoose')
 const notificationModel = require('../models/notification')
 
 class DBService {
   uri = 'mongodb+srv://justask-admin:justask00@justask.ricqn.mongodb.net/whohave?poolSize=5'
   constructor() {
+    mongoose.set('useFindAndModify', false);
   }
 
   async connect() {
-    await mongoos.connect(this.uri, {
+    await mongoose.connect(this.uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
@@ -18,7 +19,7 @@ class DBService {
   }
 
   async disconnect() {
-    await mongoos.disconnect()
+    await mongoose.disconnect()
   }
 }
 
