@@ -5,8 +5,14 @@ const products = require('../controllers/products')
 const authentification = require('../middleware/auth')
 const imagesUploder = require('../middleware/ImagesStorage')
 
-router.delete('/delete/:productId', authentification, products.delete)
-router.post('/send', authentification, imagesUploder.array('files'), products.send)
-router.get('/image/:imageId', authentification, products.sendImage)
+const {
+  DELETE_P,
+  SEND,
+  GET_IMAGE,
+} = process.env
+
+router.delete(DELETE_P, authentification, products.delete)
+router.post(SEND, authentification, imagesUploder.array('files'), products.send)
+router.get(GET_IMAGE, authentification, products.sendImage)
 
 module.exports = router

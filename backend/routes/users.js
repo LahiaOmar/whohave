@@ -3,13 +3,24 @@ const router = express.Router()
 const users = require('../controllers/users')
 const authentications = require("../middleware/auth")
 
-router.post('/auth/signup', users.userSignUp)
-router.post('/auth/login', users.userLogin)
-router.post('/auth/logout', users.userLogout)
-router.post('/auth/setPassword', authentications, users.setPassword)
-router.post('/update', authentications, users.userSetInformation)
-router.get('/getInformation', authentications, users.getInformation)
-router.post('/verify', authentications, users.verify)
-router.post('/socketMap', users.socketMap)
+const {
+  SIGNUP,
+  LOGIN,
+  LOGOUT,
+  UPDATE_PASSWORD,
+  UPDATE,
+  GET_USER,
+  VERIFY,
+  SOCKET,
+} = process.env
+
+router.post(SIGNUP, users.userSignUp)
+router.post(LOGIN, users.userLogin)
+router.post(LOGOUT, users.userLogout)
+router.post(UPDATE_PASSWORD, authentications, users.setPassword)
+router.post(UPDATE, authentications, users.userSetInformation)
+router.get(GET_USER, authentications, users.getInformation)
+router.post(VERIFY, authentications, users.verify)
+router.post(SOCKET, users.socketMap)
 
 module.exports = router
