@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Grid, Menu, MenuItem, Avatar, makeStyles, Hidden, List, ListItem, ListItemText } from '@material-ui/core'
+import { Button, Avatar, makeStyles, Hidden, List, ListItem, ListItemText } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   root: {

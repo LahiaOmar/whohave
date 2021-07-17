@@ -43,7 +43,7 @@ function ListOfResponse({ notification, responses, actions: { deleteProduct, del
         case 'OPEN':
           return { ...state, open: true }
         default:
-          throw ("error action type")
+          throw new Error("error action type")
       }
     }, { open: false, listPosition: [] })
 
@@ -68,7 +68,7 @@ function ListOfResponse({ notification, responses, actions: { deleteProduct, del
           </TableHead>
           <TableBody>
             {
-              responses.products.length == 0 &&
+              responses.products.length === 0 &&
               <TableRow>
                 <TableCell align="center" colSpan={5}>
                   <IllustrationDisplay type={ILLUSTRATION_TYPES.NO_RESPONSES} />

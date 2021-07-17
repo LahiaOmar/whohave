@@ -1,21 +1,14 @@
 import React from 'react'
-import { Grid, TextField, Button, Slider, Typography } from '@material-ui/core'
+import { Grid, TextField, Button, Typography } from '@material-ui/core'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
 import { StoresType } from '../StoresType'
 import useAxios from '../useHooks/useAxios'
-import LoginContext from '../ContextAuth'
 import CountrySelector from '../CountrySelector/'
 
 function Message({ sendProduct }) {
-  const [data, errors, loading, setConfig] = useAxios({})
   const [open, setOpen] = React.useState(false)
-  const [distance, setDistance] = React.useState(5)
   const imagesInput = React.createRef()
-
-  const handleOpen = () => {
-    setOpen(true)
-  }
 
   const handleClose = () => {
     setOpen(false)

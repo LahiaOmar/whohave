@@ -1,9 +1,10 @@
 import React from 'react'
-import { AuthContext } from '../../Context/AuthProvider'
-import Axios from 'axios'
 import { Avatar } from '@material-ui/core'
 import { Typography } from '@material-ui/core'
+
 import './style.css'
+
+import { AuthContext } from '../../Context/AuthProvider'
 
 const UserCard = () => {
   const { authState: { profile } } = React.useContext(AuthContext)

@@ -5,16 +5,15 @@ import {
   Divider,
   Grid,
   Toolbar,
-  Link as LinkUi,
-  Badge,
   Tooltip,
 } from '@material-ui/core'
+
 import ListOfResponse from '../ListOfResponse'
 import UserInformations from '../UserInformations'
 import UserCard from '../UserCard'
-import { Route, Link } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import Axios from 'axios'
+
 import UserMenuList from '../UserMenuList'
 import Message from '../Message'
 import useSocket from '../useHooks/useSocket'
@@ -25,7 +24,7 @@ import { AuthContext } from '../../Context/AuthProvider'
 import dashboardAPI from '../../api/CoreAPI'
 
 const UserDashboard = () => {
-  const { authState: { userType, profile: { _id, coordinates } }, authDispatch } = React.useContext(AuthContext)
+  const { authState: { userType, profile: { _id } }, authDispatch } = React.useContext(AuthContext)
   const { alertDispatch } = React.useContext(AlertContext)
   const [notification, socketLoading] = useSocket()
   const [responses, setResponses] = React.useState(null)
@@ -97,7 +96,6 @@ const UserDashboard = () => {
     if (notification) {
       const { store, productId } = JSON.parse(notification)
       if (store && productId) {
-        // i should find the index of the product base on productId
         const newResponses = { ...responses }
         const index = newResponses.products.findIndex((product) => product._id === productId)
         if (index >= 0) {

@@ -1,7 +1,6 @@
 import React from 'react'
 import { AccountCircle } from '@material-ui/icons'
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup, Container } from '@material-ui/core'
+import { Button, Grid, TextField, Typography, FormControlLabel, Radio, FormLabel, RadioGroup } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useHistory } from 'react-router-dom'

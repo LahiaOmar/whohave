@@ -1,8 +1,6 @@
 import React from 'react'
-import Axios from 'axios'
-import { v4 as uui } from 'uuid'
 import { Grid } from '@material-ui/core'
-import { BrowserRouter as Router, Route, Switch, Redirect, useHistory } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 
 import './styles/style.css'
 
@@ -32,6 +30,9 @@ function App() {
             <ProtectedRoute path="/dashboard/">
               <Dashboard />
             </ProtectedRoute>
+            <Route path="*">
+              <p>There's nothing here! OUT ! </p>
+            </Route>
           </Switch>
         </AlertProvider>
       </AuthProvider>

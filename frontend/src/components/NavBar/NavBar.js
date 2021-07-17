@@ -1,11 +1,11 @@
 import React from 'react'
+import { Grid, makeStyles, Container, Hidden, IconButton, Drawer, Divider } from '@material-ui/core'
+import MenuIcon from '@material-ui/icons/Menu';
 
 import Menu from '../Menu'
 import Authentication from '../Authentication'
 import Logo from '../Logo'
 
-import { Grid, makeStyles, Container, Hidden, IconButton, Drawer, Divider } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles((theme) => ({
 	root: {

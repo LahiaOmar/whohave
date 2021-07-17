@@ -12,7 +12,6 @@ const AuthProvider = ({ children }) => {
   )
 
   React.useEffect(() => {
-    console.log("ath useEffect")
     const authToken = () => {
       Axios.post('/api/user/verify')
         .then(({ data }) => {

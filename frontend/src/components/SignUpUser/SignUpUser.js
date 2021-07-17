@@ -75,10 +75,10 @@ function SignUpWho() {
 	}
 
 	const nextHandler = async () => {
-		if (activeStep == 0) {
+		if (activeStep === 0) {
 			await personalInformation.submitForm()
 		}
-		if (activeStep == 1) {
+		if (activeStep === 1) {
 			await credentials.submitForm()
 		}
 	}

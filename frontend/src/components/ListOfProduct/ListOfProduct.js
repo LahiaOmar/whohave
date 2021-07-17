@@ -1,3 +1,4 @@
+import React from 'react';
 import { Divider, IconButton, TablePagination, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -8,10 +9,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import React from 'react';
 import { v4 as uui } from 'uuid';
-import './style.css';
 import ImageIcon from '@material-ui/icons/Image';
+
+import './style.css';
+
 import MyModal from '../Mymodal/MyModal';
 import Carousel from '../Carousel'
 import IllustrationDisplay from '../IllustrationDisplay'
@@ -44,7 +46,7 @@ const ListOfProduct = ({ products, feedback }) => {
             </TableHead>
             <TableBody>
               {
-                products.length == 0 &&
+                products.length === 0 &&
                 <TableRow className="dashboard-msg">
                   <TableCell align="center" colSpan={5}>
                     <IllustrationDisplay type={ILLUSTRATION_TYPES.NO_PRODUCTS} />

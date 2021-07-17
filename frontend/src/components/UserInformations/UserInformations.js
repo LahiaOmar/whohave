@@ -14,9 +14,6 @@ import Axios from 'axios'
 const UserInformations = () => {
   const { authState: { profile }, authDispatch } = React.useContext(AuthContext)
   const { alertDispatch } = React.useContext(AlertContext)
-  const [modalOpen, setModalOpen] = React.useState(false)
-  const refNewType = React.useRef()
-  const [data, loading, error, setConfig] = useAxios({})
 
   const formik = useFormik({
     initialValues: {

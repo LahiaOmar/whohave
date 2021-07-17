@@ -7,14 +7,13 @@ function Map({ markersPosition = [], style = {}, selfLocation, ...rest }) {
 	const [mp, setMp] = React.useState(null)
 	const [userLocation, setUserLocation] = React.useState(selfLocation)
 	const [userMarker, setUserMarker] = React.useState(null)
-	const [isLoading, setIsLoading] = React.useState(true)
 
 	React.useEffect(() => {
 		if (userMarker) {
 			const boundes = markersBoundes([userMarker])
 			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
 		}
-	}, [userMarker])
+	}, [userMarker, mp])
 
 	React.useEffect(() => {
 		if (mp && userLocation) {

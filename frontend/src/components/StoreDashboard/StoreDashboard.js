@@ -5,17 +5,14 @@ import {
   Divider,
   Grid,
   Toolbar,
-  Link as LinkUi,
-  Badge,
   Tooltip,
 } from '@material-ui/core'
-import ListOfProduct from '../ListOfProduct'
-import StoreInformations from '../StoreInformations'
 import UserCard from '../UserCard'
-import Axios from 'axios'
-import { Route, Link } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
+import ListOfProduct from '../ListOfProduct'
+import StoreInformations from '../StoreInformations'
 import StoreMenuList from '../StoreMenuList'
 import useSocket from '../useHooks/useSocket'
 import { AlertContext } from '../../Context/AlertProvider'

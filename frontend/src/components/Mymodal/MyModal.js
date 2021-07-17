@@ -1,7 +1,7 @@
 import React from 'react'
-
-import { Button, Modal, Backdrop, Grid, IconButton, Tooltip } from '@material-ui/core'
+import { Button, Modal, Backdrop, Tooltip } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
+
 import './style.css'
 
 function MyModal({ btnTitle, children, MyButton, open, handleClose, handleOpen, useBtn }) {
