@@ -9,10 +9,11 @@ const Store = require('../../../models/userStore')
 const { getUser, getStore } = require('../../mockData')
 const { createHash, createJwtToken } = require('../../../helpers')
 
-// to update the user ( User and Store ),  
-const PATH_SETPASSWORD = "/api/user/auth/setPassword"
-const PATH_SETINFORMATION = "/api/user/updateUser"
-
+const {
+  MODULE_USERS,
+  UPDATE_PASSWORD,
+  UPDATE
+} = process.env
 
 describe('ROUTE:SET_PASSWORD and ROUTE:SET_INFORMATION', () => {
 
@@ -56,7 +57,7 @@ describe('ROUTE:SET_PASSWORD and ROUTE:SET_INFORMATION', () => {
       const { password: oldPassword } = fakeUser
 
       const { status, body } = await request
-        .post(PATH_SETPASSWORD)
+        .post(MODULE_USERS + UPDATE_PASSWORD)
         .send({
           oldPassword,
           newPassword: 'password1234'
@@ -70,7 +71,7 @@ describe('ROUTE:SET_PASSWORD and ROUTE:SET_INFORMATION', () => {
       const { password: oldPassword } = fakeUser
 
       const { status } = await request
-        .post(PATH_SETPASSWORD)
+        .post(MODULE_USERS + UPDATE_PASSWORD)
         .send({
           oldPassword: 'testteste134',
           newPassword: 'password1234'
@@ -85,7 +86,7 @@ describe('ROUTE:SET_PASSWORD and ROUTE:SET_INFORMATION', () => {
       [firstName, lastName] = [lastName, firstName];
 
       const { status, body } = await request
-        .post(PATH_SETINFORMATION)
+        .post(MODULE_USERS + UPDATE)
         .send({
           forUpdate: {
             firstName, lastName
@@ -104,7 +105,7 @@ describe('ROUTE:SET_PASSWORD and ROUTE:SET_INFORMATION', () => {
       [firstName, lastName] = [lastName, firstName];
 
       const { status } = await request
-        .post(PATH_SETINFORMATION)
+        .post(MODULE_USERS + UPDATE)
         .send({
           forUpdate: {
             firstName, lastName

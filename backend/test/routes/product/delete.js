@@ -4,12 +4,14 @@ const mongoose = require('mongoose')
 
 const { getUser, getMockModel } = require('../../mockData')
 const { getUserModel, createHash, createJwtToken, modelNames: { PRODUCT }, getModel } = require('../../../helpers')
-const { assert } = require('chai')
+const { assert, expect } = require('chai')
 const { OK, UNAUTHORIZED } = require('http-status')
 
-// delete product
-const PATH_MODULE = '/api/products'
-const PATH_PRODUCT_DELETE = '/delete/'
+
+const {
+  MODULE_PRODUCTS,
+  DELETE_P
+} = process.env
 
 const User = getUserModel('USER')
 const ProductModel = getModel(PRODUCT)
@@ -52,21 +54,27 @@ describe('ROUTE:DELETE PRODUCT', () => {
 
   it('should delete the product', async () => {
     const { _id } = product
+    let path = MODULE_PRODUCTS + DELETE_P
+    path = path.replace(/:productId/, _id)
 
-    const { status } = await request
-      .delete(PATH_MODULE + PATH_PRODUCT_DELETE + `${_id}`)
+    const { status, body } = await request
+      .delete(path)
       .set('cookie', `token=${userToken}`)
+    const { error } = body
 
-    assert.equal(status, OK)
+    assert.equal(status, OK, `Error : ${error}`)
   })
 
   it('should not deleting the product with a wrong id', async () => {
     const { _id } = product
+    let path = MODULE_PRODUCTS + DELETE_P
+    path = path.replace(/:productId/, `${_id}2f44f`)
 
-    const { status } = await request
-      .delete(PATH_MODULE + PATH_PRODUCT_DELETE + `${_id}d213ds`)
+    const { status, body } = await request
+      .delete(path)
       .set('cookie', `token=${userToken}`)
+    const { error, message } = body
 
-    assert.equal(status, UNAUTHORIZED)
+    assert.equal(status, UNAUTHORIZED, `Error : ${error} Message ${message}`)
   })
 })

@@ -10,6 +10,12 @@ const User = require('../../../models/user')
 const Store = require('../../../models/userStore')
 const { getStore, getUser } = require('../../mockData')
 const { createHash } = require('../../../helpers')
+
+const {
+  MODULE_USERS,
+  LOGIN
+} = process.env
+
 describe('ROUTE:LOGIN', () => {
 
   let user, store, fakeUser, fakeStore
@@ -57,7 +63,7 @@ describe('ROUTE:LOGIN', () => {
       const { email, password, userType } = fakeUser
 
       const { status, headers } = await request
-        .post('/api/user/auth/login')
+        .post(MODULE_USERS + LOGIN)
         .send({
           email,
           password,
@@ -73,7 +79,7 @@ describe('ROUTE:LOGIN', () => {
       const { email, password, userType } = fakeUser
 
       const { status } = await request
-        .post('/api/user/auth/login')
+        .post(MODULE_USERS + LOGIN)
         .send({
           email,
           password: password + 'test',
@@ -87,7 +93,7 @@ describe('ROUTE:LOGIN', () => {
       const { email, userType } = fakeUser
 
       const { status } = await request
-        .post('/api/user/auth/login')
+        .post(MODULE_USERS + LOGIN)
         .send({
           email,
           userType
@@ -101,7 +107,7 @@ describe('ROUTE:LOGIN', () => {
       const { email, password, userType } = fakeStore
 
       const { status, headers } = await request
-        .post('/api/user/auth/login')
+        .post(MODULE_USERS + LOGIN)
         .send({
           email,
           password,
@@ -117,7 +123,7 @@ describe('ROUTE:LOGIN', () => {
       const { email, password, userType } = fakeStore
 
       const { status, text } = await request
-        .post('/api/user/auth/login')
+        .post(MODULE_USERS + LOGIN)
         .send({
           email,
           password: password + 'test',

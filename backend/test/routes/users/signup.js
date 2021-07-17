@@ -10,6 +10,11 @@ const UserModel = require('../../../models/user')
 const { parseTokenCookie } = require('../../utils')
 const { getStore, getUser } = require('../../mockData')
 
+const {
+  MODULE_USERS,
+  SIGNUP,
+} = process.env
+
 describe('ROUTE:SIGNUP', () => {
 
   let storesToDelete = [], usersToDelete = []
@@ -29,7 +34,7 @@ describe('ROUTE:SIGNUP', () => {
       const user = getUser({ allField: true })
 
       const { status, body, headers } = await request
-        .post('/api/user/auth/signup')
+        .post(MODULE_USERS + SIGNUP)
         .send({
           ...user
         })
@@ -51,7 +56,7 @@ describe('ROUTE:SIGNUP', () => {
       const user = getUser({ allField: false })
 
       const { status, body } = await request
-        .post('/api/user/auth/signup')
+        .post(MODULE_USERS + SIGNUP)
         .send({
           ...user,
         })
@@ -65,7 +70,7 @@ describe('ROUTE:SIGNUP', () => {
       const store = getStore({ allField: true })
 
       const { status, body, headers } = await request
-        .post('/api/user/auth/signup')
+        .post(MODULE_USERS + SIGNUP)
         .send({
           ...store
         })
@@ -84,7 +89,7 @@ describe('ROUTE:SIGNUP', () => {
       const store = getStore({ allField: false })
 
       const { status } = await request
-        .post('/api/user/auth/signup')
+        .post(MODULE_USERS + SIGNUP)
         .send({
           ...store
         })
