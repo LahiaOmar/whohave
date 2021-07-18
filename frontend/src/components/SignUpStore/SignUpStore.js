@@ -159,7 +159,7 @@ function SignUpIhave() {
 			}
 			const { userType, information } = await API.signup({
 				userType: 'STORE',
-				userData: store
+				...store
 			})
 			authDispatch(AUTH_TYPES.login({
 				userType,

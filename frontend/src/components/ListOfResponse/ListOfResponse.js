@@ -1,21 +1,36 @@
-import { Divider, TablePagination, Typography } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import React from 'react';
+import {
+  Divider,
+  TablePagination,
+  Typography,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  makeStyles,
+} from '@material-ui/core'
 import { v4 as uui } from 'uuid';
+
+import './style.css';
 import Map from '../Map';
 import MyModal from '../Mymodal';
 import CollapsRow from './CollapsRow';
 import IllustrationDisplay from '../IllustrationDisplay'
-import './style.css';
 import { ILLUSTRATION_TYPES } from '../../constants/constants'
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: 'calc(80vw)',
+    height: 'calc(80vh)',
+    borderRadius: theme.shape.borderRadius
+  }
+}))
+
 function ListOfResponse({ notification, responses, actions: { deleteProduct, deleteResponse } }) {
+  const classes = useStyles()
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(2)
   const [mapState, mapDispatch] = React.useReducer(
@@ -115,7 +130,9 @@ function ListOfResponse({ notification, responses, actions: { deleteProduct, del
             mapDispatch({ type: 'OPEN' })
           }}>
           <Map
-            markersPosition={mapState.listPosition} />
+            className={classes.root}
+            markersPosition={mapState.listPosition}
+          />
         </MyModal>
       </div>
     </Paper>

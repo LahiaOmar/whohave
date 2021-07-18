@@ -1,7 +1,13 @@
 import React from 'react'
 import mapboxgl from 'mapbox-gl'
-import { Grid } from '@material-ui/core'
+import {
+	Grid,
+} from '@material-ui/core'
 import { PositionAction } from '../ButtonActions'
+
+const {
+	REACT_APP_MAP_KEY
+} = process.env
 
 function Map({ markersPosition = [], style = {}, selfLocation, ...rest }) {
 	const [mp, setMp] = React.useState(null)
@@ -9,11 +15,32 @@ function Map({ markersPosition = [], style = {}, selfLocation, ...rest }) {
 	const [userMarker, setUserMarker] = React.useState(null)
 
 	React.useEffect(() => {
+		console.log("user effect _mp")
+		mapboxgl.accessToken = REACT_APP_MAP_KEY
+		const _mp = new mapboxgl.Map({
+			container: "map",
+			style: "mapbox://styles/mapbox/streets-v11",
+			center: [-74, 40],
+			zoom: 9
+		})
+		setMp(_mp)
+	}, [])
+
+	React.useEffect(() => {
+		if (markersPosition.length > 0 && mp) {
+			console.log("use effect markerposition")
+			const markers = markersPosition.map(marker => createMarker(marker))
+			const boundes = markersBoundes(markers)
+			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
+		}
+	}, [markersPosition, mp])
+
+	React.useEffect(() => {
 		if (userMarker) {
 			const boundes = markersBoundes([userMarker])
 			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
 		}
-	}, [userMarker, mp])
+	}, [userMarker])
 
 	React.useEffect(() => {
 		if (mp && userLocation) {
@@ -24,17 +51,6 @@ function Map({ markersPosition = [], style = {}, selfLocation, ...rest }) {
 			}
 		}
 	}, [mp, userLocation])
-
-	React.useEffect(() => {
-		mapboxgl.accessToken = process.env.REACT_APP_MAP_KEY
-		const _mp = new mapboxgl.Map({
-			container: "map",
-			style: "mapbox://styles/mapbox/streets-v11",
-			center: [-74, 40],
-			zoom: 9
-		})
-		setMp(_mp)
-	}, [])
 
 	const getUserPosition = () => {
 		if (navigator.geolocation) {
@@ -69,14 +85,6 @@ function Map({ markersPosition = [], style = {}, selfLocation, ...rest }) {
 		})
 		return boundes
 	}
-
-	React.useEffect(() => {
-		if (markersPosition.length > 0 && mp) {
-			const markers = markersPosition.map(marker => createMarker(marker))
-			const boundes = markersBoundes(markers)
-			mp.fitBounds(boundes, { padding: 20, offset: [0, 100], maxZoom: 7 })
-		}
-	}, [markersPosition, mp])
 
 	return (
 		<Grid item xs={12} id="map" style={style} {...rest}>

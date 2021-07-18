@@ -95,7 +95,7 @@ function SignUpWho() {
 			}
 			const { userType, information } = await API.signup({
 				userType: 'USER',
-				userData: user
+				...user
 			})
 			authDispatch(AUTH_TYPES.login({
 				userType,
