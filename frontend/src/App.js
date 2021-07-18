@@ -11,6 +11,7 @@ import AlertMessage from './components/AlertMessage'
 import AlertProvider from './Context/AlertProvider'
 import AuthProvider from './Context/AuthProvider'
 import Dashboard from './components/Dashboard'
+import NotFound from './components/NotFound'
 
 function App() {
 
@@ -31,7 +32,7 @@ function App() {
               <Dashboard />
             </ProtectedRoute>
             <Route path="*">
-              <p>There's nothing here! OUT ! </p>
+              <NotFound />
             </Route>
           </Switch>
         </AlertProvider>
