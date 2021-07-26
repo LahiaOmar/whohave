@@ -1,3 +1,3 @@
-import logger from './logger'
+const logger = require('./logger')
 
-export default logger
+module.exports = logger

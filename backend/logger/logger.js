@@ -26,6 +26,4 @@ const logger = winston.createLogger({
   exitOnError: false
 })
 
-console.log(logger)
-
 module.exports = logger
