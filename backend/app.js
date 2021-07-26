@@ -28,7 +28,7 @@ const httpServer = http.Server(app)
 const dbService = new DBService()
 const socketService = new SocketService(httpServer)
 
-dbService.connect().catch(console.dir)
+dbService.connect()
 socketService.connect()
 
 dbService.watchChangeNotifications(data => socketService.sendNotification(data))

@@ -23,7 +23,6 @@ class SocketService {
         await socketMap.findByIdAndUpdate({ _id: isExist._id }, { socketId: socket.id })
       }
       else {
-        console.log("not exist ", { userId, socketId: socket.id })
         const mp = new socketMap({ userId, socketId: socket.id })
         await mp.save()
       }

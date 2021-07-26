@@ -8,10 +8,15 @@ class DBService {
   }
 
   async connect() {
-    await mongoose.connect(this.uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
+    try {
+      await mongoose.connect(this.uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      })
+    }
+    catch (ex) {
+      console.log(`mongodb connection exception : ${ex.message}`)
+    }
   }
 
   watchChangeNotifications(onChange) {
@@ -19,7 +24,12 @@ class DBService {
   }
 
   async disconnect() {
-    await mongoose.disconnect()
+    try {
+      await mongoose.disconnect()
+    }
+    catch (ex) {
+      console.log(`mongodb disconnect exception ${ex.message}`)
+    }
   }
 }
 

@@ -122,7 +122,7 @@ exports.verify = async (req, res) => {
       res.status(ACCEPTED).json({ userType: userType, userData: user.getFieldToSend() })
     }
     else {
-      res.status(UNAUTHORIZED).json({ msg: "user not found" })
+      res.status(UNAUTHORIZED).json({ message: "user not found" })
     }
   }
   catch (ex) {
