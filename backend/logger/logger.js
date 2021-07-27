@@ -1,9 +1,21 @@
-const winston = require('winston')
+const {
+  config,
+  transports,
+  format,
+  createLogger
+} = require('winston')
+const path = require('path')
 
-const config = {
+const { combine, timestamp, label, printf } = format
+
+const outFormat = printf(({ level, message, timestamp }) => {
+  return `Time : ${timestamp} - Level [${level}] - Message : ${message}`
+})
+
+const TransporterConfig = {
   file: {
     level: 'info',
-    filename: '../logs/app.log',
+    filename: path.join('./', 'logs', 'app.log'),
     handleException: true,
     json: true,
     maxsize: 5242880,
@@ -17,11 +29,14 @@ const config = {
   }
 }
 
-const logger = winston.createLogger({
-  levels: winston.config.npm.levels,
+const logger = createLogger({
+  format: combine(
+    timestamp(),
+    outFormat
+  ),
   transports: [
-    new winston.transports.File(config.file),
-    new winston.transports.Console(config.console)
+    new transports.File(TransporterConfig.file),
+    new transports.Console(TransporterConfig.console)
   ],
   exitOnError: false
 })
