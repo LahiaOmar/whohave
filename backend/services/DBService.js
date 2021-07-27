@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
 const notificationModel = require('../models/notification')
+const logger = require('../logger')
 
 class DBService {
-  uri = 'mongodb+srv://justask-admin:justask00@justask.ricqn.mongodb.net/whohave?poolSize=5'
+  uri = process.env.MONGODB_URI
   constructor() {
     mongoose.set('useFindAndModify', false);
   }
@@ -15,7 +16,7 @@ class DBService {
       })
     }
     catch (ex) {
-      console.log(`mongodb connection exception : ${ex.message}`)
+      logger.error(`mongodb connection exception : ${ex.message}`)
     }
   }
 
@@ -28,7 +29,7 @@ class DBService {
       await mongoose.disconnect()
     }
     catch (ex) {
-      console.log(`mongodb disconnect exception ${ex.message}`)
+      logger.error(`mongodb disconnect exception ${ex.message}`)
     }
   }
 }
