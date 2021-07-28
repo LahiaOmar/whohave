@@ -58,13 +58,8 @@ const getUserModel = (profile) => {
  * @returns {string} jwt token
  */
 const createJwtToken = (payload, options) => {
-  try {
-    const PRIVATE_KEY = "RANDOM-KEY"
-    return jwt.sign(payload, PRIVATE_KEY, { expiresIn: '24h', ...options })
-  }
-  catch (ex) {
-    throw new Error(ex.message)
-  }
+  const PRIVATE_KEY = "RANDOM-KEY"
+  return jwt.sign(payload, PRIVATE_KEY, { expiresIn: '24h', ...options })
 }
 
 /**

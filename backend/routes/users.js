@@ -12,6 +12,7 @@ const {
   GET_USER,
   VERIFY,
   SOCKET,
+  LOGS
 } = process.env
 
 router.post(SIGNUP, users.userSignUp)
@@ -22,5 +23,6 @@ router.post(UPDATE, authentications, users.userSetInformation)
 router.get(GET_USER, authentications, users.getInformation)
 router.post(VERIFY, authentications, users.verify)
 router.post(SOCKET, users.socketMap)
+router.post(LOGS, users.saveLogs)
 
 module.exports = router
