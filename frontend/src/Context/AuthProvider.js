@@ -12,16 +12,14 @@ const AuthProvider = ({ children }) => {
   )
 
   React.useEffect(() => {
-    const authToken = () => {
-      Axios.post('/api/user/verify')
-        .then(({ data }) => {
-          console.log("data then ", data)
-          authDispatch(AUTH_ACTIONS.tokenVerification(true, { userType: data.userType, ...data.userData }))
-        })
-        .catch(err => {
-          console.log("err token vald", err)
-          authDispatch(AUTH_ACTIONS.tokenVerification(false, {}))
-        })
+    const authToken = async () => {
+      try {
+        const { data } = await Axios.post('/api/user/verify')
+        authDispatch(AUTH_ACTIONS.tokenVerification(true, { userType: data.userType, ...data.userData }))
+      }
+      catch (ex) {
+        authDispatch(AUTH_ACTIONS.tokenVerification(false, {}))
+      }
     }
     authToken()
   }, [authState.validationToken.status])

@@ -12,7 +12,6 @@ function Authentication() {
 		loginOpen: false
 	})
 	const setModalHandler = (target) => setModalState({ ...modalState, [target.who]: target.bool })
-	const closeModal = () => setModalState({ signUpOpen: false, loginOpen: false })
 
 	return (
 		<Grid item sm={5} xs={12} >
