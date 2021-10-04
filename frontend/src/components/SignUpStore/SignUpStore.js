@@ -16,7 +16,7 @@ import OwnerInformation from './OwnerInformation'
 import StorePosition from './StorePosition'
 import StoreCredentials from './StoreCredentials'
 
-function SignUpIhave() {
+function SignUpStore() {
 	const [activeStep, setActiveStep] = React.useState(0)
 	const [stepsComplete, setStepsComplete] = React.useState(new Array(4).fill(false))
 	const [stepsLabels] = React.useState(['Owner information', 'Store information', 'Store Position', 'Credentials'])
@@ -189,4 +189,4 @@ function SignUpIhave() {
 	)
 }
 
-export default SignUpIhave
+export default SignUpStore

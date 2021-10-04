@@ -5,7 +5,7 @@ import { Route, Switch } from 'react-router-dom'
 import './styles/style.css'
 
 import NavBar from './components/NavBar'
-import HeadLine from './components/HeadLIne'
+import HeadLine from './components/HeadLine'
 import ProtectedRoute from './components/ProtectedRoute'
 import AlertMessage from './components/AlertMessage'
 import AlertProvider from './Context/AlertProvider'

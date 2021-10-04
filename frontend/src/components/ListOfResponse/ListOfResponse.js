@@ -11,6 +11,7 @@ import {
   TableHead,
   TableRow,
   makeStyles,
+  Grid,
 } from '@material-ui/core'
 import { v4 as uui } from 'uuid';
 
@@ -86,7 +87,12 @@ function ListOfResponse({ notification, responses, actions: { deleteProduct, del
               responses.products.length === 0 &&
               <TableRow>
                 <TableCell align="center" colSpan={5}>
-                  <IllustrationDisplay type={ILLUSTRATION_TYPES.NO_RESPONSES} />
+                  <Grid xs={12}>
+                    <IllustrationDisplay
+                      style={{ height: '50vh' }}
+                      type={ILLUSTRATION_TYPES.NO_RESPONSES} />
+                    <p>No responses / No Request ...</p>
+                  </Grid>
                 </TableCell>
               </TableRow>
             }

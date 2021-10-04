@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, IconButton, TablePagination, Typography } from '@material-ui/core';
+import { Divider, IconButton, TablePagination, Typography, Grid } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -26,7 +26,7 @@ const ListOfProduct = ({ products, feedback }) => {
   const [showImages, setShowImages] = React.useState(false)
 
   return (
-    <div className="list-products">
+    <Grid xs={12} className="list-products">
       <Paper>
         <TableContainer component={Paper} className="table-products">
           <div className="table-actions">
@@ -49,7 +49,12 @@ const ListOfProduct = ({ products, feedback }) => {
                 products.length === 0 &&
                 <TableRow className="dashboard-msg">
                   <TableCell align="center" colSpan={5}>
-                    <IllustrationDisplay type={ILLUSTRATION_TYPES.NO_PRODUCTS} />
+                    <Grid xs={12} >
+                      <IllustrationDisplay
+                        style={{ height: '50vh' }}
+                        type={ILLUSTRATION_TYPES.NO_PRODUCTS} />
+                      <p>No Product for Now ...</p>
+                    </Grid>
                   </TableCell>
                 </TableRow>
               }
@@ -116,7 +121,7 @@ const ListOfProduct = ({ products, feedback }) => {
       >
         <Carousel images={images} />
       </MyModal>
-    </div>
+    </Grid>
   )
 }
 

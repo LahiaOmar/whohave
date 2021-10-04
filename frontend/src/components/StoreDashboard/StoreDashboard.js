@@ -91,7 +91,7 @@ const StoreDashboard = () => {
     return <p>dashboard loading</p>
 
   return (
-    <Grid className="dashboard-container" item xs={12} spacing={4}>
+    <>
       <Grid xs={12} item>
         <AppBar position="relative">
           <Toolbar className="dashboard-topbar" disableGutters>
@@ -122,7 +122,7 @@ const StoreDashboard = () => {
           </Route>
         </Grid>
       </Grid>
-    </Grid >
+    </>
   )
 }
 

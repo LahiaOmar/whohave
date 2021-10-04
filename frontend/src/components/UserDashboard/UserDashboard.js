@@ -114,7 +114,7 @@ const UserDashboard = () => {
   if (socketLoading)
     return <p>dashboad loading</p>
   return (
-    <Grid className="dashboard-container" item xs={12} spacing={4}>
+    <>
       <Grid xs={12} item>
         <AppBar position="relative">
           <Toolbar className="dashboard-topbar" disableGutters>
@@ -149,7 +149,7 @@ const UserDashboard = () => {
           </Route>
         </Grid>
       </Grid>
-    </Grid >
+    </>
   )
 }
 

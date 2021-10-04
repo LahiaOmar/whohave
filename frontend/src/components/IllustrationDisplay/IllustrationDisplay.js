@@ -6,30 +6,27 @@ import sendProducts from './sendProduct.svg'
 
 import './style.css'
 
-const IllustrationDisplay = ({ type }) => {
-  const [illustration, setIllustration] = React.useState({
-    img: '',
-    title: ''
-  })
+const IllustrationDisplay = ({ type, style }) => {
+  const [illustration, setIllustration] = React.useState(null)
 
   React.useEffect(() => {
     switch (type) {
       case TYPES.NO_PRODUCTS:
-        setIllustration({ img: noProducts, title: 'No products for now ... ' })
+        setIllustration(noProducts)
         break;
       case TYPES.NO_RESPONSES:
-        setIllustration({ img: sendProducts, title: 'Waiting for your product requests ...' })
+        setIllustration(sendProducts)
         break;
+      default:
+        throw new TypeError(`WRONG ILLUSTRATION NAME : ${type}`)
     }
   }, [])
 
+  if (!illustration) {
+    return <p>Loafing illustration</p>
+  }
   return (
-    <div className="dashboard-msg">
-      <h3>{illustration.title}</h3>
-      <div className="dashboard-msg-img">
-        <img src={illustration.img} />
-      </div>
-    </div>
+    <img style={style} src={illustration} />
   )
 }
 
