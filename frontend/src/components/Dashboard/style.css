@@ -1,5 +1,5 @@
 .dashboard-container{
-  height: calc(100vh);
+  /* height: calc(100vh); */
 }
 
 .dashboard-topbar{
@@ -31,8 +31,8 @@
   background-color: rgb(182, 194, 219);
 }
 .dashboard-notifications{
-  height: inherit;
+  /* height: inherit; */
   background : #F4F6F8;
-  padding: 20px;
-  overflow: auto;
+  /* padding: 20px; */
+  /* overflow: auto; */
 } 

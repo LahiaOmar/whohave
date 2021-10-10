@@ -12,7 +12,7 @@ const Dashboard = () => {
 
 	return (
 		<ErrorBoundary>
-			<Grid className="dashboard-container" item xs={12} spacing={4}>
+			<Grid container className="dashboard-container" >
 				{
 					profile.userType === "STORE"
 						? <StoreDashboard />

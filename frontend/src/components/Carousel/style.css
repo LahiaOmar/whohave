@@ -2,10 +2,6 @@
   padding: 5px;
 }
 
-#carousel-title {
-  text-align: center;
-}
-
 #carousel-container {
   position: relative;
   display: flex;

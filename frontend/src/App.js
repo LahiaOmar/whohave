@@ -1,6 +1,7 @@
 import React from 'react'
 import { Grid } from '@material-ui/core'
 import { Route, Switch } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core'
 
 import './styles/style.css'
 
@@ -13,13 +14,18 @@ import AuthProvider from './Context/AuthProvider'
 import Dashboard from './components/Dashboard'
 import NotFound from './components/NotFound'
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.grey[100]
+  }
+}))
+
 function App() {
+  const classes = useStyles()
 
   return (
     <Grid
-      container
-      className="app-container"
-      xs={12}>
+      className="app-container" className={classes.root}>
       <AuthProvider>
         <AlertProvider>
           <AlertMessage />

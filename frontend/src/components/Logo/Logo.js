@@ -21,8 +21,8 @@ function Logo() {
 	return (
 		<Grid item xs={12} sm={2} className={classes.root}>
 			<Typography>
-				WhoHave?
-      </Typography>
+				NearBy
+			</Typography>
 		</Grid>
 	)
 }
