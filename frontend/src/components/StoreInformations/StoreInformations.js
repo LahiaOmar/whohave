@@ -100,13 +100,13 @@ const StoreInformations = () => {
   }
   return (
     <Grid className="form-signup" container spacing={2}>
-      <Grid container item spacing={2} component="form" onSubmit={personalInformation.handleSubmit}>
+      <Grid container item spacing={2} justify="center" component="form" onSubmit={personalInformation.handleSubmit}>
         <Grid container justify="center" alignItems="center">
           <Typography component="h1" variant="h5">
             Update Your Informations
-            </Typography>
+          </Typography>
         </Grid>
-        <Grid item container xs={6} spacing={2}>
+        <Grid item container xs={12} sm={6} spacing={2}>
           <Grid item xs={12} sm={6} >
             <TextField
               {...personalInformation.getFieldProps('firstName')}
@@ -167,11 +167,11 @@ const StoreInformations = () => {
               label="email"
             />
           </Grid>
-          <Grid container item spacing={2} xs={12}>
+          <Grid container spacing={2} item>
             <CountrySelector formik={personalInformation} />
           </Grid>
         </Grid>
-        <Grid item container xs={6}>
+        <Grid item container xs={12} sm={6}>
           <Map
             selfLocation={{ ...storePosition, changePosition }}
           >
@@ -182,7 +182,7 @@ const StoreInformations = () => {
             type="submit"
             variant="contained"
             color="primary">
-            update informations
+            update
           </Button>
         </Grid>
       </Grid>
@@ -243,7 +243,7 @@ const StoreInformations = () => {
         </Grid>
         <Grid item xs={12}>
           <Button variant="contained" color="primary" type="submit">
-            Update Password
+            Update
           </Button>
         </Grid>
       </Grid>

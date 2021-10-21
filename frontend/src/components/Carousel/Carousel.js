@@ -2,23 +2,23 @@ import React from 'react'
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import Paper from '@material-ui/core/Paper'
-import { Box, makeStyles } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 
 import './style.css'
 
-const WIDTH = 400
-const HEIGHT = 400
+const WIDTH = 350
+const HEIGHT = 300
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: '5px'
+    padding: '5px',
   },
   container: {
     position: 'relative',
     display: 'flex',
     alignContent: 'center',
     alignItems: 'center',
-    width: `${WIDTH}px`,
+    maxWidth: `${WIDTH}px`,
     height: `${HEIGHT}px`,
     overflow: 'hidden',
   },
@@ -62,28 +62,29 @@ const Carousel = ({ images }) => {
     if (tr <= 0)
       setTrValue(tr)
   }
+
   return (
-    <Paper id="carousel" elevation={0}>
-      <div className={classes.container}>
-        <div className={classes.buttonsContainer}>
+    <Grid className={classes.root} component={Paper} elevation={0}>
+      <Grid container justify="center" className={classes.container}>
+        <Grid item xs={12} className={classes.buttonsContainer}>
           <NavigateBeforeIcon className={classes.buttons} fontSize="large" onClick={prevHandler} />
           <NavigateNextIcon className={classes.buttons} fontSize="large" onClick={nextHandler} />
-        </div>
-        <div className={classes.imagesContainer} style={{
+        </Grid>
+        <Grid item xs={12} className={classes.imagesContainer} style={{
           transform: `translate(${trValue}px, 0px)`,
           transition: 'transform 1s',
         }}>
           {
             images.map((image) => {
-              return <img
+              return <Grid ><img
                 className={classes.image}
                 alt="product image"
-                src={`${PRODUCT_IMAGE_URL}${image}`} />
+                src={`${PRODUCT_IMAGE_URL}${image}`} /></Grid>
             })
           }
-        </div>
-      </div>
-    </Paper>
+        </Grid>
+      </Grid>
+    </Grid>
   )
 }
 

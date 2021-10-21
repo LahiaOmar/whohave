@@ -61,7 +61,7 @@ const CountrySelector = ({ formik }) => {
 
   return (
     <>
-      <Grid item xs={6}>
+      <Grid item xs={12} sm={6}>
         <Autocomplete
           defaultValue={() => {
             if (selectedCountry.length > 0)
@@ -107,7 +107,7 @@ const CountrySelector = ({ formik }) => {
           }}
         />
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={12} sm={6}>
         <Autocomplete
           defaultValue={() => (selectedCity.length > 0 ? selectedCity : null)}
           onChange={(event, value) => {

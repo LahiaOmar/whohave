@@ -7,9 +7,9 @@ import {
   Toolbar,
   Tooltip,
   Typography,
-  makeStyles
+  makeStyles,
+  Container
 } from '@material-ui/core'
-import UserCard from '../UserCard'
 import { Route, useHistory } from 'react-router-dom'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -17,7 +17,6 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 
 import ListOfProduct from '../ListOfProduct'
 import StoreInformations from '../StoreInformations'
-import StoreMenuList from '../StoreMenuList'
 import useSocket from '../useHooks/useSocket'
 import { AlertContext } from '../../Context/AlertProvider'
 import { AuthContext } from '../../Context/AuthProvider'
@@ -108,62 +107,82 @@ const StoreDashboard = () => {
 
   return (
     <>
-      <Grid container item xs={12}>
+      <Grid item xs={12}>
         <AppBar position="relative">
-          <Toolbar className="dashboard-topbar" disableGutters>
-            <Grid container item xs={10} justify="flex-start" >
-              <Logo />
-            </Grid>
-            <Grid container item xs={2}>
-              <Tooltip title="Notification" onClick={() => history.push('/dashboard/notifications')}>
-                <Button color="inherit">
-                  <NotificationsIcon />
-                </Button>
-              </Tooltip>
+          <Container maxWidth="lg">
+            <Toolbar className="dashboard-topbar" disableGutters>
+              <Grid container item xs={4} justify="flex-start" >
+                <Logo />
+              </Grid>
+              <Grid container item xs={8} justify="flex-end">
+                <Tooltip title="Notification" onClick={() => history.push('/dashboard/notifications')}>
+                  <Button color="inherit">
+                    <NotificationsIcon />
+                  </Button>
+                </Tooltip>
 
-              <Tooltip title="Profile" onClick={() => history.push('/dashboard/profile')}>
-                <Button color="inherit">
-                  <AccountCircleIcon />
-                </Button>
-              </Tooltip>
+                <Tooltip title="Profile" onClick={() => history.push('/dashboard/profile')}>
+                  <Button color="inherit">
+                    <AccountCircleIcon />
+                  </Button>
+                </Tooltip>
 
-              <Tooltip title="LogOut" onClick={() => logout()}>
-                <Button color="inherit">
-                  <ExitToAppIcon />
-                </Button>
-              </Tooltip>
-            </Grid>
-          </Toolbar>
+                <Tooltip title="LogOut" onClick={() => logout()}>
+                  <Button color="inherit">
+                    <ExitToAppIcon />
+                  </Button>
+                </Tooltip>
+              </Grid>
+            </Toolbar>
+          </Container>
         </AppBar>
       </Grid>
-      <Grid container item xs={12} justify="center" alignItems="center" spacing={2}>
-        <Grid container item xs={8} spacing="2">
-          <Grid item xs={12}>
-            <Typography color="textPrimary" variant="h6">Channels</Typography>
-            <Divider variant="middle" />
+      <Grid item xs={12}>
+        <Container maxWidth="lg">
+          <Grid container justify="center" alignItems="center" direction="column" spacing={2}>
+            <Route exact path="/dashboard/notifications">
+              <Grid item xs={12} sm={12} md={6}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Typography color="textPrimary" variant="h6">Channels</Typography>
+                    <Divider variant="middle" />
+                  </Grid>
+                  <Grid container item xs={12} justify="center" spacing={2}>
+                    {
+                      new Array(7).fill(2).map(_ => <Grid item> <Channel /></Grid>)
+                    }
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6}>
+                <div>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography color="textPrimary" variant="h6">Products</Typography>
+                      <Divider variant="middle" />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <div>
+                        <Grid container spacing={2} alignItems="center" justify="center">
+                          {
+                            !isLoading && <ListOfProduct
+                              products={products}
+                              feedback={feedback} />
+                          }
+                        </Grid>
+                      </div>
+                    </Grid>
+                  </Grid>
+                </div>
+              </Grid>
+            </Route>
+            <Route exact path="/dashboard/profile">
+              <Grid item xs={12} sm={8}>
+                <StoreInformations />
+              </Grid>
+            </Route>
           </Grid>
-          <Grid container item xs={12} spacing={2} justify="center">
-            {
-              new Array(7).fill(2).map(_ => <Grid item> <Channel /></Grid>)
-            }
-          </Grid>
-        </Grid>
-        <Grid container item xs={8} spacing={2}>
-          <Route exact path="/dashboard/notifications">
-            <Grid item xs={12}>
-              <Typography color="textPrimary" variant="h6">Products</Typography>
-              <Divider variant="middle" />
-            </Grid>
-            {
-              !isLoading && <ListOfProduct
-                products={products}
-                feedback={feedback} />
-            }
-          </Route>
-          <Route exact path="/dashboard/profile">
-            <StoreInformations />
-          </Route>
-        </Grid>
+        </Container>
       </Grid>
     </>
   )

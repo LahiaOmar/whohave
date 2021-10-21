@@ -9,7 +9,7 @@ const {
 	REACT_APP_MAP_KEY
 } = process.env
 
-function Map({ markersPosition = [], style = {}, selfLocation, ...rest }) {
+function Map({ markersPosition = [], style = { width: '300px', height: '300px' }, selfLocation, ...rest }) {
 	const [mp, setMp] = React.useState(null)
 	const [userLocation, setUserLocation] = React.useState(selfLocation)
 	const [userMarker, setUserMarker] = React.useState(null)
