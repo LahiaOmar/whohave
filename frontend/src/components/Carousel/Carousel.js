@@ -11,7 +11,7 @@ const HEIGHT = 300
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: '5px',
+    padding: '8px',
   },
   container: {
     position: 'relative',
@@ -64,8 +64,8 @@ const Carousel = ({ images }) => {
   }
 
   return (
-    <Grid className={classes.root} component={Paper} elevation={0}>
-      <Grid container justify="center" className={classes.container}>
+    <Grid container justify="center" alignItems="center" alignContent="center" className={classes.root} component={Paper} elevation={0}>
+      <Grid container className={classes.container} justify="center">
         <Grid item xs={12} className={classes.buttonsContainer}>
           <NavigateBeforeIcon className={classes.buttons} fontSize="large" onClick={prevHandler} />
           <NavigateNextIcon className={classes.buttons} fontSize="large" onClick={nextHandler} />

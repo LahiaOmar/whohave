@@ -12,6 +12,9 @@ import {
   TableRow,
   makeStyles,
   Grid,
+  Fab,
+  Badge,
+  Tooltip,
 } from '@material-ui/core'
 import { v4 as uui } from 'uuid';
 
@@ -21,127 +24,89 @@ import MyModal from '../Mymodal';
 import CollapsRow from './CollapsRow';
 import IllustrationDisplay from '../IllustrationDisplay'
 import { ILLUSTRATION_TYPES } from '../../constants/constants'
+import Carousel from '../Carousel'
+import StoreIcon from '@material-ui/icons/Store'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 'calc(80vw)',
     height: 'calc(80vh)',
     borderRadius: theme.shape.borderRadius
+  },
+  card: {
+    border: `2px solid ${theme.palette.primary['light']}`,
+    backgroundColor: 'white',
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[2],
+    width: '360px'
   }
 }))
 
 function ListOfResponse({ notification, responses, actions: { deleteProduct, deleteResponse } }) {
   const classes = useStyles()
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(2)
-  const [mapState, mapDispatch] = React.useReducer(
-    (state, action) => {
-      let newState = { ...state }
-      let pyload = {}
-      switch (action.type) {
-        case 'STORE':
-          pyload = action.pyload
-          const storeIndex = responses.products.findIndex(product => product._id === pyload.productId)
-          if (storeIndex >= 0) {
-            const store = responses.stores[storeIndex].find(store => store._id === pyload.storeId)
-            return { open: true, listPosition: [{ coordinates: store.location.coordinates, draggable: false, type: 'STORE' }] }
-          }
-          return newState
-        case 'PRODUCT':
-          pyload = action.pyload
-          const storesIndex = responses.products.findIndex(product => product._id === pyload.productId)
-          const listCoordinates = responses.stores[storesIndex].map(store => ({
-            coordinates: store.location.coordinates, draggable: false, type: 'STORE'
-          }))
-          return { open: true, listPosition: listCoordinates }
-        case 'CLOSE':
-          return { ...state, open: false }
-        case 'OPEN':
-          return { ...state, open: true }
-        default:
-          throw new Error("error action type")
-      }
-    }, { open: false, listPosition: [] })
+  const [responseHeight, setResponseHeight] = React.useState(0)
+  const slideRef = React.useRef()
+
+  const slideResponse = () => {
+    const height = responseHeight > 0 ? 0 : 100
+    setResponseHeight(height)
+  }
 
   return (
-    <Paper>
-      <div className="table-actions">
-        <Typography>
-          <h3>List of Response</h3>
-        </Typography>
-      </div>
-      <Divider />
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table" size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell align="center">Product Name</TableCell>
-              <TableCell align="center">Description </TableCell>
-              <TableCell align="center">Responses</TableCell>
-              <TableCell align="center">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {
-              responses.products.length === 0 &&
-              <TableRow>
-                <TableCell align="center" colSpan={5}>
-                  <Grid xs={12}>
-                    <IllustrationDisplay
-                      style={{ height: '50vh' }}
-                      type={ILLUSTRATION_TYPES.NO_RESPONSES} />
-                    <p>No responses / No Request ...</p>
+    <>
+      {
+        responses.products.map((product, index) => {
+          return (
+            <Grid container item justify="center" xs={12} sm={10} md={8}>
+              <div style={{ margin: '15px', position: 'relative' }}>
+                <Grid container item xs={12} justify="center"
+                  style={{
+                    position: 'absolute',
+                    zIndex: '10',
+                    top: '-6%',
+                    left: '50%',
+                  }}>
+                  <div>
+                    <Tooltip
+                      title="Responses"
+                      onClick={() => console.log("click")}>
+                      <Fab color="primary" style={{ width: '60px', height: '60px' }}>
+                        <Badge badgeContent={100} color="secondary" >
+                          <StoreIcon fontSize="samll" />
+                        </Badge>
+                      </Fab>
+                    </Tooltip>
+                  </div>
+                </Grid>
+                <Grid container className={classes.card}
+                  justify="center" alignItems="center">
+                  <Grid item xs={12}>
+                    <Carousel images={product.images} />
                   </Grid>
-                </TableCell>
-              </TableRow>
-            }
-            {
-              responses.products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((product, index) => {
-                  const key = uui()
-                  return <CollapsRow
-                    key={key}
-                    product={product}
-                    stores={responses.stores[index]}
-                    deleteProduct={deleteProduct}
-                    deleteResponse={deleteResponse}
-                    mapDispatch={mapDispatch} />
-                })
-            }
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[2, 4, 6]}
-        component="div"
-        count={responses.products.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={(e, newPage) => {
-          setPage(newPage)
-        }}
-        onChangeRowsPerPage={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10))
-        }}
-      />
-      <div id="table-footer-action">
-        <MyModal
-          useBtn={false}
-          open={mapState.open}
-          handleClose={() => {
-            mapDispatch({ type: 'CLOSE' })
-          }}
-          handleOpen={() => {
-            mapDispatch({ type: 'OPEN' })
-          }}>
-          <Map
-            className={classes.root}
-            markersPosition={mapState.listPosition}
-          />
-        </MyModal>
-      </div>
-    </Paper>
+                  <div style={{ padding: '16px' }}>
+                    <Grid container item xs={12} spacing={2}>
+                      <Grid item xs={12}>
+                        <Grid container>
+                          <Grid item xs={12}>
+                            <Typography>{product.name}</Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography
+                              variant="body2" color="textSecondary" component="p">
+                              {product.description}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </div>
+                </Grid>
+              </div>
+            </Grid >
+          )
+        })
+      }
+    </>
   )
 }
 

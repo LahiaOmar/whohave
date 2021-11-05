@@ -6,13 +6,18 @@ import {
   Grid,
   Toolbar,
   Tooltip,
+  Container,
+  Typography
 } from '@material-ui/core'
 
 import ListOfResponse from '../ListOfResponse'
 import UserInformations from '../UserInformations'
 import UserCard from '../UserCard'
-import { Route } from 'react-router-dom'
+import { Route, useHistory } from 'react-router-dom'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import SendIcon from '@material-ui/icons/Send';
 
 import UserMenuList from '../UserMenuList'
 import Message from '../Message'
@@ -22,6 +27,8 @@ import * as ALERT_TYPES from '../../Context/actions/AlertTypes'
 import * as AUTH_ACTIONS from '../../Context/actions/AuthTypes'
 import { AuthContext } from '../../Context/AuthProvider'
 import dashboardAPI from '../../api/CoreAPI'
+import Logo from '../Logo'
+import Channel from '../Channel'
 
 const UserDashboard = () => {
   const { authState: { userType, profile: { _id } }, authDispatch } = React.useContext(AuthContext)
@@ -29,6 +36,14 @@ const UserDashboard = () => {
   const [notification, socketLoading] = useSocket()
   const [responses, setResponses] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(true)
+  const history = useHistory()
+
+  /**
+   * 
+   * 
+   * 
+   */
+
 
   const fetchData = async () => {
     dashboardAPI.getUserResponses({
@@ -117,37 +132,85 @@ const UserDashboard = () => {
     <>
       <Grid xs={12} item>
         <AppBar position="relative">
-          <Toolbar className="dashboard-topbar" disableGutters>
-            <Tooltip title="LogOut" onClick={() => logout()}>
-              <Button color="inherit">
-                <ExitToAppIcon />
-              </Button>
-            </Tooltip>
-          </Toolbar>
+          <Container maxWidth="lg">
+            <Toolbar className="dashboard-topbar" disableGutters>
+              <Grid container item xs={4} justify="flex-start" >
+                <Logo />
+              </Grid>
+              <Grid container item xs={8} justify="flex-end">
+                <Tooltip title="Send Product" onClick={() => history.push('/dashboard/product')}>
+                  <Button color="inherit">
+                    <SendIcon />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="Notification" onClick={() => history.push('/dashboard/notifications')}>
+                  <Button color="inherit">
+                    <NotificationsIcon />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="Profile" onClick={() => history.push('/dashboard/profile')}>
+                  <Button color="inherit">
+                    <AccountCircleIcon />
+                  </Button>
+                </Tooltip>
+
+                <Tooltip title="LogOut" onClick={() => logout()}>
+                  <Button color="inherit">
+                    <ExitToAppIcon />
+                  </Button>
+                </Tooltip>
+              </Grid>
+            </Toolbar>
+          </Container>
         </AppBar>
       </Grid>
-      <Grid className="dashboard-mid" xs={12} container item>
-        <Grid item className="dashboard-menu" xs={2}>
-          <UserCard />
-          <Divider />
-          <UserMenuList />
-        </Grid>
-        <Grid item xs={10} className="dashboard-notifications">
-          <Route exact path="/dashboard/notifications">
-            {
-              !isLoading && <ListOfResponse
-                responses={responses}
-                notification={notification}
-                actions={{ deleteProduct, deleteResponse }} />
-            }
-          </Route>
-          <Route exact path="/dashboard/profile">
-            <UserInformations />
-          </Route>
-          <Route exact path="/dashboard/product">
-            <Message sendProduct={sendProduct} />
-          </Route>
-        </Grid>
+      <Grid container item xs={12}>
+        <Container maxWidth="lg">
+          <Grid container justify="center" alignItems="center" direction="column" spacing={2}>
+            <Route exact path="/dashboard/notifications">
+              <Grid container spacing={2} item xs={12} sm={12} md={8}>
+                <Grid item xs={12}>
+                  <Typography color="textPrimary" variant="h6">Channels</Typography>
+                  <Divider variant="middle" />
+                </Grid>
+                <Grid container item xs={12} justify="center" spacing={2}>
+                  {
+                    new Array(7).fill(2).map(_ => <Grid item> <Channel /></Grid>)
+                  }
+                </Grid>
+              </Grid>
+              <Grid item xs={12} sm={12} md={8}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Typography color="textPrimary" variant="h6">Products</Typography>
+                    <Divider variant="middle" />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Grid container spacing={2} alignItems="center" justify="center">
+                      {
+                        !isLoading
+                        &&
+                        responses.products.map(product => <UserCard product={product} showResponses={() => { }} />)
+                      }
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Route>
+            <Route exact path="/dashboard/profile">
+              <Grid item xs={12} sm={8}>
+                <UserInformations />
+              </Grid>
+            </Route>
+            <Route exact path="/dashboard/product">
+              <Grid item xs={12} sm={8}>
+                <Message sendProduct={sendProduct} />
+              </Grid>
+            </Route>
+          </Grid>
+        </Container>
       </Grid>
     </>
   )
