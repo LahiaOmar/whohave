@@ -72,16 +72,16 @@ exports.send = async (req, res) => {
     }, {
       _id: 1
     })
-    if (allStores.length === 0)
-      res.status(OK).json({ message: " notidication is send" })
+    if (allStores.length === 0) {
+      const storesIds = allStores.map(objId => objId._id)
 
-    const storesIds = allStores.map(objId => objId._id)
+      const notification = new NotificationsModel({
+        content: storeDocument._id, from: userId, to: storesIds, type: 'request'
+      })
+      await notification.save()
+    }
 
-    const notification = new NotificationsModel({
-      content: storeDocument._id, from: userId, to: storesIds, type: 'request'
-    })
-    await notification.save()
-    res.status(OK).json({ message: '' })
+    res.status(OK).json({ message: 'The product is send!' })
   }
   catch (ex) {
     res.status(UNAUTHORIZED).json({ error: ex.message })
