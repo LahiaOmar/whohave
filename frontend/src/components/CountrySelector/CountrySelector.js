@@ -63,6 +63,7 @@ const CountrySelector = ({ formik }) => {
     <>
       <Grid item xs={6}>
         <Autocomplete
+          inputValue={formik.values['country']}
           defaultValue={() => {
             if (selectedCountry.length > 0)
               return { name: selectedCountry, unicodeFlag }
@@ -109,6 +110,7 @@ const CountrySelector = ({ formik }) => {
       </Grid>
       <Grid item xs={6}>
         <Autocomplete
+          inputValue={formik.values['city']}
           defaultValue={() => (selectedCity.length > 0 ? selectedCity : null)}
           onChange={(event, value) => {
             if (value) {
