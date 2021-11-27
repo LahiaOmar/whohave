@@ -72,7 +72,7 @@ exports.send = async (req, res) => {
     }, {
       _id: 1
     })
-    if (allStores.length === 0) {
+    if (allStores.length) {
       const storesIds = allStores.map(objId => objId._id)
 
       const notification = new NotificationsModel({
