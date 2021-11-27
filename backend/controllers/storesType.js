@@ -1,5 +1,5 @@
 const storesType = require('../models/storesType')
-const { OK, UNAUTHORIZED } = require('http-status')
+const { OK, UNAUTHORIZED, CREATED } = require('http-status')
 
 exports.get = async (req, res) => {
   try {
