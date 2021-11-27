@@ -7,4 +7,4 @@ const storesType = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('TypesModel', storesType)
+module.exports = mongoose.model('Types', storesType)

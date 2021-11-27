@@ -76,4 +76,4 @@ userStoreSchema.methods.getFieldToSend = function () {
   }
 }
 
-module.exports = mongoose.model('StoreModel', userStoreSchema)
+module.exports = mongoose.model('Store', userStoreSchema)
